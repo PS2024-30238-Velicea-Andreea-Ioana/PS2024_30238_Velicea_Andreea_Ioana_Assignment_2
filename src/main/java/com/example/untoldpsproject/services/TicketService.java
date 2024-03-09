@@ -1,6 +1,7 @@
 package com.example.untoldpsproject.services;
 
 import com.example.untoldpsproject.dtos.TicketDto;
+import com.example.untoldpsproject.dtos.TicketDtoIds;
 import com.example.untoldpsproject.dtos.UserDto;
 import com.example.untoldpsproject.entities.Ticket;
 import com.example.untoldpsproject.entities.User;
@@ -35,12 +36,12 @@ public class TicketService {
         return ticket.getId();
     }
 
-    public List<TicketDto> findTickets(){
+    public List<TicketDtoIds> findTickets(){
         List<Ticket> ticketList = ticketRepository.findAll();
         return ticketList.stream().map(TicketMapper::toTicketDto).collect(Collectors.toList());
     }
 
-    public TicketDto findTicketById(UUID id){
+    public TicketDtoIds findTicketById(UUID id){
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if(!ticketOptional.isPresent()){
             LOGGER.error("Ticket with id {} was not found in db", id);
@@ -57,7 +58,6 @@ public class TicketService {
             Ticket updatedTicket = TicketMapper.toTicket(updatedTicketDto);
             ticket.setType(updatedTicket.getType());
             ticket.setPrice(updatedTicket.getPrice());
-            ticket.setBuyDate(updatedTicket.getBuyDate());
             ticket.setQuantity(updatedTicket.getQuantity());
             ticketRepository.save(ticket);
             LOGGER.debug("Ticket with id {} was successfully updated", id);

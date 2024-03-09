@@ -7,6 +7,7 @@ import jakarta.persistence.OneToMany;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Setter
@@ -17,6 +18,6 @@ import java.util.UUID;
 public class OrderDto {
     private UUID id;
     private User user;
-    private List<Ticket> tickets;
+    private Set<Ticket> tickets;
     private Double totalPrice;
 }

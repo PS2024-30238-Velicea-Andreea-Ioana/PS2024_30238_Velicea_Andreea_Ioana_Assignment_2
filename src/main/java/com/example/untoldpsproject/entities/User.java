@@ -1,11 +1,16 @@
 package com.example.untoldpsproject.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -34,9 +39,17 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @OneToMany(mappedBy = "user")
-    private List<Order> orders;
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Order> orders = new HashSet<>();
 
-    @OneToMany(mappedBy = "user")
-    private List<Ticket> tickets;
+    public Set<UUID> convertOrdersToIds (){
+        Set<UUID> orderIds = new HashSet<>();
+        if(!orders.isEmpty()) {
+            for (Order order : orders) {
+                orderIds.add(order.getId());
+            }
+        }
+        return orderIds;
+    }
 }

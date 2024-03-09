@@ -1,6 +1,7 @@
 package com.example.untoldpsproject.controllers;
 
 import com.example.untoldpsproject.dtos.UserDto;
+import com.example.untoldpsproject.dtos.UserDtoIds;
 import com.example.untoldpsproject.entities.User;
 import com.example.untoldpsproject.services.UserService;
 import lombok.AllArgsConstructor;
@@ -23,17 +24,17 @@ public class UserController {
     private final UserService userService;
     @PostMapping("/insert")
     public ResponseEntity<UUID> insertUser(@RequestBody UserDto userDto){
-        UUID userID = userService.insert(userDto);
-        return new ResponseEntity<>(userID, HttpStatus.CREATED);
+        UUID userId = userService.insert(userDto);
+        return new ResponseEntity<>(userId, HttpStatus.CREATED);
     }
     @GetMapping("/getAllUsers")
-    public ResponseEntity<List<UserDto>> getUsers(){
-        List<UserDto> dtos = userService.findUsers();
+    public ResponseEntity<List<UserDtoIds>> getUsers(){
+        List<UserDtoIds> dtos = userService.findUsers();
         return new ResponseEntity<>(dtos,HttpStatus.OK);
     }
     @GetMapping(value = "/{id}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable("id") UUID userId){
-        UserDto dto = userService.findUserById(userId);
+    public ResponseEntity<UserDtoIds> getUserById(@PathVariable("id") UUID userId){
+        UserDtoIds dto = userService.findUserById(userId);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
     @PutMapping(value = "/{id}")

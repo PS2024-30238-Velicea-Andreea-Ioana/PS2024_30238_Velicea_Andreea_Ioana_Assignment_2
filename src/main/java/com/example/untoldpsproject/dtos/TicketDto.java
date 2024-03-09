@@ -8,6 +8,8 @@ import jakarta.persistence.ManyToOne;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Setter
@@ -19,8 +21,6 @@ public class TicketDto {
     private UUID id;
     private String type;
     private Double price;
-    private Date buyDate;
     private int quantity;
-    private Order order;
-    private User user;
+    private Set<Order> orders;
 }

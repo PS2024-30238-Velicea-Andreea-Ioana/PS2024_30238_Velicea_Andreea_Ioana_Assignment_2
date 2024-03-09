@@ -1,12 +1,13 @@
 package com.example.untoldpsproject.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -27,17 +28,20 @@ public class Ticket {
     @Column(name = "Price", nullable = false)
     private Double price;
 
-    @Column(name = "BuyDate", nullable = false)
-    private Date buyDate;
-
     @Column(name = "Quantity", nullable = false)
     private int quantity;
 
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @JsonIgnore
+    @ManyToMany(mappedBy = "tickets")
+    private Set<Order> orders = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    public Set<UUID> convertOrdersToIds (){
+        Set<UUID> orderIds = new HashSet<>();
+        if(!orders.isEmpty()) {
+            for (Order order : orders) {
+                orderIds.add(order.getId());
+            }
+        }
+        return orderIds;
+    }
 }

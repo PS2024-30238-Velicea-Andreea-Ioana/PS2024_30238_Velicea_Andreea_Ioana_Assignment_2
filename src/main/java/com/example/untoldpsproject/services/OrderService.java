@@ -1,13 +1,16 @@
 package com.example.untoldpsproject.services;
 
 import com.example.untoldpsproject.dtos.OrderDto;
+import com.example.untoldpsproject.dtos.OrderDtoIds;
 import com.example.untoldpsproject.dtos.TicketDto;
 import com.example.untoldpsproject.entities.Order;
 import com.example.untoldpsproject.entities.Ticket;
+import com.example.untoldpsproject.entities.User;
 import com.example.untoldpsproject.mappers.OrderMapper;
 import com.example.untoldpsproject.mappers.TicketMapper;
 import com.example.untoldpsproject.repositories.OrderRepository;
 import com.example.untoldpsproject.repositories.TicketRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,12 +37,12 @@ public class OrderService {
         return order.getId();
     }
 
-    public List<OrderDto> findOrders(){
+    public List<OrderDtoIds> findOrders(){
         List<Order> orderList = orderRepository.findAll();
         return orderList.stream().map(OrderMapper::toOrderDto).collect(Collectors.toList());
     }
 
-    public OrderDto findOrderById(UUID id){
+    public OrderDtoIds findOrderById(UUID id){
         Optional<Order> orderOptional = orderRepository.findById(id);
         if(!orderOptional.isPresent()){
             LOGGER.error("Order with id {} was not found in db", id);
@@ -72,4 +75,5 @@ public class OrderService {
             orderRepository.delete(optionalOrder.get());
         }
     }
+
 }

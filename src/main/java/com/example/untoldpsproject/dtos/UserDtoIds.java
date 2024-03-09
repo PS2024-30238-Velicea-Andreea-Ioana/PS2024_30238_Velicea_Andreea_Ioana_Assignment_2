@@ -1,11 +1,8 @@
 package com.example.untoldpsproject.dtos;
 
 import com.example.untoldpsproject.entities.Order;
-import com.example.untoldpsproject.entities.Ticket;
-import jakarta.persistence.OneToMany;
 import lombok.*;
 
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -14,11 +11,11 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserDto {
+public class UserDtoIds {
     private UUID id;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
-    private Set<Order> orders;
+    private Set<UUID> orders;
 }

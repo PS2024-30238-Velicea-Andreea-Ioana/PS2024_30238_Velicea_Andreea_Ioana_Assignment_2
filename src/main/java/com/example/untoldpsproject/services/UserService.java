@@ -1,6 +1,7 @@
 package com.example.untoldpsproject.services;
 
 import com.example.untoldpsproject.dtos.UserDto;
+import com.example.untoldpsproject.dtos.UserDtoIds;
 import com.example.untoldpsproject.entities.User;
 import com.example.untoldpsproject.mappers.UserMapper;
 import com.example.untoldpsproject.repositories.UserRepository;
@@ -32,12 +33,12 @@ public class UserService {
         return user.getId();
     }
 
-    public List<UserDto> findUsers(){
+    public List<UserDtoIds> findUsers(){
         List<User> userList = userRepository.findAll();
         return userList.stream().map(UserMapper::toUserDto).collect(Collectors.toList());
     }
 
-    public UserDto findUserById(UUID id){
+    public UserDtoIds findUserById(UUID id){
         Optional<User> userOptional = userRepository.findById(id);
         if(!userOptional.isPresent()){
             LOGGER.error("Person with id {} was not found in db", id);
@@ -58,7 +59,6 @@ public class UserService {
             user.setPassword(updatedUser.getPassword());
             userRepository.save(user);
             LOGGER.debug("User with id {} was successfully updated", id);
-
         }
         return userOptional.get();
     }

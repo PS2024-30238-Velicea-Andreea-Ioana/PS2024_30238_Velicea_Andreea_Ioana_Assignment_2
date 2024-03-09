@@ -1,7 +1,7 @@
 package com.example.untoldpsproject.controllers;
 
 import com.example.untoldpsproject.dtos.OrderDto;
-import com.example.untoldpsproject.dtos.TicketDto;
+import com.example.untoldpsproject.dtos.OrderDtoIds;
 import com.example.untoldpsproject.entities.Order;
 import com.example.untoldpsproject.entities.Ticket;
 import com.example.untoldpsproject.services.OrderService;
@@ -30,13 +30,13 @@ public class OrderController {
         return new ResponseEntity<>(orderId, HttpStatus.CREATED);
     }
     @GetMapping("/getAllOrders")
-    public ResponseEntity<List<OrderDto>> getOrder(){
-        List<OrderDto> dtos = orderService.findOrders();
+    public ResponseEntity<List<OrderDtoIds>> getOrder(){
+        List<OrderDtoIds> dtos = orderService.findOrders();
         return new ResponseEntity<>(dtos,HttpStatus.OK);
     }
     @GetMapping(value = "/{id}")
-    public ResponseEntity<OrderDto> getOrderById(@PathVariable("id") UUID orderId){
-        OrderDto dto = orderService.findOrderById(orderId);
+    public ResponseEntity<OrderDtoIds> getOrderById(@PathVariable("id") UUID orderId){
+        OrderDtoIds dto = orderService.findOrderById(orderId);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
     @PutMapping(value = "/{id}")

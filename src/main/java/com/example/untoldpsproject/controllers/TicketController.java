@@ -1,6 +1,7 @@
 package com.example.untoldpsproject.controllers;
 
 import com.example.untoldpsproject.dtos.TicketDto;
+import com.example.untoldpsproject.dtos.TicketDtoIds;
 import com.example.untoldpsproject.dtos.UserDto;
 import com.example.untoldpsproject.entities.Ticket;
 import com.example.untoldpsproject.services.TicketService;
@@ -28,13 +29,13 @@ public class TicketController {
         return new ResponseEntity<>(ticketId, HttpStatus.CREATED);
     }
     @GetMapping("/getAllTickets")
-    public ResponseEntity<List<TicketDto>> getTickets(){
-        List<TicketDto> dtos = ticketService.findTickets();
+    public ResponseEntity<List<TicketDtoIds>> getTickets(){
+        List<TicketDtoIds> dtos = ticketService.findTickets();
         return new ResponseEntity<>(dtos,HttpStatus.OK);
     }
     @GetMapping(value = "/{id}")
-    public ResponseEntity<TicketDto> getTicketById(@PathVariable("id") UUID ticketId){
-        TicketDto dto = ticketService.findTicketById(ticketId);
+    public ResponseEntity<TicketDtoIds> getTicketById(@PathVariable("id") UUID ticketId){
+        TicketDtoIds dto = ticketService.findTicketById(ticketId);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
     @PutMapping(value = "/{id}")
