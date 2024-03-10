@@ -28,20 +28,14 @@ public class Ticket {
     @Column(name = "Price", nullable = false)
     private Double price;
 
-    @Column(name = "Quantity", nullable = false)
+    @Column(name = "Quantity")
     private int quantity;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "tickets")
-    private Set<Order> orders = new HashSet<>();
+    @Column(name = "Available")
+    private int available;
 
-    public Set<UUID> convertOrdersToIds (){
-        Set<UUID> orderIds = new HashSet<>();
-        if(!orders.isEmpty()) {
-            for (Order order : orders) {
-                orderIds.add(order.getId());
-            }
-        }
-        return orderIds;
-    }
+    @JsonIgnore
+    @ManyToMany(mappedBy = "tickets", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
+    private List<Order> orders;
+
 }

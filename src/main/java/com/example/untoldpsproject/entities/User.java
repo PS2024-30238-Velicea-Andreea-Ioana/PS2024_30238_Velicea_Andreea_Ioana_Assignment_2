@@ -40,16 +40,5 @@ public class User {
     private String password;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Set<Order> orders = new HashSet<>();
-
-    public Set<UUID> convertOrdersToIds (){
-        Set<UUID> orderIds = new HashSet<>();
-        if(!orders.isEmpty()) {
-            for (Order order : orders) {
-                orderIds.add(order.getId());
-            }
-        }
-        return orderIds;
-    }
+    private List<Order> orders;
 }

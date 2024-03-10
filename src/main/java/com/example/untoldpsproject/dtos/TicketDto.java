@@ -22,5 +22,6 @@ public class TicketDto {
     private String type;
     private Double price;
     private int quantity;
-    private Set<Order> orders;
+    private int available;
+    private List<Order> orders;
 }

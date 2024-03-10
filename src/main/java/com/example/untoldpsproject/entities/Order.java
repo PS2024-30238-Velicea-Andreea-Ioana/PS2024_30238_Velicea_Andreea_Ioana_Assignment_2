@@ -22,8 +22,8 @@ public class Order {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private UUID id;
 
-    @Getter
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -31,18 +31,17 @@ public class Order {
     @JoinTable(name = "orders_tickets",
             joinColumns = @JoinColumn(name = "order_id"),
             inverseJoinColumns = @JoinColumn(name = "ticket_id"))
-    private Set<Ticket> tickets = new HashSet<>();
+    private List<Ticket> tickets;
 
     @Column(name = "total_price")
     private Double totalPrice;
 
-    public Set<UUID> convertTicketsToIds (){
-        Set<UUID> ticketsId = new HashSet<>();
-        if(!tickets.isEmpty()){
-            for(Ticket ticket: tickets){
-                ticketsId.add(ticket.getId());
+    public void setTotalPrice() {
+        Double totalPrice1 = 0.0;
+        if (!tickets.isEmpty())
+            for (Ticket ticket : tickets) {
+                totalPrice1 += ticket.getPrice();
             }
-        }
-        return ticketsId;
+        this.setTotalPrice(totalPrice1);
     }
 }

@@ -3,6 +3,7 @@ package com.example.untoldpsproject.services;
 import com.example.untoldpsproject.dtos.TicketDto;
 import com.example.untoldpsproject.dtos.TicketDtoIds;
 import com.example.untoldpsproject.dtos.UserDto;
+import com.example.untoldpsproject.entities.Order;
 import com.example.untoldpsproject.entities.Ticket;
 import com.example.untoldpsproject.entities.User;
 import com.example.untoldpsproject.mappers.TicketMapper;
@@ -20,7 +21,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+/**
+ * Service class for managing tickets.
+ */
 @Setter
 @Getter
 @AllArgsConstructor
@@ -29,6 +32,12 @@ public class TicketService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketService.class);
     private final TicketRepository ticketRepository;
 
+    /**
+     * Inserts a new ticket into the database.
+     *
+     * @param ticketDto The ticket DTO containing information about the ticket.
+     * @return The UUID of the inserted ticket.
+     */
     public UUID insert(TicketDto ticketDto){
         Ticket ticket = TicketMapper.toTicket(ticketDto);
         ticket = ticketRepository.save(ticket);
@@ -36,11 +45,22 @@ public class TicketService {
         return ticket.getId();
     }
 
+    /**
+     * Retrieves all tickets from the database.
+     *
+     * @return A list of ticket DTOs.
+     */
     public List<TicketDtoIds> findTickets(){
         List<Ticket> ticketList = ticketRepository.findAll();
         return ticketList.stream().map(TicketMapper::toTicketDto).collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a ticket by its ID from the database.
+     *
+     * @param id The ID of the ticket to retrieve.
+     * @return The ticket DTO.
+     */
     public TicketDtoIds findTicketById(UUID id){
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if(!ticketOptional.isPresent()){
@@ -49,6 +69,13 @@ public class TicketService {
         return TicketMapper.toTicketDto(ticketOptional.get());
     }
 
+    /**
+     * Updates a ticket in the database.
+     *
+     * @param id The ID of the ticket to update.
+     * @param updatedTicketDto The updated ticket DTO.
+     * @return The updated ticket entity.
+     */
     public Ticket updateTicketById(UUID id, TicketDto updatedTicketDto){
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if(!ticketOptional.isPresent()){
@@ -58,14 +85,18 @@ public class TicketService {
             Ticket updatedTicket = TicketMapper.toTicket(updatedTicketDto);
             ticket.setType(updatedTicket.getType());
             ticket.setPrice(updatedTicket.getPrice());
-            ticket.setQuantity(updatedTicket.getQuantity());
+            ticket.setAvailable(updatedTicket.getAvailable());
             ticketRepository.save(ticket);
             LOGGER.debug("Ticket with id {} was successfully updated", id);
 
         }
         return ticketOptional.get();
     }
-
+    /**
+     * Deletes a ticket from the database.
+     *
+     * @param id The ID of the ticket to delete.
+     */
     public void deleteTicketById(UUID id){
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if(!ticketOptional.isPresent()){

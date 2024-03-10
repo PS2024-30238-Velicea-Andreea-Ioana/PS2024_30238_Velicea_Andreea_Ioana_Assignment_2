@@ -17,7 +17,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
-
+/**
+ * Service class for managing users.
+ */
 @Setter
 @Getter
 @AllArgsConstructor
@@ -26,6 +28,12 @@ public class UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
 
+    /**
+     * Inserts a new user into the database.
+     * @param userDto The user DTO containing user information.
+     * @return The ID of the inserted user.
+     */
+
     public UUID insert(UserDto userDto){
         User user = UserMapper.toUser(userDto);
         user = userRepository.save(user);
@@ -33,11 +41,19 @@ public class UserService {
         return user.getId();
     }
 
+    /**
+     * Retrieves all users from the database.
+     * @return A list of user DTOs containing user information.
+     */
     public List<UserDtoIds> findUsers(){
         List<User> userList = userRepository.findAll();
         return userList.stream().map(UserMapper::toUserDto).collect(Collectors.toList());
     }
-
+    /**
+     * Retrieves a user by ID from the database.
+     * @param id The ID of the user to retrieve.
+     * @return The user DTO containing user information, or null if not found.
+     */
     public UserDtoIds findUserById(UUID id){
         Optional<User> userOptional = userRepository.findById(id);
         if(!userOptional.isPresent()){
@@ -45,7 +61,12 @@ public class UserService {
         }
         return UserMapper.toUserDto(userOptional.get());
     }
-
+    /**
+     * Updates a user by ID in the database.
+     * @param id The ID of the user to update.
+     * @param updatedUserDto The updated user DTO containing new user information.
+     * @return The updated user entity.
+     */
     public User updateUserById(UUID id, UserDto updatedUserDto){
         Optional<User> userOptional = userRepository.findById(id);
         if(!userOptional.isPresent()){
@@ -63,6 +84,10 @@ public class UserService {
         return userOptional.get();
     }
 
+    /**
+     * Deletes a user by ID from the database.
+     * @param id The ID of the user to delete.
+     */
     public void deleteUserById(UUID id){
         Optional<User> userOptional = userRepository.findById(id);
         if(!userOptional.isPresent()){

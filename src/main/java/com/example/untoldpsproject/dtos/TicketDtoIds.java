@@ -2,6 +2,7 @@ package com.example.untoldpsproject.dtos;
 
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -15,5 +16,6 @@ public class TicketDtoIds {
     private String type;
     private Double price;
     private int quantity;
-    private Set<UUID> orders;
+    private int available;
+    private List<UUID> orders;
 }

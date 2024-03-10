@@ -1,8 +1,10 @@
 package com.example.untoldpsproject.dtos;
 
+import com.example.untoldpsproject.entities.Ticket;
+import com.example.untoldpsproject.entities.User;
 import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Setter
@@ -13,6 +15,6 @@ import java.util.UUID;
 public class OrderDtoIds {
     private UUID id;
     private UUID user;
-    private Set<UUID> tickets;
+    private List<UUID> tickets;
     private Double totalPrice;
 }

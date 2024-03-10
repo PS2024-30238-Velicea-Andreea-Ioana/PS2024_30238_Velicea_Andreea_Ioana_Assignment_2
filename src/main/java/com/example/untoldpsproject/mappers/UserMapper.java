@@ -2,7 +2,11 @@ package com.example.untoldpsproject.mappers;
 
 import com.example.untoldpsproject.dtos.UserDto;
 import com.example.untoldpsproject.dtos.UserDtoIds;
+import com.example.untoldpsproject.entities.Order;
 import com.example.untoldpsproject.entities.User;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class UserMapper {
     public static UserDtoIds toUserDto(User user){
@@ -11,7 +15,7 @@ public class UserMapper {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .orders(user.convertOrdersToIds())
+                .orders(user.getOrders().stream().map(Order::getId).collect(Collectors.toList()))
                 .build();
     }
     public static User toUser(UserDto userDto){

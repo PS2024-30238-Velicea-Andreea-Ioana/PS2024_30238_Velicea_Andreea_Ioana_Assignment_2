@@ -3,6 +3,7 @@ package com.example.untoldpsproject.dtos;
 import com.example.untoldpsproject.entities.Order;
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -17,5 +18,5 @@ public class UserDtoIds {
     private String lastName;
     private String email;
     private String password;
-    private Set<UUID> orders;
+    private List<UUID> orders;
 }

@@ -18,6 +18,6 @@ import java.util.UUID;
 public class OrderDto {
     private UUID id;
     private User user;
-    private Set<Ticket> tickets;
+    private List<Ticket> tickets;
     private Double totalPrice;
 }
