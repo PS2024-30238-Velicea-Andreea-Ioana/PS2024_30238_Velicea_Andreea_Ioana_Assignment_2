@@ -1,0 +1,7 @@
+com.example.untoldpsproject
+com.example.untoldpsproject.controllers
+com.example.untoldpsproject.dtos
+com.example.untoldpsproject.entities
+com.example.untoldpsproject.mappers
+com.example.untoldpsproject.repositories
+com.example.untoldpsproject.services
