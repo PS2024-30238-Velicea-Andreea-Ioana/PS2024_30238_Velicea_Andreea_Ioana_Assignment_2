@@ -83,7 +83,7 @@ public class TicketService {
         }else{
             Ticket ticket = ticketOptional.get();
             Ticket updatedTicket = TicketMapper.toTicket(updatedTicketDto);
-            ticket.setType(updatedTicket.getType());
+            ticket.setCategory(updatedTicket.getCategory());
             ticket.setPrice(updatedTicket.getPrice());
             ticket.setAvailable(updatedTicket.getAvailable());
             ticketRepository.save(ticket);

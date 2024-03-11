@@ -22,8 +22,10 @@ public class Ticket {
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private UUID id;
 
-    @Column(name = "Type", nullable = false)
-    private String type;
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
     @Column(name = "Price", nullable = false)
     private Double price;

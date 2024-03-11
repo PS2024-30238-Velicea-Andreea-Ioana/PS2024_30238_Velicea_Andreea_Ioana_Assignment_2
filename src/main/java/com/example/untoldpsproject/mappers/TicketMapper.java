@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class TicketMapper {
     public static TicketDtoIds toTicketDto(Ticket ticket){
         return TicketDtoIds.builder().id(ticket.getId())
-                .type(ticket.getType())
+                .category(ticket.getCategory().getId())
                 .price(ticket.getPrice())
                 .quantity(ticket.getQuantity())
                 .available(ticket.getAvailable())
@@ -21,7 +21,7 @@ public class TicketMapper {
     }
     public static Ticket toTicket(TicketDto ticketDto){
         return Ticket.builder().id(ticketDto.getId())
-                .type(ticketDto.getType())
+                .category(ticketDto.getCategory())
                 .price(ticketDto.getPrice())
                 .quantity(ticketDto.getQuantity())
                 .available(ticketDto.getAvailable())

@@ -1,5 +1,6 @@
 package com.example.untoldpsproject.dtos;
 
+import com.example.untoldpsproject.entities.Category;
 import com.example.untoldpsproject.entities.Order;
 import com.example.untoldpsproject.entities.User;
 import jakarta.persistence.Column;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Builder
 public class TicketDto {
     private UUID id;
-    private String type;
+    private Category category;
     private Double price;
     private int quantity;
     private int available;
