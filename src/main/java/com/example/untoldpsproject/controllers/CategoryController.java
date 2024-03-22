@@ -30,8 +30,8 @@ public class CategoryController {
      * @return The UUID of the inserted category.
      */
     @PostMapping("/insert")
-    public ResponseEntity<UUID> insertCategory(@RequestBody CategoryDto categoryDto){
-        UUID categoryId = categoryService.insert(categoryDto);
+    public ResponseEntity<String> insertCategory(@RequestBody CategoryDto categoryDto){
+        String categoryId = categoryService.insert(categoryDto);
         return new ResponseEntity<>(categoryId, HttpStatus.CREATED);
     }
 
@@ -53,7 +53,7 @@ public class CategoryController {
      * @return The category DTO.
      */
     @GetMapping(value = "/{id}")
-    public ResponseEntity<CategoryDtoIds> getUserById(@PathVariable("id") UUID categoryId){
+    public ResponseEntity<CategoryDtoIds> getUserById(@PathVariable("id") String categoryId){
         CategoryDtoIds dto = categoryService.findCategoryById(categoryId);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
@@ -66,7 +66,7 @@ public class CategoryController {
      * @return The updated category entity.
      */
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Category> updateUserById(@PathVariable("id") UUID categoryId, @RequestBody CategoryDto categoryDto){
+    public ResponseEntity<Category> updateUserById(@PathVariable("id") String categoryId, @RequestBody CategoryDto categoryDto){
         Category category = categoryService.updateCategoryById(categoryId,categoryDto);
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
@@ -78,7 +78,7 @@ public class CategoryController {
      * @return HttpStatus indicating the success of the operation.
      */
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<UUID> deleteCategoryById(@PathVariable("id") UUID categoryId){
+    public ResponseEntity<UUID> deleteCategoryById(@PathVariable("id") String categoryId){
         categoryService.deleteCategoryById(categoryId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

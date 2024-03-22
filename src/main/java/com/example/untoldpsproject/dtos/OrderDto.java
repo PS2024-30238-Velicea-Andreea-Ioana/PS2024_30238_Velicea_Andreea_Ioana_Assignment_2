@@ -8,7 +8,6 @@ import lombok.*;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Setter
 @Getter
@@ -16,9 +15,9 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class OrderDto {
-    private UUID id;
+    private String id;
     private User user;
-    private UUID userId;
+    private String userId;
     private List<Ticket> tickets;
     private Double totalPrice;
 }

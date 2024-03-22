@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Setter
@@ -31,7 +30,7 @@ public class CategoryService {
      * @return The ID of the inserted category.
      */
 
-    public UUID insert(CategoryDto categoryDto){
+    public String insert(CategoryDto categoryDto){
         Category category = CategoryMapper.toCategory(categoryDto);
         category = categoryRepository.save(category);
         LOGGER.debug("Category with id {} was inserted in db",category.getId());
@@ -51,7 +50,7 @@ public class CategoryService {
      * @param id The ID of the category to retrieve.
      * @return The category DTO containing category information, or null if not found.
      */
-    public CategoryDtoIds findCategoryById(UUID id){
+    public CategoryDtoIds findCategoryById(String id){
         Optional<Category> categoryOptional = categoryRepository.findById(id);
         if(!categoryOptional.isPresent()){
             LOGGER.error("Category with id {} was not found in db", id);
@@ -64,7 +63,7 @@ public class CategoryService {
      * @param updatedCategoryDto The updated category DTO containing new user information.
      * @return The updated category entity.
      */
-    public Category updateCategoryById(UUID id, CategoryDto updatedCategoryDto){
+    public Category updateCategoryById(String id, CategoryDto updatedCategoryDto){
         Optional<Category> categoryOptional = categoryRepository.findById(id);
         if(!categoryOptional.isPresent()){
             LOGGER.error("Category with id {} was not found in db", id);
@@ -83,7 +82,7 @@ public class CategoryService {
      * Deletes a category by ID from the database.
      * @param id The ID of the category to delete.
      */
-    public void deleteCategoryById(UUID id){
+    public void deleteCategoryById(String id){
         Optional<Category> categoryOptional = categoryRepository.findById(id);
         if(!categoryOptional.isPresent()){
             LOGGER.error("Category with id {} was not found in db", id);

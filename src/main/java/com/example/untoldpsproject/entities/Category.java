@@ -19,11 +19,10 @@ public class Category {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    private UUID id;
+    private String id;
 
     @Column(name = "tip")
     private String tip;
-
 
     @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
     private List<Ticket> tickets;

@@ -5,7 +5,6 @@ import com.example.untoldpsproject.entities.User;
 import lombok.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @Setter
 @Getter
@@ -13,8 +12,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class OrderDtoIds {
-    private UUID id;
-    private UUID user;
-    private List<UUID> tickets;
+    private String id;
+    private String user;
+    private List<String> tickets;
     private Double totalPrice;
 }

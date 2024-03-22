@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 /**
  * Service class for managing orders.
@@ -37,10 +36,10 @@ public class OrderService {
      * Inserts a new order into the database.
      *
      * @param orderDto The order DTO containing information about the order.
-     * @return The UUID of the inserted order.
+     * @return The String of the inserted order.
      */
     @Transactional
-    public UUID insert(OrderDto orderDto){
+    public String insert(OrderDto orderDto){
         Order order = OrderMapper.toOrder(orderDto);
         order.setTotalPrice();
         if (order.getTickets() == null) {
@@ -49,11 +48,10 @@ public class OrderService {
         for (int i = 0; i < order.getTickets().size(); i++) {
             Ticket ticket = order.getTickets().get(i);
             ticket.setAvailable(ticket.getAvailable()-1);
-            ticket.setQuantity(ticket.getQuantity()+1);
             for (int j = i + 1; j < order.getTickets().size(); j++) {
                 Ticket nextTicket = order.getTickets().get(j);
-                ticket.setAvailable(ticket.getAvailable()-1);
-                ticket.setQuantity(ticket.getQuantity()+1);
+                ticket.setAvailable(ticket.getAvailable()+nextTicket.getAvailable());
+                ticket.setQuantity(ticket.getQuantity()+ nextTicket.getQuantity());
                 if (ticket.getId().equals(nextTicket.getId())) {
                     order.getTickets().remove(j);
                     j--;
@@ -69,6 +67,13 @@ public class OrderService {
                     .setParameter("ticketId", ticket.getId())
                     .executeUpdate();
         }
+        for (Ticket ticket : order.getTickets()) {
+            String updateQuery = "UPDATE Ticket t SET t.quantity = :quantity WHERE t.id = :ticketId";
+            entityManager.createQuery(updateQuery)
+                    .setParameter("quantity", ticket.getQuantity())
+                    .setParameter("ticketId", ticket.getId())
+                    .executeUpdate();
+        }
         return order.getId();
     }
 
@@ -77,7 +82,7 @@ public class OrderService {
      *
      * @return A list of order DTOs.
      */
-    public List<OrderDtoIds> findOrders(){
+    public List<OrderDto> findOrders(){
         List<Order> orderList = orderRepository.findAll();
         return orderList.stream().map(OrderMapper::toOrderDto).collect(Collectors.toList());
     }
@@ -88,13 +93,13 @@ public class OrderService {
      * @param id The ID of the order to retrieve.
      * @return The order DTO.
      */
-    public OrderDtoIds findOrderById(UUID id){
-        Optional<Order> orderOptional = orderRepository.findById(id);
-        if(!orderOptional.isPresent()){
-            LOGGER.error("Order with id {} was not found in db", id);
-        }
-        return OrderMapper.toOrderDto(orderOptional.get());
-    }
+//    public OrderDtoIds findOrderById(String id){
+//        Optional<Order> orderOptional = orderRepository.findById(id);
+//        if(!orderOptional.isPresent()){
+//            LOGGER.error("Order with id {} was not found in db", id);
+//        }
+//        return OrderMapper.toOrderDto(orderOptional.get());
+//    }
 
     /**
      * Updates an order in the database.
@@ -103,7 +108,7 @@ public class OrderService {
      * @param updatedOrderDto The updated order DTO.
      * @return The updated order entity.
      */
-    public Order updateOrderById(UUID id, OrderDto updatedOrderDto){
+    public Order updateOrderById(String id, OrderDto updatedOrderDto){
         Optional<Order> orderOptional = orderRepository.findById(id);
         if(!orderOptional.isPresent()){
             LOGGER.error("Order with id {} was not found in db", id);
@@ -125,11 +130,28 @@ public class OrderService {
      *
      * @param id The ID of the order to delete.
      */
-    public void deleteOrderById(UUID id){
+    @Transactional
+    public void deleteOrderById(String id){
         Optional<Order> optionalOrder = orderRepository.findById(id);
         if(!optionalOrder.isPresent()){
             LOGGER.error("Order with id {} was not found in db", id);
         }else{
+            for (Ticket ticket :  optionalOrder.get().getTickets()) {
+                System.out.println(ticket.getQuantity());
+                String updateQuery = "UPDATE Ticket t SET t.available = t.available + :quantity WHERE t.id = :ticketId";
+                entityManager.createQuery(updateQuery)
+                        .setParameter("quantity", ticket.getQuantity())
+                        .setParameter("ticketId", ticket.getId())
+                        .executeUpdate();
+            }
+            for (Ticket ticket :  optionalOrder.get().getTickets()) {
+                System.out.println(ticket.getQuantity());
+                String updateQuery = "UPDATE Ticket t SET t.quantity = t.quantity-:quantity WHERE t.id = :ticketId";
+                entityManager.createQuery(updateQuery)
+                        .setParameter("quantity", ticket.getQuantity())
+                        .setParameter("ticketId", ticket.getId())
+                        .executeUpdate();
+            }
             orderRepository.delete(optionalOrder.get());
         }
     }

@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 /**
  * Controller class for managing ticket operations.
  */
@@ -30,11 +29,11 @@ public class TicketController {
      * Inserts a new ticket into the system.
      *
      * @param ticketDto The ticket DTO containing information about the ticket to be inserted.
-     * @return The UUID of the inserted ticket.
+     * @return The String of the inserted ticket.
      */
     @PostMapping("/insert")
-    public ResponseEntity<UUID> insertTicket(@RequestBody TicketDto ticketDto){
-        UUID ticketId = ticketService.insert(ticketDto);
+    public ResponseEntity<String> insertTicket(@RequestBody TicketDto ticketDto){
+        String ticketId = ticketService.insert(ticketDto);
         return new ResponseEntity<>(ticketId, HttpStatus.CREATED);
     }
 
@@ -56,7 +55,7 @@ public class TicketController {
      * @return The ticket DTO.
      */
     @GetMapping(value = "/{id}")
-    public ResponseEntity<TicketDtoIds> getTicketById(@PathVariable("id") UUID ticketId){
+    public ResponseEntity<TicketDtoIds> getTicketById(@PathVariable("id") String ticketId){
         TicketDtoIds dto = ticketService.findTicketById(ticketId);
         return new ResponseEntity<>(dto, HttpStatus.OK);
     }
@@ -69,7 +68,7 @@ public class TicketController {
      * @return The updated ticket entity.
      */
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Ticket> updateTicketById(@PathVariable("id") UUID ticketId, @RequestBody TicketDto ticketDto){
+    public ResponseEntity<Ticket> updateTicketById(@PathVariable("id") String ticketId, @RequestBody TicketDto ticketDto){
         Ticket ticket = ticketService.updateTicketById(ticketId,ticketDto);
         return new ResponseEntity<>(ticket, HttpStatus.OK);
     }
@@ -81,7 +80,7 @@ public class TicketController {
      * @return ResponseEntity indicating the success of the operation.
      */
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<UUID> deleteTicketById(@PathVariable("id") UUID ticketId){
+    public ResponseEntity<String> deleteTicketById(@PathVariable("id") String ticketId){
         ticketService.deleteTicketById(ticketId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

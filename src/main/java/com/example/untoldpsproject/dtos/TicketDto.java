@@ -11,7 +11,6 @@ import lombok.*;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Setter
 @Getter
@@ -19,7 +18,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class TicketDto {
-    private UUID id;
+    private String id;
     private Category category;
     private Double price;
     private int quantity;

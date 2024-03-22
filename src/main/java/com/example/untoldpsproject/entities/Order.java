@@ -20,7 +20,7 @@ public class Order {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
-    private UUID id;
+    private String id;
 
     @ManyToOne
     @JsonIgnore
@@ -40,7 +40,7 @@ public class Order {
         Double totalPrice1 = 0.0;
         if (!tickets.isEmpty())
             for (Ticket ticket : tickets) {
-                totalPrice1 += ticket.getPrice();
+                totalPrice1 += ticket.getPrice()* ticket.getQuantity();
             }
         this.setTotalPrice(totalPrice1);
     }

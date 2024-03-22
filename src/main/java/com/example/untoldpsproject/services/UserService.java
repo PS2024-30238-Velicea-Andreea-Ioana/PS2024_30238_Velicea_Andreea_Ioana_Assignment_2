@@ -5,6 +5,7 @@ import com.example.untoldpsproject.dtos.UserDtoIds;
 import com.example.untoldpsproject.entities.User;
 import com.example.untoldpsproject.mappers.UserMapper;
 import com.example.untoldpsproject.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 /**
  * Service class for managing users.
@@ -34,7 +34,7 @@ public class UserService {
      * @return The ID of the inserted user.
      */
 
-    public UUID insert(UserDto userDto){
+    public String insert(UserDto userDto){
         User user = UserMapper.toUser(userDto);
         user = userRepository.save(user);
         LOGGER.debug("User with id {} was inserted in db",user.getId());
@@ -54,7 +54,7 @@ public class UserService {
      * @param id The ID of the user to retrieve.
      * @return The user DTO containing user information, or null if not found.
      */
-    public UserDtoIds findUserById(UUID id){
+    public UserDtoIds findUserById(String id){
         Optional<User> userOptional = userRepository.findById(id);
         if(!userOptional.isPresent()){
             LOGGER.error("Person with id {} was not found in db", id);
@@ -67,11 +67,13 @@ public class UserService {
      * @param updatedUserDto The updated user DTO containing new user information.
      * @return The updated user entity.
      */
-    public User updateUserById(UUID id, UserDto updatedUserDto){
+    @Transactional
+    public User updateUserById(String id, UserDto updatedUserDto){
         Optional<User> userOptional = userRepository.findById(id);
-        if(!userOptional.isPresent()){
-            LOGGER.error("Person with id {} was not found in db", id);
-        }else{
+        if (!userOptional.isPresent()) {
+            LOGGER.error("User with id {} was not found in the database", id);
+            return null;
+        } else {
             User user = userOptional.get();
             User updatedUser = UserMapper.toUser(updatedUserDto);
             user.setFirstName(updatedUser.getFirstName());
@@ -80,15 +82,15 @@ public class UserService {
             user.setPassword(updatedUser.getPassword());
             userRepository.save(user);
             LOGGER.debug("User with id {} was successfully updated", id);
+            return user;
         }
-        return userOptional.get();
     }
 
     /**
      * Deletes a user by ID from the database.
      * @param id The ID of the user to delete.
      */
-    public void deleteUserById(UUID id){
+    public void deleteUserById(String id){
         Optional<User> userOptional = userRepository.findById(id);
         if(!userOptional.isPresent()){
             LOGGER.error("Person with id {} was not found in db", id);

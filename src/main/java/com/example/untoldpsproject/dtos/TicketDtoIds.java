@@ -5,7 +5,6 @@ import lombok.*;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 @Setter
 @Getter
@@ -13,10 +12,10 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 public class TicketDtoIds {
-    private UUID id;
-    private UUID category;
+    private String id;
+    private String category;
     private Double price;
     private int quantity;
     private int available;
-    private List<UUID> orders;
+    private List<String> orders;
 }

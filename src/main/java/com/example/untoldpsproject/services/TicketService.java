@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 /**
  * Service class for managing tickets.
@@ -36,9 +35,9 @@ public class TicketService {
      * Inserts a new ticket into the database.
      *
      * @param ticketDto The ticket DTO containing information about the ticket.
-     * @return The UUID of the inserted ticket.
+     * @return The String of the inserted ticket.
      */
-    public UUID insert(TicketDto ticketDto){
+    public String insert(TicketDto ticketDto){
         Ticket ticket = TicketMapper.toTicket(ticketDto);
         ticket = ticketRepository.save(ticket);
         LOGGER.debug("Ticket with id {} was inserted in db",ticket.getId());
@@ -61,7 +60,7 @@ public class TicketService {
      * @param id The ID of the ticket to retrieve.
      * @return The ticket DTO.
      */
-    public TicketDtoIds findTicketById(UUID id){
+    public TicketDtoIds findTicketById(String id){
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if(!ticketOptional.isPresent()){
             LOGGER.error("Ticket with id {} was not found in db", id);
@@ -76,7 +75,7 @@ public class TicketService {
      * @param updatedTicketDto The updated ticket DTO.
      * @return The updated ticket entity.
      */
-    public Ticket updateTicketById(UUID id, TicketDto updatedTicketDto){
+    public Ticket updateTicketById(String id, TicketDto updatedTicketDto){
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if(!ticketOptional.isPresent()){
             LOGGER.error("Ticket with id {} was not found in db", id);
@@ -97,7 +96,7 @@ public class TicketService {
      *
      * @param id The ID of the ticket to delete.
      */
-    public void deleteTicketById(UUID id){
+    public void deleteTicketById(String id){
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if(!ticketOptional.isPresent()){
             LOGGER.error("Ticket with id {} was not found in db", id);
