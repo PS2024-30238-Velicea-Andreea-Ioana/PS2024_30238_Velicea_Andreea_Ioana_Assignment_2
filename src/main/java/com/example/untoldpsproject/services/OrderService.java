@@ -93,13 +93,13 @@ public class OrderService {
      * @param id The ID of the order to retrieve.
      * @return The order DTO.
      */
-//    public OrderDtoIds findOrderById(String id){
-//        Optional<Order> orderOptional = orderRepository.findById(id);
-//        if(!orderOptional.isPresent()){
-//            LOGGER.error("Order with id {} was not found in db", id);
-//        }
-//        return OrderMapper.toOrderDto(orderOptional.get());
-//    }
+    public OrderDto findOrderById(String id){
+        Optional<Order> orderOptional = orderRepository.findById(id);
+        if(!orderOptional.isPresent()){
+            LOGGER.error("Order with id {} was not found in db", id);
+        }
+        return OrderMapper.toOrderDto(orderOptional.get());
+    }
 
     /**
      * Updates an order in the database.

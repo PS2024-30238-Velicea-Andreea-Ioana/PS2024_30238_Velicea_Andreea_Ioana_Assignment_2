@@ -6,8 +6,8 @@
 </head>
 <body>
 <h2>Edit User</h2>
-<form action="/user/edit/{id} (id=${userDto.id})" method="post" th:object="${userDto}">
-    <input type="hidden" id="id" name="id" th:value="${userDto.id}"/>
+<form th:action="@{/user/edit/ ${userDto.id}} " method="post" th:object="${userDto}">
+   <input type="hidden" id="id" name="id" th:value="${userDto.id}"/>
     <label for="firstName">First Name:</label>
     <input type="text" id="firstName" name="firstName" th:field="*{firstName}"/><br/>
     <label for="lastName">Last Name:</label>

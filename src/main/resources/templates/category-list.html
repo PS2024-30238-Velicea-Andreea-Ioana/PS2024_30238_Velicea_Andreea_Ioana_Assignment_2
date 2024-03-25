@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>User List</title>
+    <title>Category List</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -57,33 +57,6 @@
         .actions a.delete {
             color: #dc3545;
         }
-
-        .add-user-link {
-            display: block;
-            margin-top: 20px;
-            color: #28a745;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .add-user-link:hover {
-            text-decoration: underline;
-        }
-        .password-container {
-            position: relative;
-        }
-
-        .password {
-            display: none;
-        }
-
-        .show-password {
-            position: absolute;
-            top: 50%;
-            right: 10px;
-            transform: translateY(-50%);
-            cursor: pointer;
-        }
         .back-button {
             position: absolute;
             top: 20px;
@@ -99,57 +72,55 @@
         .back-button:hover {
             background-color: #32CD32; /* Darker green color on hover */
         }
+        .add-category-button {
+            display: block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #D5F5E3; /* Light green color */
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            text-align: center;
+            width: fit-content;
+        }
 
+        .add-category-button:hover {
+            background-color: #32CD32
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h2>User List</h2>
+    <h2>Category List</h2>
     <form id="deleteForm" action="/user/delete" method="post">
         <input type="hidden" id="userIdToDelete" name="userIdToDelete" value="">
     </form>
-    <form action="/user/list" method="get">
-
+    <form action = "/user/list" method="get">
     <table>
         <tr>
             <th>ID</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Email</th>
-            <th>Password</th>
+            <th>Tip</th>
             <th>Actions</th>
         </tr>
-        <tr th:each="user : ${users}">
-            <td th:text="${user.id}"></td>
-            <td th:text="${user.firstName}"></td>
-            <td th:text="${user.lastName}"></td>
-            <td th:text="${user.email}"></td>
-            <td class="password-container">
-                <span class="password" th:text="${user.password}">********</span>
-                <span class="show-password" onclick="togglePassword(this)">👁️</span>
-            </td>
+        <tr th:each="category : ${categories}">
+            <td th:text="${category.id}"></td>
+            <td th:text="${category.tip}"></td>
             <td class="actions">
-                <a th:href="@{/user/edit/{id}(id=${user.id})}">Edit</a>
-                <a th:href="@{/user/delete/{id}(id=${user.id})}" class="delete">Delete</a>
+                <a th:href="@{/category/edit/{id}(id=${category.id})}">Edit</a>
+                <a th:href="@{/category/delete/{id}(id=${category.id})}" class="delete">Delete</a>
+
             </td>
         </tr>
     </table>
     </form>
-    <a href="/user/add" class="add-user-link">Add User</a>
+    <a href="/category/add" class="add-category-button">Add Category</a>
     <a href="/index" class="back-button">Back to Home Page</a>
-
 </div>
 <script>
-    function togglePassword(element) {
-        const password = element.parentNode.querySelector('.password');
-        if (password.style.display === 'none') {
-            password.style.display = 'inline';
-            element.textContent = '👁️';
-        } else {
-            password.style.display = 'none';
-            element.textContent = '👁️';
-        }
-    }
 </script>
 </body>
 </html>

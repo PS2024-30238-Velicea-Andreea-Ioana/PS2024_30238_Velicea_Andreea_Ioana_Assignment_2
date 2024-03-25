@@ -5,13 +5,11 @@ import com.example.untoldpsproject.dtos.UserDtoIds;
 import com.example.untoldpsproject.entities.User;
 import com.example.untoldpsproject.mappers.UserMapper;
 import com.example.untoldpsproject.repositories.UserRepository;
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -56,23 +54,24 @@ public class UserService {
      */
     public UserDtoIds findUserById(String id){
         Optional<User> userOptional = userRepository.findById(id);
-        if(!userOptional.isPresent()){
-            LOGGER.error("Person with id {} was not found in db", id);
+        if(userOptional.isEmpty()){
+            LOGGER.error(" in service Person with id {"+id+"} was not found in db", id);
+            return null;
+        }else{
+            return UserMapper.toUserDto(userOptional.get());
         }
-        return UserMapper.toUserDto(userOptional.get());
+
     }
     /**
      * Updates a user by ID in the database.
-     * @param id The ID of the user to update.
+     *
+     * @param id             The ID of the user to update.
      * @param updatedUserDto The updated user DTO containing new user information.
-     * @return The updated user entity.
      */
-    @Transactional
-    public User updateUserById(String id, UserDto updatedUserDto){
+    public void updateUserById(String id, UserDto updatedUserDto){
         Optional<User> userOptional = userRepository.findById(id);
-        if (!userOptional.isPresent()) {
-            LOGGER.error("User with id {} was not found in the database", id);
-            return null;
+        if (userOptional.isEmpty()) {
+            LOGGER.error(" in update User with id { "+id+" } was not found in the database", id);
         } else {
             User user = userOptional.get();
             User updatedUser = UserMapper.toUser(updatedUserDto);
@@ -81,8 +80,7 @@ public class UserService {
             user.setEmail(updatedUser.getEmail());
             user.setPassword(updatedUser.getPassword());
             userRepository.save(user);
-            LOGGER.debug("User with id {} was successfully updated", id);
-            return user;
+            LOGGER.debug("User with id {" + id +"} was successfully updated", id);
         }
     }
 

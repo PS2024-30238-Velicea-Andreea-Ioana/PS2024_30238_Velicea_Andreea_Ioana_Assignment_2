@@ -1,7 +1,6 @@
 package com.example.untoldpsproject.services;
 
 import com.example.untoldpsproject.dtos.CategoryDto;
-import com.example.untoldpsproject.dtos.CategoryDtoIds;
 import com.example.untoldpsproject.entities.Category;
 import com.example.untoldpsproject.mappers.CategoryMapper;
 import com.example.untoldpsproject.repositories.CategoryRepository;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -39,23 +37,24 @@ public class CategoryService {
 
     /**
      * Retrieves all categories from the database.
+     *
      * @return A list of category DTOs containing category information.
      */
-    public List<CategoryDtoIds> findCategories(){
+    public List<Category> findCategories(){
         List<Category> categoryList = categoryRepository.findAll();
-        return categoryList.stream().map(CategoryMapper::toCategoryDto).collect(Collectors.toList());
+        return categoryList;
     }
     /**
      * Retrieves a category by ID from the database.
      * @param id The ID of the category to retrieve.
      * @return The category DTO containing category information, or null if not found.
      */
-    public CategoryDtoIds findCategoryById(String id){
+    public Category findCategoryById(String id){
         Optional<Category> categoryOptional = categoryRepository.findById(id);
         if(!categoryOptional.isPresent()){
             LOGGER.error("Category with id {} was not found in db", id);
         }
-        return CategoryMapper.toCategoryDto(categoryOptional.get());
+        return categoryOptional.get();
     }
     /**
      * Updates a category by ID in the database.

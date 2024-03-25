@@ -2,14 +2,10 @@ package com.example.untoldpsproject.controllers;
 
 import com.example.untoldpsproject.dtos.UserDto;
 import com.example.untoldpsproject.dtos.UserDtoIds;
-import com.example.untoldpsproject.entities.User;
 import com.example.untoldpsproject.services.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -101,9 +97,9 @@ public class UserController {
         return mav;
     }
 
-    @PostMapping("/edit/{id}")
-    public ModelAndView updateUser(@PathVariable("id") String id, @ModelAttribute UserDto userDto) {
-        userService.updateUserById(id, userDto);
+    @PostMapping ("/edit/{id}")
+    public ModelAndView updateUser(@ModelAttribute("userDto") UserDto userDto) {
+        userService.updateUserById(userDto.getId(), userDto);
         return new ModelAndView("redirect:/user/list");
     }
 
@@ -121,7 +117,7 @@ public class UserController {
     }
 
     @PostMapping("/add")
-    public ModelAndView addUser(@ModelAttribute UserDto userDto) {
+    public ModelAndView addUser(@ModelAttribute("userDto") UserDto userDto) {
         userService.insert(userDto);
         return new ModelAndView("redirect:/user/list");
     }

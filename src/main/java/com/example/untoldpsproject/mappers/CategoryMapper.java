@@ -21,4 +21,9 @@ public class CategoryMapper {
                 .tickets(categoryDto.getTickets())
                 .build();
     }
+    public static Category toCategory(CategoryDtoIds categoryDtoIds){
+        return Category.builder().id(categoryDtoIds.getId())
+                .tip(categoryDtoIds.getTip())
+                .build();
+    }
 }

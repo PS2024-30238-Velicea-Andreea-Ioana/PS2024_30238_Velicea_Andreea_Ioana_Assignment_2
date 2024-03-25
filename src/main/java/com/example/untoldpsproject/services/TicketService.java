@@ -37,7 +37,7 @@ public class TicketService {
      * @param ticketDto The ticket DTO containing information about the ticket.
      * @return The String of the inserted ticket.
      */
-    public String insert(TicketDto ticketDto){
+    public String insert(TicketDtoIds ticketDto){
         Ticket ticket = TicketMapper.toTicket(ticketDto);
         ticket = ticketRepository.save(ticket);
         LOGGER.debug("Ticket with id {} was inserted in db",ticket.getId());
