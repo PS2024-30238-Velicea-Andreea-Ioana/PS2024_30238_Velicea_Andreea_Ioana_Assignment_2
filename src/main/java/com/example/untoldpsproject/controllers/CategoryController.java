@@ -88,7 +88,7 @@ public class CategoryController {
     @GetMapping("/list")
     public ModelAndView categoryList() {
         ModelAndView mav = new ModelAndView("category-list");
-        List<Category> categories = categoryService.findCategories();
+        List<CategoryDtoIds> categories = categoryService.findCategories();
         mav.addObject("categories", categories);
         return mav;
     }
@@ -97,13 +97,13 @@ public class CategoryController {
     public ModelAndView editCategoryForm(@PathVariable("id") String categoryId) {
         ModelAndView mav = new ModelAndView("category-edit");
         Category category = categoryService.findCategoryById(categoryId);
-        mav.addObject("category", category);
+        mav.addObject("categoryDto", category);
         return mav;
     }
 
     @PostMapping("/edit/{id}")
-    public ModelAndView updateCategory(@PathVariable("id") String id, @ModelAttribute CategoryDto categoryDto) {
-        categoryService.updateCategoryById(id, categoryDto);
+    public ModelAndView updateCategory( @ModelAttribute("categoryDto") CategoryDto categoryDto) {
+        categoryService.updateCategoryById(categoryDto.getId(), categoryDto);
         return new ModelAndView("redirect:/category/list");
     }
 

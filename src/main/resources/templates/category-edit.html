@@ -3,14 +3,94 @@
 <head>
   <meta charset="UTF-8">
   <title>Edit Category</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 50px auto;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    form label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    form input[type="text"],
+    form input[type="email"],
+    form input[type="password"] {
+      width: calc(100% - 20px);
+      padding: 8px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+
+    form input[type="submit"] {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    form input[type="submit"]:hover {
+      background-color: #0056b3;
+    }
+    form select {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8"><polygon points="6,0 0,8 12,8"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 10px top 50%;
+      background-size: 12px auto;
+      cursor: pointer;
+    }
+
+    form select:focus {
+      outline: none;
+      border-color: #66afe9;
+    }
+
+  </style>
 </head>
 <body>
-<h2>Edit Category</h2>
-<form action="/category/edit/{id} (id=${categoryDto.id})" method="post" th:object="${categoryDto}">
-  <input type="hidden" id="id" name="id" th:value="${categoryDto.id}"/>
-  <label for="tip">Tip:</label>
-  <input type="text" id="tip" name="tip" th:field="*{tip}"/><br/>
-  <input type="submit" value="Update"/>
-</form>
+<div class="container">
+  <h2>Edit Category</h2>
+  <form th:action="@{/category/edit/ ${categoryDto.id}} " method="post" th:object="${categoryDto}">
+    <input type="hidden" id="id" name="id" th:value="${categoryDto.id}"/>
+    <label for="tip">Tip:</label>
+    <select id="tip" name="tip" th:field="*{tip}">
+      <option value="one_day">One Day</option>
+      <option value="two_days">Two Days</option>
+      <option value="three_days">Three Days</option>
+      <option value="general_access">General Access</option>
+    </select><br/>
+    <input type="submit" value="Update"/>
+  </form>
+</div>
 </body>
 </html>

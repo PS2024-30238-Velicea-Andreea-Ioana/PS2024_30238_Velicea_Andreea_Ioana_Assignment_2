@@ -1,8 +1,10 @@
 package com.example.untoldpsproject.services;
 
 import com.example.untoldpsproject.dtos.CategoryDto;
+import com.example.untoldpsproject.dtos.CategoryDtoIds;
 import com.example.untoldpsproject.entities.Category;
 import com.example.untoldpsproject.mappers.CategoryMapper;
+import com.example.untoldpsproject.mappers.UserMapper;
 import com.example.untoldpsproject.repositories.CategoryRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Setter
 @Getter
@@ -40,9 +43,9 @@ public class CategoryService {
      *
      * @return A list of category DTOs containing category information.
      */
-    public List<Category> findCategories(){
+    public List<CategoryDtoIds> findCategories(){
         List<Category> categoryList = categoryRepository.findAll();
-        return categoryList;
+        return categoryList.stream().map(CategoryMapper::toCategoryDto).collect(Collectors.toList());
     }
     /**
      * Retrieves a category by ID from the database.
