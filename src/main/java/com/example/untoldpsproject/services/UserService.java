@@ -45,7 +45,7 @@ public class UserService {
      */
     public List<UserDtoIds> findUsers(){
         List<User> userList = userRepository.findAll();
-        return userList.stream().map(UserMapper::toUserDto).collect(Collectors.toList());
+        return userList.stream().map(UserMapper::toUserDtoIds).collect(Collectors.toList());
     }
     /**
      * Retrieves a user by ID from the database.
@@ -58,7 +58,7 @@ public class UserService {
             LOGGER.error(" in service Person with id {"+id+"} was not found in db", id);
             return null;
         }else{
-            return UserMapper.toUserDto(userOptional.get());
+            return UserMapper.toUserDtoIds(userOptional.get());
         }
 
     }
@@ -90,7 +90,7 @@ public class UserService {
      */
     public void deleteUserById(String id){
         Optional<User> userOptional = userRepository.findById(id);
-        if(!userOptional.isPresent()){
+        if(userOptional.isEmpty()){
             LOGGER.error("Person with id {} was not found in db", id);
         }else{
             userRepository.delete(userOptional.get());

@@ -96,23 +96,23 @@
 <body>
 <div class="container">
     <h2>Category List</h2>
-    <form id="deleteForm" action="/user/delete" method="post">
-        <input type="hidden" id="userIdToDelete" name="userIdToDelete" value="">
-    </form>
-    <form action = "/user/list" method="get">
+    <form action = "/category/list" method="get">
     <table>
         <tr>
             <th>ID</th>
             <th>Tip</th>
+            <th>Start Date</th>
+            <th>Finish Date</th>
             <th>Actions</th>
         </tr>
         <tr th:each="category : ${categories}">
             <td th:text="${category.id}"></td>
             <td th:text="${category.tip}"></td>
+            <td th:text="${category.startDate}"></td>
+            <td th:text="${category.finishDate}"></td>
             <td class="actions">
                 <a th:href="@{/category/edit/{id}(id=${category.id})}">Edit</a>
                 <a th:href="@{/category/delete/{id}(id=${category.id})}" class="delete">Delete</a>
-
             </td>
         </tr>
     </table>

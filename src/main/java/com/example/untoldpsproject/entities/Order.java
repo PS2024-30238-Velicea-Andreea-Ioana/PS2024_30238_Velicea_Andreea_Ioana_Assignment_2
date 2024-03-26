@@ -36,12 +36,4 @@ public class Order {
     @Column(name = "total_price")
     private Double totalPrice;
 
-    public void setTotalPrice() {
-        Double totalPrice1 = 0.0;
-        if (!tickets.isEmpty())
-            for (Ticket ticket : tickets) {
-                totalPrice1 += ticket.getPrice()* ticket.getQuantity();
-            }
-        this.setTotalPrice(totalPrice1);
-    }
 }

@@ -54,6 +54,7 @@
     form input[type="submit"]:hover {
       background-color: #0056b3;
     }
+
     form select {
       width: calc(100% - 20px);
       padding: 10px;
@@ -74,6 +75,7 @@
       outline: none;
       border-color: #66afe9;
     }
+
     .back-button {
       position: absolute;
       top: 20px;
@@ -102,6 +104,11 @@
       <option value="three_days">Three Days</option>
       <option value="general_access">General Access</option>
     </select><br/>
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate" name="startDate" th:value="${categoryDto.startDate}" required><br/>
+    <label for="finishDate">Finish Date:</label>
+    <input type="date" id="finishDate" name="finishDate" th:value="${categoryDto.finishDate}" required><br/>
+
     <input type="submit" value="Add"/>
   </form>
   <a href="/category/list" class="back-button">Back to Category List</a>

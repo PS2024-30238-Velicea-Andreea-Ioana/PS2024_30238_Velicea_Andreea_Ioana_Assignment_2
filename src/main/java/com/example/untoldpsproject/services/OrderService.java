@@ -32,6 +32,8 @@ public class OrderService {
     private final OrderRepository orderRepository;
     @PersistenceContext
     private EntityManager entityManager;
+
+
     /**
      * Inserts a new order into the database.
      *
@@ -41,29 +43,15 @@ public class OrderService {
     @Transactional
     public String insert(OrderDto orderDto){
         Order order = OrderMapper.toOrder(orderDto);
-        order.setTotalPrice();
+        order.setTotalPrice(calculateTotalPrice(order.getTickets()));
         if (order.getTickets() == null) {
             order.setTickets(new ArrayList<>());
-        }
-        for (int i = 0; i < order.getTickets().size(); i++) {
-            Ticket ticket = order.getTickets().get(i);
-            ticket.setAvailable(ticket.getAvailable()-1);
-            for (int j = i + 1; j < order.getTickets().size(); j++) {
-                Ticket nextTicket = order.getTickets().get(j);
-                ticket.setAvailable(ticket.getAvailable()+nextTicket.getAvailable());
-                ticket.setQuantity(ticket.getQuantity()+ nextTicket.getQuantity());
-                if (ticket.getId().equals(nextTicket.getId())) {
-                    order.getTickets().remove(j);
-                    j--;
-                }
-            }
         }
         order = orderRepository.save(order);
         LOGGER.debug("Order with id {} was inserted in db",order.getId());
         for (Ticket ticket : order.getTickets()) {
-            String updateQuery = "UPDATE Ticket t SET t.available = t.available - :quantity WHERE t.id = :ticketId";
+            String updateQuery = "UPDATE Ticket t SET t.available = t.available - 1 WHERE t.id = :ticketId";
             entityManager.createQuery(updateQuery)
-                    .setParameter("quantity", ticket.getQuantity())
                     .setParameter("ticketId", ticket.getId())
                     .executeUpdate();
         }
@@ -117,7 +105,7 @@ public class OrderService {
             Order updatedOrder = OrderMapper.toOrder(updatedOrderDto);
             order.setUser(updatedOrder.getUser());
             order.setTickets(updatedOrder.getTickets());
-            order.setTotalPrice();
+            order.setTotalPrice(calculateTotalPrice(order.getTickets()));
             orderRepository.save(order);
             LOGGER.debug("Order with id {} was successfully updated", id);
 
@@ -138,9 +126,8 @@ public class OrderService {
         }else{
             for (Ticket ticket :  optionalOrder.get().getTickets()) {
                 System.out.println(ticket.getQuantity());
-                String updateQuery = "UPDATE Ticket t SET t.available = t.available + :quantity WHERE t.id = :ticketId";
+                String updateQuery = "UPDATE Ticket t SET t.available = t.available + 1 WHERE t.id = :ticketId";
                 entityManager.createQuery(updateQuery)
-                        .setParameter("quantity", ticket.getQuantity())
                         .setParameter("ticketId", ticket.getId())
                         .executeUpdate();
             }
@@ -155,5 +142,12 @@ public class OrderService {
             orderRepository.delete(optionalOrder.get());
         }
     }
-
+    public Double calculateTotalPrice(List<Ticket> tickets){
+        Double totalPrice1 = 0.0;
+        if (!tickets.isEmpty())
+            for (Ticket ticket : tickets) {
+                totalPrice1 += ticket.getPrice();
+            }
+        return totalPrice1;
+    }
 }

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Interface</title>
+    <style>
+        .ticket-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .ticket {
+            background-color: #4b0082; /* Dark purple */
+            color: #fff;
+            border-radius: 10px;
+            width: 300px;
+            margin: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .ticket-header {
+            padding: 20px;
+            border-bottom: 1px solid #333;
+        }
+
+        .ticket-header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .ticket-header p {
+            margin: 10px 0 0 0;
+        }
+
+        .ticket-content {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .ticket-price {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .ticket-date {
+            font-size: 16px;
+        }
+
+        .cart-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color: #4b0082;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 999;
+        }
+
+        .cart-button:hover {
+            background-color: #6a5acd;
+        }
+
+        .add-to-cart-button {
+            background-color: #fff;
+            color: #4b0082;
+            border: 2px solid #4b0082;
+            border-radius: 5px;
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .add-to-cart-button:hover {
+            background-color: #4b0082;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<h1>My Tickets</h1>
+<button class="cart-button"> <a href="/category/add"> 🛒 Cart </a></button>
+<form action="/user/customer/tickets" method="get">
+    <div class="ticket-container">
+        <div th:each="ticket : ${tickets}" class="ticket">
+            <div class="ticket-header">
+                <h2 class="ticket-type" th:text="${ticket.category.tip}"></h2>
+                <p class="ticket-number" th:text="'Ticket No: ' + ${ticket.id}"></p>
+            </div>
+            <div class="ticket-content">
+                <p class="ticket-price" th:text="'Price: ' + ${ticket.price} + ' RON'"></p>
+                <p class="ticket-date" th:text="'Start Date: ' + ${ticket.category.startDate}"></p>
+                <p class="ticket-date" th:text="'Finish Date: ' + ${ticket.category.finishDate}"></p>
+                <button class="add-to-cart-button" onclick="addToCart('${ticket.id}')">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+</form>
+<script>
+    function addToCart(ticketId) {
+        // You can implement your logic here to add the ticket to the cart
+        // For example, you can send an AJAX request to your server to add the ticket to the cart
+        alert('Ticket with ID ' + ticketId + ' added to cart!');
+    }
+</script>
+</body>
+
+</html>

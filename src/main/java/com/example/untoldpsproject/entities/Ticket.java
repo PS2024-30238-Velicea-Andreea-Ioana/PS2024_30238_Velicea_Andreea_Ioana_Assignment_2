@@ -40,4 +40,10 @@ public class Ticket {
     @ManyToMany(mappedBy = "tickets", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
     private List<Order> orders;
 
+    @JsonIgnore
+    @ManyToMany(mappedBy = "tickets", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
+    private List<Order> carts;
+
+
+
 }

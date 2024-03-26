@@ -2,15 +2,8 @@ package com.example.untoldpsproject.dtos;
 
 import com.example.untoldpsproject.entities.Category;
 import com.example.untoldpsproject.entities.Order;
-import com.example.untoldpsproject.entities.User;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.*;
-
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Setter
 @Getter

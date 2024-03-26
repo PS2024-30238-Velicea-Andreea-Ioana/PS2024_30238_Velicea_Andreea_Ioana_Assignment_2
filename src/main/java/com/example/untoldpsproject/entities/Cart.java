@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -13,22 +12,22 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "categories")
-public class Category {
+@Table(name = "cart")
+public class Cart {
+
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
     private String id;
 
-    @Column(name = "tip")
-    private String tip;
-
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
+    @ManyToMany
+    @JoinTable(name = "carts_tickets",
+            joinColumns = @JoinColumn(name = "cart_id"),
+            inverseJoinColumns = @JoinColumn(name = "ticket_id"))
     private List<Ticket> tickets;
 
-    @Column(name = "startDate")
-    private LocalDate startDate;
+    @OneToOne
+    @JoinColumn(name = "cart_id")
+    private User user;
 
-    @Column(name = "finishDate")
-    private LocalDate finishDate;
 }

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,7 +34,7 @@ public class CategoryService {
 
     public String insert(CategoryDto categoryDto){
         Category category = CategoryMapper.toCategory(categoryDto);
-        category = categoryRepository.save(category);
+        categoryRepository.save(category);
         LOGGER.debug("Category with id {} was inserted in db",category.getId());
         return category.getId();
     }
@@ -45,7 +46,7 @@ public class CategoryService {
      */
     public List<CategoryDtoIds> findCategories(){
         List<Category> categoryList = categoryRepository.findAll();
-        return categoryList.stream().map(CategoryMapper::toCategoryDto).collect(Collectors.toList());
+        return categoryList.stream().map(CategoryMapper::toCategoryDtoIds).collect(Collectors.toList());
     }
     /**
      * Retrieves a category by ID from the database.
@@ -74,6 +75,8 @@ public class CategoryService {
             Category updatedCategory = CategoryMapper.toCategory(updatedCategoryDto);
             category.setTip(updatedCategory.getTip());
             category.setTickets(updatedCategory.getTickets());
+            category.setStartDate(updatedCategory.getStartDate());
+            category.setFinishDate(updatedCategory.getFinishDate());
             categoryRepository.save(category);
             LOGGER.debug("Category with id {} was successfully updated", id);
         }

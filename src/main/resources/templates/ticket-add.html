@@ -96,7 +96,11 @@
     <h2>Add Ticket</h2>
     <form action="/ticket/add" method="post" th:object="${ticketDto}">
         <label for="category">Category:</label>
-        <input type="text" id="category" name="category" th:field="*{category}"/><br>
+        <select id="category" name="category">
+            <option th:each="category : ${categories}"
+                    th:value="${category.id}"
+                    th:text="${category.tip}"></option>
+        </select><br>
         <label for="price">Price:</label>
         <input type="text" id="price" name="price" th:field="*{price}"/><br/>
         <label for="available">Available:</label>

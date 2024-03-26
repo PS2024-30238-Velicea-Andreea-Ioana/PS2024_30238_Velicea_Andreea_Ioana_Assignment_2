@@ -1,7 +1,5 @@
 package com.example.untoldpsproject.dtos;
 
-import com.example.untoldpsproject.entities.Ticket;
-import com.example.untoldpsproject.entities.User;
 import lombok.*;
 
 import java.util.List;

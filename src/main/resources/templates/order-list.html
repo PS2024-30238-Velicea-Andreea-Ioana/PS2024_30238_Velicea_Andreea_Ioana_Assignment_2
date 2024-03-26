@@ -106,8 +106,15 @@
         </tr>
         <tr th:each="order : ${orders}">
             <td th:text="${order.id}"></td>
-            <td th:text="${order.user}"></td>
-            <td th:text="${order.tickets}"></td>
+            <td th:text="${order.user.firstName}"></td>
+            <td>
+                <ul>
+                    <li th:each="ticket: ${order.tickets}">
+                        Ticket type: <span th:text="${ticket.category.tip}"></span>
+                        Price: <span th:text="${ticket.price}"></span>
+                    </li>
+                </ul>
+            </td>
             <td th:text="${order.totalPrice}"></td>
             <td class="actions">
                 <a th:href="@{/order/edit/{id}(id=${order.id})}">Edit</a>

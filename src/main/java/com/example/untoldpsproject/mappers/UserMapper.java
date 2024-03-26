@@ -9,13 +9,22 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UserMapper {
-    public static UserDtoIds toUserDto(User user){
+    public static UserDtoIds toUserDtoIds(User user){
         return UserDtoIds.builder().id(user.getId())
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .orders(user.getOrders().stream().map(Order::getId).collect(Collectors.toList()))
+                .build();
+    }
+    public static UserDto toUserDto(User user){
+        return UserDto.builder().id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .password(user.getPassword())
+                .orders(user.getOrders())
                 .build();
     }
     public static User toUser(UserDto userDto){

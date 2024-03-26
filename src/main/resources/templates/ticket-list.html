@@ -106,7 +106,7 @@
         </tr>
         <tr th:each="ticket : ${tickets}">
             <td th:text="${ticket.id}"></td>
-            <td th:text="${ticket.category}"></td>
+            <td th:text="${ticket.category.tip}"></td>
             <td th:text="${ticket.price}"></td>
             <td th:text="${ticket.available}"></td>
             <td class="actions">

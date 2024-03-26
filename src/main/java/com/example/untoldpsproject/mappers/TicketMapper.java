@@ -13,13 +13,22 @@ import java.util.stream.Collectors;
 
 
 public class TicketMapper{
-    public static TicketDtoIds toTicketDto(Ticket ticket){
+    public static TicketDtoIds toTicketDtoIds(Ticket ticket){
         return TicketDtoIds.builder().id(ticket.getId())
                 .category(ticket.getCategory().getId())
                 .price(ticket.getPrice())
                 .quantity(ticket.getQuantity())
                 .available(ticket.getAvailable())
                 .orders(ticket.getOrders().stream().map(Order::getId).collect(Collectors.toList()))
+                .build();
+    }
+    public static TicketDto toTicketDto(Ticket ticket){
+        return TicketDto.builder().id(ticket.getId())
+                .category(ticket.getCategory())
+                .price(ticket.getPrice())
+                .quantity(ticket.getQuantity())
+                .available(ticket.getAvailable())
+                .orders(ticket.getOrders())
                 .build();
     }
     public static Ticket toTicket(TicketDto ticketDto){
@@ -31,11 +40,5 @@ public class TicketMapper{
                 .orders(ticketDto.getOrders())
                 .build();
     }
-    public static Ticket toTicket(TicketDtoIds ticketDtoIds){
-        return Ticket.builder().id(ticketDtoIds.getId())
-                .price(ticketDtoIds.getPrice())
-                .quantity(ticketDtoIds.getQuantity())
-                .available(ticketDtoIds.getAvailable())
-                .build();
-    }
+
 }

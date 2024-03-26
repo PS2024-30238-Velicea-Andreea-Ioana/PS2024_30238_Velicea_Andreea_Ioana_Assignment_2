@@ -8,10 +8,20 @@ import com.example.untoldpsproject.entities.Ticket;
 import java.util.stream.Collectors;
 
 public class CategoryMapper {
-    public static CategoryDtoIds toCategoryDto(Category category){
+    public static CategoryDtoIds toCategoryDtoIds(Category category){
         return CategoryDtoIds.builder().id(category.getId())
                 .tip(category.getTip())
                 .tickets(category.getTickets().stream().map(Ticket::getId).collect(Collectors.toList()))
+                .startDate(category.getStartDate())
+                .finishDate(category.getFinishDate())
+                .build();
+    }
+    public static CategoryDto toCategoryDto(Category category){
+        return CategoryDto.builder().id(category.getId())
+                .tip(category.getTip())
+                .tickets(category.getTickets())
+                .startDate(category.getStartDate())
+                .finishDate(category.getFinishDate())
                 .build();
     }
 
@@ -19,11 +29,8 @@ public class CategoryMapper {
         return Category.builder().id(categoryDto.getId())
                 .tip(categoryDto.getTip())
                 .tickets(categoryDto.getTickets())
-                .build();
-    }
-    public static Category toCategory(CategoryDtoIds categoryDtoIds){
-        return Category.builder().id(categoryDtoIds.getId())
-                .tip(categoryDtoIds.getTip())
+                .startDate(categoryDto.getStartDate())
+                .finishDate(categoryDto.getFinishDate())
                 .build();
     }
 }

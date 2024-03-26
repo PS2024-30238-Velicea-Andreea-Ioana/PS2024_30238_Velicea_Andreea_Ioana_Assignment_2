@@ -1,10 +1,8 @@
 package com.example.untoldpsproject.dtos;
 
-import com.example.untoldpsproject.entities.Order;
 import lombok.*;
 
 import java.util.List;
-import java.util.Set;
 
 @Setter
 @Getter

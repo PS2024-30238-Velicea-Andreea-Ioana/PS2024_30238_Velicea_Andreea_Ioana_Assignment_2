@@ -89,6 +89,10 @@
       <option value="three_days">Three Days</option>
       <option value="general_access">General Access</option>
     </select><br/>
+    <label for="startDate">Start Date:</label>
+    <input type="date" id="startDate" name="startDate" th:value="${categoryDto.startDate}" required><br/>
+    <label for="finishDate">Finish Date:</label>
+    <input type="date" id="finishDate" name="finishDate" th:value="${categoryDto.finishDate}" required><br/>
     <input type="submit" value="Update"/>
   </form>
 </div>

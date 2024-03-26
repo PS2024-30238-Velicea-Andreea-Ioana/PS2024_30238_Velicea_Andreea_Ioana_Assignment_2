@@ -2,14 +2,9 @@ package com.example.untoldpsproject.services;
 
 import com.example.untoldpsproject.dtos.TicketDto;
 import com.example.untoldpsproject.dtos.TicketDtoIds;
-import com.example.untoldpsproject.dtos.UserDto;
-import com.example.untoldpsproject.entities.Order;
 import com.example.untoldpsproject.entities.Ticket;
-import com.example.untoldpsproject.entities.User;
 import com.example.untoldpsproject.mappers.TicketMapper;
-import com.example.untoldpsproject.mappers.UserMapper;
 import com.example.untoldpsproject.repositories.TicketRepository;
-import com.example.untoldpsproject.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,7 +32,7 @@ public class TicketService {
      * @param ticketDto The ticket DTO containing information about the ticket.
      * @return The String of the inserted ticket.
      */
-    public String insert(TicketDtoIds ticketDto){
+    public String insert(TicketDto ticketDto){
         Ticket ticket = TicketMapper.toTicket(ticketDto);
         ticket = ticketRepository.save(ticket);
         LOGGER.debug("Ticket with id {} was inserted in db",ticket.getId());
@@ -49,7 +44,7 @@ public class TicketService {
      *
      * @return A list of ticket DTOs.
      */
-    public List<TicketDtoIds> findTickets(){
+    public List<TicketDto> findTickets(){
         List<Ticket> ticketList = ticketRepository.findAll();
         return ticketList.stream().map(TicketMapper::toTicketDto).collect(Collectors.toList());
     }
@@ -65,7 +60,7 @@ public class TicketService {
         if(!ticketOptional.isPresent()){
             LOGGER.error("Ticket with id {} was not found in db", id);
         }
-        return TicketMapper.toTicketDto(ticketOptional.get());
+        return TicketMapper.toTicketDtoIds(ticketOptional.get());
     }
 
     /**
@@ -75,7 +70,7 @@ public class TicketService {
      * @param updatedTicketDto The updated ticket DTO.
      * @return The updated ticket entity.
      */
-    public Ticket updateTicketById(String id, TicketDto updatedTicketDto){
+    public void updateTicketById(String id, TicketDto updatedTicketDto){
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if(!ticketOptional.isPresent()){
             LOGGER.error("Ticket with id {} was not found in db", id);
@@ -89,7 +84,6 @@ public class TicketService {
             LOGGER.debug("Ticket with id {} was successfully updated", id);
 
         }
-        return ticketOptional.get();
     }
     /**
      * Deletes a ticket from the database.
