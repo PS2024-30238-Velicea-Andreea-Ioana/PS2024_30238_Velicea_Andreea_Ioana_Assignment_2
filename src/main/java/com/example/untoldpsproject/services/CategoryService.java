@@ -1,5 +1,6 @@
 package com.example.untoldpsproject.services;
 
+import com.example.untoldpsproject.constants.CategoryConstants;
 import com.example.untoldpsproject.dtos.CategoryDto;
 import com.example.untoldpsproject.dtos.TicketDto;
 import com.example.untoldpsproject.entities.Category;
@@ -8,6 +9,7 @@ import com.example.untoldpsproject.mappers.CategoryMapper;
 import com.example.untoldpsproject.mappers.TicketMapper;
 import com.example.untoldpsproject.repositories.CategoryRepository;
 import com.example.untoldpsproject.repositories.TicketRepository;
+import com.example.untoldpsproject.validators.CategoryValidator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +28,7 @@ public class CategoryService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoryService.class);
     private final CategoryRepository categoryRepository;
     private final TicketRepository ticketRepository;
+    private final CategoryValidator categoryValidator = new CategoryValidator();
     /**
      * Inserts a new category into the database.
      * @param categoryDto The user DTO containing user information.
@@ -33,10 +36,16 @@ public class CategoryService {
      */
 
     public String insert(CategoryDto categoryDto){
-        Category category = CategoryMapper.toCategory(categoryDto);
-        categoryRepository.save(category);
-        LOGGER.debug("Category with id {} was inserted in db",category.getId());
-        return category.getId();
+        try{
+            categoryValidator.categoryDtoValidator(categoryDto);
+            Category category = CategoryMapper.toCategory(categoryDto);
+            categoryRepository.save(category);
+            LOGGER.debug(CategoryConstants.CATEGORY_INSERTED);
+            return CategoryConstants.CATEGORY_INSERTED;
+        }catch (Exception e){
+            LOGGER.error(CategoryConstants.CATEGORY_NOT_INSERTED + e.getMessage());
+            return CategoryConstants.CATEGORY_NOT_INSERTED;
+        }
     }
 
     /**
@@ -81,13 +90,18 @@ public class CategoryService {
             LOGGER.error("Category with id {} was not found in db", id);
         }else{
             Category category = categoryOptional.get();
-            Category updatedCategory = CategoryMapper.toCategory(updatedCategoryDto);
-            category.setTip(updatedCategory.getTip());
-            category.setTickets(updatedCategory.getTickets());
-            category.setStartDate(updatedCategory.getStartDate());
-            category.setFinishDate(updatedCategory.getFinishDate());
-            categoryRepository.save(category);
-            LOGGER.debug("Category with id {} was successfully updated", id);
+            try{
+                categoryValidator.categoryDtoValidator(updatedCategoryDto);
+                Category updatedCategory = CategoryMapper.toCategory(updatedCategoryDto);
+                category.setTip(updatedCategory.getTip());
+                category.setTickets(updatedCategory.getTickets());
+                category.setStartDate(updatedCategory.getStartDate());
+                category.setFinishDate(updatedCategory.getFinishDate());
+                categoryRepository.save(category);
+                LOGGER.debug(CategoryConstants.CATEGORY_UPDATED);
+            }catch (Exception e){
+                LOGGER.error(CategoryConstants.CATEGORY_NOT_UPDATED);
+            }
         }
 
     }

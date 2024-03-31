@@ -94,7 +94,7 @@
 <body>
 <div class="container">
     <h2>Add Order</h2>
-    <form action="/order/add" method="post" th:object="${orderDto}">
+    <form id="orderForm" action="/order/add" method="post" th:object="${orderDto}" onsubmit="return validateForm()">
         <label for="user">User:</label>
         <select id="user" name="user">
             <option th:each="user : ${users}"
@@ -113,5 +113,23 @@
     </form>
     <a href="/order/list" class="back-button">Back to Order List</a>
 </div>
+<script>
+    function validateForm() {
+        const user = document.getElementById('user').value;
+        const tickets = document.getElementById('tickets').selectedOptions;
+
+        if (user === '') {
+            alert('Please select a user.');
+            return false;
+        }
+
+        if (tickets.length === 0) {
+            alert('Please select at least one ticket.');
+            return false;
+        }
+
+        return true;
+    }
+</script>
 </body>
 </html>

@@ -50,9 +50,11 @@ public class OrderController {
     public ModelAndView addOrder(@ModelAttribute("orderDto") OrderDtoIds orderDto) {
         UserDto user = orderService.findUserById(orderDto.getUser());
         List<Ticket> tickets = new ArrayList<>();
-        for(String ticketId : orderDto.getTickets() ){
-            TicketDto ticket = orderService.findTicketById(ticketId);
-            tickets.add(TicketMapper.toTicket(ticket));
+        if(orderDto.getTickets()!=null){
+            for(String ticketId : orderDto.getTickets() ){
+                TicketDto ticket = orderService.findTicketById(ticketId);
+                tickets.add(TicketMapper.toTicket(ticket));
+            }
         }
         OrderDto order = new OrderDto();
         order.setUser(UserMapper.toUser(user));

@@ -1,5 +1,6 @@
 package com.example.untoldpsproject.services;
 
+import com.example.untoldpsproject.constants.OrderConstants;
 import com.example.untoldpsproject.dtos.OrderDto;
 import com.example.untoldpsproject.dtos.OrderDtoIds;
 import com.example.untoldpsproject.dtos.TicketDto;
@@ -36,6 +37,7 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
     private final TicketRepository ticketRepository;
+    private final OrderValidator orderValidator = new OrderValidator();
 
 
     /**
@@ -46,15 +48,21 @@ public class OrderService {
      */
     @Transactional
     public String insert(OrderDto orderDto){
-        Order order = OrderMapper.toOrder(orderDto);
-        order.setTotalPrice(calculateTotalPrice(order.getTickets()));
-        order = orderRepository.save(order);
-        LOGGER.debug("Order with id {} was inserted in db",order.getId());
-        for (Ticket ticket : order.getTickets()) {
-            if(ticketRepository.findById(ticket.getId()).isPresent())
-                ticketRepository.findById(ticket.getId()).get().setAvailable(ticket.getAvailable()-1);
+        try{
+            orderValidator.OrderDtoValidator(orderDto);
+            Order order = OrderMapper.toOrder(orderDto);
+            order.setTotalPrice(calculateTotalPrice(order.getTickets()));
+            order = orderRepository.save(order);
+            LOGGER.debug(OrderConstants.ORDER_INSERTED);
+            for (Ticket ticket : order.getTickets()) {
+                if(ticketRepository.findById(ticket.getId()).isPresent())
+                    ticketRepository.findById(ticket.getId()).get().setAvailable(ticket.getAvailable()-1);
+            }
+            return order.getId();
+        }catch (Exception e){
+            LOGGER.error(OrderConstants.ORDER_NOT_INSERTED + " " + e.getMessage());
+            return null;
         }
-        return order.getId();
     }
 
     /**
@@ -124,12 +132,17 @@ public class OrderService {
             LOGGER.error("Order with id {} was not found in db", id);
         }else{
             Order order = orderOptional.get();
-            Order updatedOrder = OrderMapper.toOrder(updatedOrderDto);
-            order.setUser(updatedOrder.getUser());
-            order.setTickets(updatedOrder.getTickets());
-            order.setTotalPrice(calculateTotalPrice(order.getTickets()));
-            orderRepository.save(order);
-            LOGGER.debug("Order with id {} was successfully updated", id);
+            try {
+                orderValidator.OrderDtoValidator(updatedOrderDto);
+                Order updatedOrder = OrderMapper.toOrder(updatedOrderDto);
+                order.setUser(updatedOrder.getUser());
+                order.setTickets(updatedOrder.getTickets());
+                order.setTotalPrice(calculateTotalPrice(order.getTickets()));
+                orderRepository.save(order);
+                LOGGER.debug(OrderConstants.ORDER_UPDATED);
+            } catch (Exception e) {
+                LOGGER.error(OrderConstants.ORDER_NOT_UPDATED);
+            }
         }
     }
 

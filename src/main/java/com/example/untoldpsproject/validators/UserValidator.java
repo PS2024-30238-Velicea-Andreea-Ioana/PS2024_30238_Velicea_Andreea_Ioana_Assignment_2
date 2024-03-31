@@ -39,11 +39,7 @@ public class UserValidator {
     }
 
     public boolean userDtoValidator(UserDto userDto) throws Exception{
-        if(nameValidator(userDto.getFirstName()) && nameValidator(userDto.getLastName())&&
-                emailValidator(userDto.getEmail()) && passwordValidator(userDto.getPassword())){
-            return true;
-        } else {
-            return false;
-        }
+        return nameValidator(userDto.getFirstName()) && nameValidator(userDto.getLastName()) &&
+                emailValidator(userDto.getEmail()) && passwordValidator(userDto.getPassword());
     }
 }

@@ -78,7 +78,7 @@
 <body>
 <div class="container">
     <h2>Edit Ticket</h2>
-    <form th:action="@{/ticket/edit/ ${ticketDto.id}}" method="post" th:object="${ticketDto}">
+    <form id="ticketForm" th:action="@{/ticket/edit/ ${ticketDto.id}}" method="post" th:object="${ticketDto}" onsubmit="return validateForm()">
         <input type="hidden" id="id" name="id" th:value="${ticketDto.id}"/>
         <label for="category">Category:</label>
         <select id="category" name="category">
@@ -93,5 +93,20 @@
         <input type="submit" value="Update"/>
     </form>
 </div>
+<script>
+    function validateForm() {
+        const price = document.getElementById('price').value;
+        const available = document.getElementById('available').value;
+        if (isNaN(price) || price <= 0) {
+            alert('Please enter a valid price greater than 0');
+            return false;
+        }
+        if (isNaN(available) || available < 0 || !Number.isInteger(parseFloat(available))) {
+            alert('Please enter a valid non-negative integer value for available');
+            return false;
+        }
+        return true;
+    }
+</script>
 </body>
 </html>

@@ -92,12 +92,12 @@
             <div class="ticket">
                 <div class="item-details" th:text="${ticket.id}"></div>
                <div class="ticket-type" th:text="${ticket.category.tip}"></div>
+                <div class="ticket-type" th:text="${ticket.price}"></div>
             </div>
         </ul>
         <div class="total-price" th:text="${order.totalPrice} + 'Ron'"></div>
 
     </div>
-
 </form>
 </body>
 </html>

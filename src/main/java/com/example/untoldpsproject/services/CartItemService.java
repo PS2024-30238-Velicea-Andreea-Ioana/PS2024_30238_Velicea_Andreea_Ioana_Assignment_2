@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 public class CartItemService {
     private final CartItemRepository cartItemRepository;
     public String insert(CartItem cartItem){
-        System.out.println(cartItem.getTicket().getId());
         cartItemRepository.save(cartItem);
         return cartItem.getId();
     }

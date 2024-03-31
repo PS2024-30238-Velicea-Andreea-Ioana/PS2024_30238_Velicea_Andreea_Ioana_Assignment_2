@@ -5,6 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Interface</title>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url('/untold.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
         .ticket-container {
             display: flex;
             flex-wrap: wrap;
@@ -13,7 +27,7 @@
         }
 
         .ticket {
-            background-color: #4b0082; /* Dark purple */
+            background-color: #4b0082;
             color: #fff;
             border-radius: 10px;
             width: 300px;
@@ -51,29 +65,12 @@
             font-size: 16px;
         }
 
-        .place-order-button {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 20px;
-            background-color: #4b0082; /* Dark purple */
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            z-index: 999;
-        }
-
-        .place-order-button:hover {
-            background-color: #6a5acd; /* Darker purple on hover */
-        }
         .back-button {
             position: absolute;
             top: 20px;
             left: 20px;
             padding: 10px 20px;
-            background-color:#8917F5; /* Light green color */
+            background-color:#8917F5;
             color: #fff;
             text-decoration: none;
             border-radius: 5px;
@@ -81,25 +78,24 @@
         }
 
         .back-button:hover {
-            background-color:  #2B0251; /* Darker green color on hover */
+            background-color:  #2B0251;
         }
         .header {
-            color: #2B0251; /* White text color */
-            padding: 20px; /* Add padding */
-            text-align: center; /* Center align text */
+            color: #2B0251;
+            padding: 20px;
+            text-align: center; /
         }
 
-        /* Style the title */
         .title {
-            font-size: 36px; /* Larger font size */
-            margin-bottom: 10px; /* Add some space below the title */
+            font-size: 36px;
+            margin-bottom: 10px;
         }
         .cart-button {
             position:absolute;
             top: 20px;
             right: 20px;
             padding: 10px 20px;
-            background-color:#8917F5; /* Light green color */
+            background-color:#8917F5;
             color: #fff;
             text-decoration: none;
             border-radius: 5px;
@@ -107,29 +103,28 @@
         }
 
         .cart-button:hover {
-            background-color:  #2B0251; /* Darker green color on hover */
+            background-color:  #2B0251;
         }
         .ticket-availability {
-            /* Style for availability text */
-            margin-top: 10px; /* Adjust the margin as needed */
-            font-size: 14px; /* Adjust font size as needed */
-            color: #666; /* Adjust text color as needed */
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
         }
         .add-to-cart {
             display: inline-block;
             padding: 10px 20px;
-            background-color: #6a5acd; /* Darker purple */
+            background-color: #6a5acd;
             color: #fff;
             border: none;
             border-radius: 5px;
             font-size: 16px;
-            text-decoration: none; /* Remove underline */
+            text-decoration: none;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
 
         .add-to-cart:hover {
-            background-color: #8a2be2; /* Lighter purple on hover */
+            background-color: #8a2be2;
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -166,6 +161,5 @@
         </div>
     </form>
     <a href="/home" class="back-button">Back to Home Page</a>
-
 </body>
 </html>

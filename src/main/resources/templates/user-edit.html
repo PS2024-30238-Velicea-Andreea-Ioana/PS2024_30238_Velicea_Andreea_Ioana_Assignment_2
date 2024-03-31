@@ -54,13 +54,28 @@
         form input[type="submit"]:hover {
             background-color: #0056b3;
         }
+        form select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            appearance: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
 
+        form select:focus {
+            outline: none;
+            border-color: #66afe9;
+        }
     </style>
 </head>
 <body>
 <div class="container">
 <h2>Edit User</h2>
-<form th:action="@{/user/edit/ ${userDto.id}} " method="post" th:object="${userDto}">
+<form th:action="@{/user/edit/ ${userDto.id}} " method="post" th:object="${userDto}" onsubmit="validateForm()">
    <input type="hidden" id="id" name="id" th:value="${userDto.id}"/>
     <label for="firstName">First Name:</label>
     <input type="text" id="firstName" name="firstName" th:field="*{firstName}"/><br/>
@@ -70,8 +85,36 @@
     <input type="email" id="email" name="email" th:field="*{email}"/><br/>
     <label for="password">Password:</label>
     <input type="password" id="password" name="password" th:field="*{password}"/><br/>
+    <label for="role">Role:</label>
+    <select id="role" name="role">
+        <option th:each="role : ${T(com.example.untoldpsproject.entities.Role).values()}"
+                th:value="${role}" th:text="${role}"></option>
+    </select><br/>
     <input type="submit" value="Update"/>
 </form>
 </div>
+<script>
+    function validateForm() {
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+
+        if (password.length < 8 || password.length > 15) {
+            alert('Password must be between 8 and 15 characters');
+            return false;
+        }
+        if (!/[a-zA-Z]+-?[a-zA-Z]*$/.test(firstName)) {
+            alert('First Name must contain only letters');
+            return false;
+        }
+
+        if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+            alert('Please enter a valid Email address');
+            return false;
+        }
+        return true;
+    }
+</script>
 </body>
 </html>

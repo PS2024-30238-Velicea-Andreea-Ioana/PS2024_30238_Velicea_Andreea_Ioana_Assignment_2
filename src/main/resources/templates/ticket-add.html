@@ -94,7 +94,7 @@
 <body>
 <div class="container">
     <h2>Add Ticket</h2>
-    <form action="/ticket/add" method="post" th:object="${ticketDto}">
+    <form id="ticketForm" action="/ticket/add" method="post" th:object="${ticketDto}" onsubmit="return validateForm()">
         <label for="category">Category:</label>
         <select id="category" name="category">
             <option th:each="category : ${categories}"
@@ -109,5 +109,20 @@
     </form>
     <a href="/ticket/list" class="back-button">Back to Ticket List</a>
 </div>
+<script>
+    function validateForm() {
+        const price = document.getElementById('price').value;
+        const available = document.getElementById('available').value;
+        if (isNaN(price) || price <= 0) {
+            alert('Please enter a valid price greater than 0');
+            return false;
+        }
+        if (isNaN(available) || available < 0 || !Number.isInteger(parseFloat(available))) {
+            alert('Please enter a valid non-negative integer value for available');
+            return false;
+        }
+        return true;
+    }
+</script>
 </body>
 </html>

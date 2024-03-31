@@ -37,7 +37,6 @@ public class CartController {
     @GetMapping("/customer/seetickets/{userId}")
     public ModelAndView visualiseTickets(@PathVariable("userId")String userId){
         ModelAndView mav = new ModelAndView("user-interface");
-        List<TicketDto> tickets = userService.findTickets();
         UserDto user = userService.findUserById(userId);
         if (user.getCart() == null) {
             CartDto cart = new CartDto();
@@ -48,6 +47,11 @@ public class CartController {
             user.setCart(CartMapper.toCart(cart));
             userService.updateUserById(userId,user);
         }
+        List<TicketDto> tickets = new ArrayList<>();
+        for(TicketDto ticket: userService.findTickets()){
+            if(ticket.getAvailable() > 0)
+                tickets.add(ticket);
+        }
         mav.addObject("tickets", tickets);
         mav.addObject("userId", userId);
         mav.addObject("cartId",user.getCart().getId());
@@ -57,12 +61,9 @@ public class CartController {
     @GetMapping("/customer/tickets/{userId}/addToCart/{ticketId}/{cartId}")
     public ModelAndView addTicketToCartForm(@PathVariable("ticketId") String id, @PathVariable("userId") String userId, @PathVariable("cartId") String cartId) {
         TicketDto ticket = ticketService.findTicketById(id);
-
-        // Check if the ticket is available
+        UserDto user = userService.findUserById(userId);
+        Cart cartDto = cartService.findCartById(cartId);
         if (ticket != null && ticket.getAvailable() > 0) {
-            UserDto user = userService.findUserById(userId);
-            Cart cartDto = cartService.findCartById(cartId);
-
             if (cartDto == null) {
                 cartDto = new Cart();
                 cartDto.setUser(UserMapper.toUser(user));
@@ -70,30 +71,22 @@ public class CartController {
                 cartDto.setTotalPrice(0.0);
                 cartService.insert(CartMapper.toCartDto(cartDto));
             }
-
             CartItem existingCartItem = cartItemService.findCartItemByTicketIdAndCartId(id, cartId);
-
             if (existingCartItem == null) {
                 CartItem newCartItem = new CartItem();
                 newCartItem.setTicket(TicketMapper.toTicket(ticket));
                 newCartItem.setQuantity(1.0);
                 newCartItem.setCart(cartDto);
                 cartItemService.insert(newCartItem);
-//                ticket.setAvailable(ticket.getAvailable() - 1);
-//                ticketService.updateTicketById(id, ticket);
             } else {
-                // If the ticket already exists in the cart, update the quantity
-                existingCartItem.setQuantity(existingCartItem.getQuantity() + 1.0);
-                cartItemService.update(existingCartItem);
-//                ticket.setAvailable(ticket.getAvailable() - 1);
-//                ticketService.updateTicketById(id, ticket);
+                if(ticket.getAvailable() > existingCartItem.getQuantity()){
+                    existingCartItem.setQuantity(existingCartItem.getQuantity() + 1.0);
+                    cartItemService.update(existingCartItem);
+                }
             }
-
             cartService.updateTotalPrice(cartId);
             return new ModelAndView("redirect:/cart/visualizeCart/" + cartId );
         } else {
-            // Redirect or show an error message indicating that the ticket is not available
-            // You can customize this based on your application's requirements
             return new ModelAndView("redirect:/cart/customer/seetickets/" + userId);
         }
     }
@@ -122,9 +115,6 @@ public class CartController {
         if (cartItem != null) {
             String cartId = cartItem.getCart().getId();
             cartItemService.deleteCartItemById(cartItemId);
-//            TicketDto ticketDto = ticketService.findTicketById(cartItem.getTicket().getId());
-//            ticketDto.setAvailable(ticketDto.getAvailable()+1);
-//            ticketService.updateTicketById(ticketDto.getId(),ticketDto);
             cartService.updateTotalPrice(cartId);
             return new ModelAndView("redirect:/cart/visualizeCart/"+ cartId);
         }
@@ -136,14 +126,16 @@ public class CartController {
         List<CartItem> cartItems = cartItemService.findCartItemsByCartId(cartId);
         List<Ticket> tickets = new ArrayList<>();
         for (CartItem cartItem : cartItems) {
+
             Double quantity = cartItem.getQuantity();
+            if(cartItem.getTicket().getAvailable() >= cartItem.getQuantity()){
             while(quantity >0){
                 tickets.add(cartItem.getTicket());
                 quantity--;
             }
             cartItem.setQuantity(0.0);
             cartItemService.update(cartItem);
-            cartItemService.deleteCartItemById(cartItem.getId());
+            cartItemService.deleteCartItemById(cartItem.getId());}
         }
         cartService.updateTotalPrice(cartId);
         double totalPrice = cartService.findCartById(cartId).getTotalPrice();

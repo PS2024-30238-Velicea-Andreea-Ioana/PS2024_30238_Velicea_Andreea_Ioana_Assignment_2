@@ -80,7 +80,7 @@
 <body>
 <div class="container">
   <h2>Edit Category</h2>
-  <form th:action="@{/category/edit/ ${categoryDto.id}} " method="post" th:object="${categoryDto}">
+  <form id="categoryForm" th:action="@{/category/edit/ ${categoryDto.id}} " method="post" th:object="${categoryDto}" onsubmit="return validateForm()">
     <input type="hidden" id="id" name="id" th:value="${categoryDto.id}"/>
     <label for="tip">Tip:</label>
     <select id="tip" name="tip" th:field="*{tip}">
@@ -96,5 +96,17 @@
     <input type="submit" value="Update"/>
   </form>
 </div>
+<script>
+  function validateForm() {
+    const startDate = document.getElementById('startDate').value;
+    const finishDate = document.getElementById('finishDate').value;
+    const today = new Date().toISOString().split('T')[0];
+    if (startDate === '' || finishDate === '' || startDate < today || finishDate < startDate) {
+      alert('Invalid dates. Start date must be today or later, and finish date must be after start date');
+      return false;
+    }
+    return true;
+  }
+</script>
 </body>
 </html>

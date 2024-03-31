@@ -90,7 +90,7 @@
 <body>
 <div class="container">
   <h2>Add User</h2>
-  <form action="/user/add" method="post" th:object="${userDto}">
+  <form id="userForm" action="/user/add" method="post" th:object="${userDto}" onsubmit="return validateForm()">
     <label for="firstName">First Name:</label>
     <input type="text" id="firstName" name="firstName" th:field="*{firstName}"/><br/>
     <label for="lastName">Last Name:</label>
@@ -109,15 +109,26 @@
   <a href="/user/list" class="back-button">Back to User List</a>
 </div>
 <script>
-  function togglePassword(element) {
-    const password = element.parentNode.querySelector('.password');
-    if (password.style.display === 'none') {
-      password.style.display = 'inline';
-      element.textContent = '👁️';
-    } else {
-      password.style.display = 'none';
-      element.textContent = '👁️';
+  function validateForm() {
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    if (password.length < 8 || password.length > 15) {
+      alert('Password must be between 8 and 15 characters');
+      return false;
     }
+    if (!/[a-zA-Z]+-?[a-zA-Z]*$/.test(firstName)) {
+      alert('First Name must contain only letters');
+      return false;
+    }
+
+    if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+      alert('Please enter a valid Email address');
+      return false;
+    }
+    return true;
   }
 </script>
 </body>

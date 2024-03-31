@@ -1,5 +1,6 @@
 package com.example.untoldpsproject.services;
 
+import com.example.untoldpsproject.constants.UserConstants;
 import com.example.untoldpsproject.dtos.TicketDto;
 import com.example.untoldpsproject.dtos.UserDto;
 import com.example.untoldpsproject.entities.Ticket;
@@ -30,6 +31,7 @@ public class UserService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final TicketRepository ticketRepository;
+    private final UserValidator userValidator = new UserValidator();
 
     /**
      * Inserts a new user into the database.
@@ -38,10 +40,16 @@ public class UserService {
      */
 
     public String insert(UserDto userDto){
-        User user = UserMapper.toUser(userDto);
-        user = userRepository.save(user);
-        LOGGER.debug("User with id {} was inserted in db",user.getId());
-        return user.getId();
+        try{
+            userValidator.userDtoValidator(userDto);
+            User user = UserMapper.toUser(userDto);
+            user = userRepository.save(user);
+            LOGGER.debug(UserConstants.USER_INSERTED);
+            return UserConstants.USER_INSERTED;
+        }catch (Exception e){
+            LOGGER.error(UserConstants.USER_NOT_INSERTED + e.getMessage());
+            return UserConstants.USER_NOT_INSERTED;
+        }
     }
 
     /**
@@ -77,21 +85,26 @@ public class UserService {
      * @param id             The ID of the user to update.
      * @param updatedUserDto The updated user DTO containing new user information.
      */
-    public void updateUserById(String id, UserDto updatedUserDto){
+    public void updateUserById(String id, UserDto updatedUserDto) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
-            LOGGER.error(" in update User with id { "+id+" } was not found in the database", id);
+            LOGGER.error(" in update User with id { " + id + " } was not found in the database", id);
         } else {
             User user = userOptional.get();
-            User updatedUser = UserMapper.toUser(updatedUserDto);
-            user.setFirstName(updatedUser.getFirstName());
-            user.setLastName(updatedUser.getLastName());
-            user.setEmail(updatedUser.getEmail());
-            user.setPassword(updatedUser.getPassword());
-            user.setRole(updatedUser.getRole());
-            user.setCart(updatedUser.getCart());
-            userRepository.save(user);
-            LOGGER.debug("User with id {" + id +"} was successfully updated", id);
+            try {
+                userValidator.userDtoValidator(updatedUserDto);
+                User updatedUser = UserMapper.toUser(updatedUserDto);
+                user.setFirstName(updatedUser.getFirstName());
+                user.setLastName(updatedUser.getLastName());
+                user.setEmail(updatedUser.getEmail());
+                user.setPassword(updatedUser.getPassword());
+                user.setRole(updatedUser.getRole());
+                user.setCart(updatedUser.getCart());
+                userRepository.save(user);
+                LOGGER.debug(UserConstants.USER_UPDATED);
+            } catch (Exception e) {
+                LOGGER.error(UserConstants.USER_NOT_UPDATED);
+            }
         }
     }
 

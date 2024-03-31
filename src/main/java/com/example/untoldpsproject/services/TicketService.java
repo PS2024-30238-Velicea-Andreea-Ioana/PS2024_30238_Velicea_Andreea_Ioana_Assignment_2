@@ -1,5 +1,6 @@
 package com.example.untoldpsproject.services;
 
+import com.example.untoldpsproject.constants.TicketConstants;
 import com.example.untoldpsproject.dtos.CategoryDto;
 import com.example.untoldpsproject.dtos.TicketDto;
 import com.example.untoldpsproject.entities.Category;
@@ -8,6 +9,7 @@ import com.example.untoldpsproject.mappers.CategoryMapper;
 import com.example.untoldpsproject.mappers.TicketMapper;
 import com.example.untoldpsproject.repositories.CategoryRepository;
 import com.example.untoldpsproject.repositories.TicketRepository;
+import com.example.untoldpsproject.validators.TicketValidator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +31,7 @@ public class TicketService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketService.class);
     private final TicketRepository ticketRepository;
     private final CategoryRepository categoryRepository;
+    private final TicketValidator ticketValidator = new TicketValidator();
 
     /**
      * Inserts a new ticket into the database.
@@ -37,10 +40,17 @@ public class TicketService {
      * @return The String of the inserted ticket.
      */
     public String insert(TicketDto ticketDto){
-        Ticket ticket = TicketMapper.toTicket(ticketDto);
-        ticket = ticketRepository.save(ticket);
-        LOGGER.debug("Ticket with id {} was inserted in db",ticket.getId());
-        return ticket.getId();
+        try{
+            ticketValidator.ticketDtoValidator(ticketDto);
+            Ticket ticket = TicketMapper.toTicket(ticketDto);
+            ticket = ticketRepository.save(ticket);
+            LOGGER.debug(TicketConstants.TICKET_INSERTED);
+            return TicketConstants.TICKET_INSERTED;
+        }catch (Exception e){
+            LOGGER.error(TicketConstants.TICKET_NOT_INSERTED + " " +e.getMessage());
+            return TicketConstants.TICKET_NOT_INSERTED;
+        }
+
     }
 
     /**
@@ -96,13 +106,18 @@ public class TicketService {
             LOGGER.error("Ticket with id {} was not found in db", id);
         }else{
             Ticket ticket = ticketOptional.get();
-            Ticket updatedTicket = TicketMapper.toTicket(updatedTicketDto);
-            ticket.setCategory(updatedTicket.getCategory());
-            ticket.setPrice(updatedTicket.getPrice());
-            ticket.setAvailable(updatedTicket.getAvailable());
-            ticket.setCartItems(updatedTicketDto.getCartItem());
-            ticketRepository.save(ticket);
-            LOGGER.debug("Ticket with id {} was successfully updated", id);
+            try {
+                ticketValidator.ticketDtoValidator(updatedTicketDto);
+                Ticket updatedTicket = TicketMapper.toTicket(updatedTicketDto);
+                ticket.setCategory(updatedTicket.getCategory());
+                ticket.setPrice(updatedTicket.getPrice());
+                ticket.setAvailable(updatedTicket.getAvailable());
+                ticket.setCartItems(updatedTicketDto.getCartItem());
+                ticketRepository.save(ticket);
+                LOGGER.debug(TicketConstants.TICKET_UPDATED);
+            }catch (Exception e){
+                LOGGER.error(TicketConstants.TICKET_NOT_UPDATED + " " + e.getMessage());
+            }
 
         }
     }

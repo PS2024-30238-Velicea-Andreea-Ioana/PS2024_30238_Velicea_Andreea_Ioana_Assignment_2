@@ -78,7 +78,7 @@
 <body>
 <div class="container">
     <h2>Edit Order</h2>
-    <form th:action="@{/order/edit/ ${orderDto.id}}" method="post" th:object="${orderDto}">
+    <form id="orderForm" th:action="@{/order/edit/ ${orderDto.id}}" method="post" th:object="${orderDto}" onsubmit="return validateForm()">
         <input type="hidden" id="id" name="id" th:value="${orderDto.id}"/>
         <label for="user">User:</label>
         <select id="user" name="user">
@@ -96,5 +96,23 @@
         <input type="submit" value="Update"/>
     </form>
 </div>
+<script>
+    function validateForm() {
+        const user = document.getElementById('user').value;
+        const tickets = document.getElementById('tickets').selectedOptions;
+
+        if (user === '') {
+            alert('Please select a user.');
+            return false;
+        }
+
+        if (tickets.length === 0) {
+            alert('Please select at least one ticket.');
+            return false;
+        }
+
+        return true;
+    }
+</script>
 </body>
 </html>
