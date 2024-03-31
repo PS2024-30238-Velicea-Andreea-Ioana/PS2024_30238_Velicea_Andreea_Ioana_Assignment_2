@@ -24,26 +24,21 @@ public class Ticket {
 
     @ManyToOne
     @JsonIgnore
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     private Category category;
 
     @Column(name = "Price", nullable = false)
     private Double price;
 
-    @Column(name = "Quantity")
-    private int quantity;
 
-    @Column(name = "Available")
+    @Column(name = "available")
     private int available;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "tickets", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
     private List<Order> orders;
 
-    @JsonIgnore
-    @ManyToMany(mappedBy = "tickets", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
-    private List<Order> carts;
-
-
+    @OneToMany(mappedBy = "ticket", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
+    private List<CartItem> cartItems;
 
 }

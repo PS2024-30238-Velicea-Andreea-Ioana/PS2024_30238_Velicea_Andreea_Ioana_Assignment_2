@@ -1,19 +1,15 @@
 package com.example.untoldpsproject.controllers;
 
 import com.example.untoldpsproject.dtos.UserDto;
-import com.example.untoldpsproject.dtos.UserDtoIds;
-import com.example.untoldpsproject.entities.Ticket;
-import com.example.untoldpsproject.entities.User;
-import com.example.untoldpsproject.services.UserService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import com.example.untoldpsproject.services.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
 import java.util.List;
+
+
 /**
  * Controller class for managing users.
  */
@@ -25,12 +21,11 @@ import java.util.List;
 @RequestMapping(value = "/user")
 public class UserController {
     private final UserService userService;
-    @PersistenceContext
-    private EntityManager entityManager;
+
     @GetMapping("/list")
     public ModelAndView userList() {
         ModelAndView mav = new ModelAndView("user-list");
-        List<UserDtoIds> users = userService.findUsers();
+        List<UserDto> users = userService.findUsers();
         mav.addObject("users", users);
         return mav;
     }
@@ -50,7 +45,7 @@ public class UserController {
     @GetMapping("/edit/{id}")
     public ModelAndView editUserForm(@PathVariable("id") String userId) {
         ModelAndView mav = new ModelAndView("user-edit");
-        UserDtoIds userDto = userService.findUserById(userId);
+        UserDto userDto = userService.findUserById(userId);
         mav.addObject("userDto", userDto);
         return mav;
     }
@@ -67,12 +62,5 @@ public class UserController {
         return new ModelAndView("redirect:/user/list");
     }
 
-    @GetMapping("/customer/tickets")
-    public ModelAndView visualiseTickets(){
-        ModelAndView mav = new ModelAndView("user-interface");
-        List<Ticket> tickets = entityManager.createQuery("SELECT t FROM Ticket t", Ticket.class).getResultList();
-        mav.addObject("tickets", tickets);
-        return mav;
-    }
 
 }

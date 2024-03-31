@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cart Visualization</title>
+    <title>Title</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -13,7 +12,7 @@
         }
 
         /* Container for the entire shopping cart */
-        .cart-container {
+        .ticket-container {
             max-width: 600px;
             margin: 20px auto;
             padding: 20px;
@@ -41,23 +40,8 @@
             margin: 0;
         }
 
-        /* Action button styling */
-        .action-button {
-            background-color: #f38ba0;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .action-button:hover {
-            background-color: #d86d8e;
-        }
-
         /* Individual cart item styling */
-        .cart-item {
+        .ticket {
             border-bottom: 1px solid #ddd;
             padding: 15px 0;
             display: flex;
@@ -66,17 +50,9 @@
         }
 
         /* Quantity styling */
-        .quantity {
+        .ticket-type {
             font-size: 16px;
             color: #888;
-            margin-right: 10px;
-        }
-
-        /* Price styling */
-        .price {
-            font-size: 16px;
-            font-weight: bold;
-            color: #f38ba0;
             margin-right: 10px;
         }
 
@@ -106,35 +82,19 @@
     </style>
 </head>
 <body>
-<!--<button class="action-button">-->
-<!--    <a th:href="@{/user/customer/seetickets/{userId} (userId=${userId})}" class="">home</a>-->
-<!--</button>-->
 <a th:href="@{/cart/customer/seetickets/{userId} (userId=${userId})}" class="back-button">Continue Shopping</a>
-<form th:action="@{/cart/visualizeCart/{cartId} (cartId = ${cart.id})}" method="get">
-    <div class="cart-container">
+<form th:action="@{cart/visualizeOrder/{orderId} (orderId = ${orderId})}" method="get">
+    <div class="ticket-container">
         <div class="header">
-            <h3 class="heading">Shopping Cart</h3>
-            <a th:href="@{/cart/place-order/{userId}/{cartId}(userId = ${userId},cartId = ${cart.id})}" class="action-button">Place Order</a>
+            <h3 class="heading">Your Order</h3>
         </div>
-        <ul th:each="cartItem: ${cartItems}">
-            <div class="cart-item">
-                <div class="item-details" th:text="${cartItem.ticket.category.tip}"></div>
-                <div class="counter">
-                    <div class="quantity" th:text="${cartItem.quantity}"></div>
-                </div>
-                <div class="price">
-                    <div class="amount" th:text="${cartItem.ticket.price}"></div>
-                </div>
-                <div class="price">
-                    <div class="amount" th:text="${cartItem.ticket.price * cartItem.quantity}"></div>
-                </div>
-                <button class="action-button">
-                    <a th:href="@{/cart/removeItem/{cartItemId} (cartItemId = ${cartItem.id})}" class="action-button">-</a>
-                </button>
-
+        <ul th:each="ticket: ${tickets}">
+            <div class="ticket">
+                <div class="item-details" th:text="${ticket.id}"></div>
+               <div class="ticket-type" th:text="${ticket.category.tip}"></div>
             </div>
         </ul>
-        <div class="total-price" th:text="${cart.totalPrice} + 'Ron'"></div>
+        <div class="total-price" th:text="${order.totalPrice} + 'Ron'"></div>
 
     </div>
 

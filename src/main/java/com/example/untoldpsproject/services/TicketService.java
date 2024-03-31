@@ -1,9 +1,12 @@
 package com.example.untoldpsproject.services;
 
+import com.example.untoldpsproject.dtos.CategoryDto;
 import com.example.untoldpsproject.dtos.TicketDto;
-import com.example.untoldpsproject.dtos.TicketDtoIds;
+import com.example.untoldpsproject.entities.Category;
 import com.example.untoldpsproject.entities.Ticket;
+import com.example.untoldpsproject.mappers.CategoryMapper;
 import com.example.untoldpsproject.mappers.TicketMapper;
+import com.example.untoldpsproject.repositories.CategoryRepository;
 import com.example.untoldpsproject.repositories.TicketRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,6 +28,7 @@ import java.util.stream.Collectors;
 public class TicketService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketService.class);
     private final TicketRepository ticketRepository;
+    private final CategoryRepository categoryRepository;
 
     /**
      * Inserts a new ticket into the database.
@@ -55,12 +59,29 @@ public class TicketService {
      * @param id The ID of the ticket to retrieve.
      * @return The ticket DTO.
      */
-    public TicketDtoIds findTicketById(String id){
+    public TicketDto findTicketById(String id){
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
-        if(!ticketOptional.isPresent()){
+        if(ticketOptional.isEmpty()){
             LOGGER.error("Ticket with id {} was not found in db", id);
+            return null;
+        }else{
+            return TicketMapper.toTicketDto(ticketOptional.get());
         }
-        return TicketMapper.toTicketDtoIds(ticketOptional.get());
+
+    }
+
+    public CategoryDto findCategoryById(String id){
+        Optional<Category> categoryOptional = categoryRepository.findById(id);
+        if(categoryOptional.isEmpty()){
+            LOGGER.error("Category with id {} was not found in db", id);
+            return null;
+        }else{
+            return CategoryMapper.toCategoryDto(categoryOptional.get());
+        }
+    }
+    public List<CategoryDto> findCategories(){
+        List<Category> categoryList = categoryRepository.findAll();
+        return categoryList.stream().map(CategoryMapper::toCategoryDto).collect(Collectors.toList());
     }
 
     /**
@@ -68,11 +89,10 @@ public class TicketService {
      *
      * @param id The ID of the ticket to update.
      * @param updatedTicketDto The updated ticket DTO.
-     * @return The updated ticket entity.
      */
     public void updateTicketById(String id, TicketDto updatedTicketDto){
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
-        if(!ticketOptional.isPresent()){
+        if(ticketOptional.isEmpty()){
             LOGGER.error("Ticket with id {} was not found in db", id);
         }else{
             Ticket ticket = ticketOptional.get();
@@ -80,6 +100,7 @@ public class TicketService {
             ticket.setCategory(updatedTicket.getCategory());
             ticket.setPrice(updatedTicket.getPrice());
             ticket.setAvailable(updatedTicket.getAvailable());
+            ticket.setCartItems(updatedTicketDto.getCartItem());
             ticketRepository.save(ticket);
             LOGGER.debug("Ticket with id {} was successfully updated", id);
 
@@ -92,7 +113,7 @@ public class TicketService {
      */
     public void deleteTicketById(String id){
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
-        if(!ticketOptional.isPresent()){
+        if(ticketOptional.isEmpty()){
             LOGGER.error("Ticket with id {} was not found in db", id);
         }else{
             ticketRepository.delete(ticketOptional.get());

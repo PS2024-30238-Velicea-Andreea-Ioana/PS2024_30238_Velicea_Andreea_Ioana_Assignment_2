@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Edit Order</title>
+    <title>Hello</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -61,10 +61,6 @@
             background-color: #f9f9f9;
             appearance: none;
             -webkit-appearance: none;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="8"><polygon points="6,0 0,8 12,8"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 10px top 50%;
-            background-size: 12px auto;
             cursor: pointer;
         }
 
@@ -72,28 +68,21 @@
             outline: none;
             border-color: #66afe9;
         }
-
     </style>
 </head>
 <body>
 <div class="container">
-    <h2>Edit Order</h2>
-    <form th:action="@{/order/edit/ ${orderDto.id}}" method="post" th:object="${orderDto}">
-        <input type="hidden" id="id" name="id" th:value="${orderDto.id}"/>
-        <label for="user">User:</label>
-        <select id="user" name="user">
-            <option th:each="user : ${users}"
-                    th:value="${user.id}"
-                    th:text="${user.firstName}"></option>
-        </select><br>
-        <label for="tickets">Tickets:</label>
-        <select id="tickets" name="tickets" multiple>
-            <option th:each="ticket : ${tickets}"
-                    th:value="${ticket.id}"
-                    th:text="${ticket.category.tip + ' - Available: ' + ticket.available}">
+    <h2>Welcome to Untold</h2>
+    <form action="/redirect" method="post">
+        <label for="userId">Select User:</label>
+        <select id="userId" name="userId">
+            <option th:each="user : ${users}" th:value="${user.id}">
+                <!-- Display the username as an option -->
+                <span th:text="${user.id}"></span>
+                <span th:text="${user.firstName}"></span>
             </option>
-        </select><br>
-        <input type="submit" value="Update"/>
+        </select><br/>
+        <input type="submit" value="Continue"/>
     </form>
 </div>
 </body>

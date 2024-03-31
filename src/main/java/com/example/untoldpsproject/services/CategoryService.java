@@ -1,19 +1,19 @@
 package com.example.untoldpsproject.services;
 
 import com.example.untoldpsproject.dtos.CategoryDto;
-import com.example.untoldpsproject.dtos.CategoryDtoIds;
+import com.example.untoldpsproject.dtos.TicketDto;
 import com.example.untoldpsproject.entities.Category;
+import com.example.untoldpsproject.entities.Ticket;
 import com.example.untoldpsproject.mappers.CategoryMapper;
-import com.example.untoldpsproject.mappers.UserMapper;
+import com.example.untoldpsproject.mappers.TicketMapper;
 import com.example.untoldpsproject.repositories.CategoryRepository;
+import com.example.untoldpsproject.repositories.TicketRepository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class CategoryService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CategoryService.class);
     private final CategoryRepository categoryRepository;
-
+    private final TicketRepository ticketRepository;
     /**
      * Inserts a new category into the database.
      * @param categoryDto The user DTO containing user information.
@@ -44,31 +44,40 @@ public class CategoryService {
      *
      * @return A list of category DTOs containing category information.
      */
-    public List<CategoryDtoIds> findCategories(){
+    public List<CategoryDto> findCategories(){
         List<Category> categoryList = categoryRepository.findAll();
-        return categoryList.stream().map(CategoryMapper::toCategoryDtoIds).collect(Collectors.toList());
+        return categoryList.stream().map(CategoryMapper::toCategoryDto).collect(Collectors.toList());
     }
     /**
      * Retrieves a category by ID from the database.
      * @param id The ID of the category to retrieve.
      * @return The category DTO containing category information, or null if not found.
      */
-    public Category findCategoryById(String id){
+    public CategoryDto findCategoryById(String id){
         Optional<Category> categoryOptional = categoryRepository.findById(id);
-        if(!categoryOptional.isPresent()){
+        if(categoryOptional.isEmpty()){
             LOGGER.error("Category with id {} was not found in db", id);
+            return null;
+        }else{
+            return CategoryMapper.toCategoryDto(categoryOptional.get());
         }
-        return categoryOptional.get();
+
+    }
+    public List<TicketDto> findAllWithCategory(String categoryId){
+        Category category = categoryRepository.findById(categoryId).get();
+        return ticketRepository.findAllByCategory(category).stream()
+                .map(TicketMapper::toTicketDto)
+                .collect(Collectors.toList());
     }
     /**
      * Updates a category by ID in the database.
-     * @param id The ID of the category to update.
+     *
+     * @param id                 The ID of the category to update.
      * @param updatedCategoryDto The updated category DTO containing new user information.
-     * @return The updated category entity.
      */
-    public Category updateCategoryById(String id, CategoryDto updatedCategoryDto){
+    public void updateCategoryById(String id, CategoryDto updatedCategoryDto){
         Optional<Category> categoryOptional = categoryRepository.findById(id);
-        if(!categoryOptional.isPresent()){
+        if(categoryOptional.isEmpty()){
             LOGGER.error("Category with id {} was not found in db", id);
         }else{
             Category category = categoryOptional.get();
@@ -80,7 +89,7 @@ public class CategoryService {
             categoryRepository.save(category);
             LOGGER.debug("Category with id {} was successfully updated", id);
         }
-        return categoryOptional.get();
+
     }
 
     /**
@@ -89,7 +98,7 @@ public class CategoryService {
      */
     public void deleteCategoryById(String id){
         Optional<Category> categoryOptional = categoryRepository.findById(id);
-        if(!categoryOptional.isPresent()){
+        if(categoryOptional.isEmpty()){
             LOGGER.error("Category with id {} was not found in db", id);
         }else{
             categoryRepository.delete(categoryOptional.get());

@@ -23,7 +23,7 @@ public class Category {
     @Column(name = "tip")
     private String tip;
 
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category",cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
     private List<Ticket> tickets;
 
     @Column(name = "startDate")

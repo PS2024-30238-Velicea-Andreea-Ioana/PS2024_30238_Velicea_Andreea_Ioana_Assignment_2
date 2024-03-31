@@ -1,23 +1,9 @@
 package com.example.untoldpsproject.mappers;
 
 import com.example.untoldpsproject.dtos.UserDto;
-import com.example.untoldpsproject.dtos.UserDtoIds;
-import com.example.untoldpsproject.entities.Order;
 import com.example.untoldpsproject.entities.User;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
 public class UserMapper {
-    public static UserDtoIds toUserDtoIds(User user){
-        return UserDtoIds.builder().id(user.getId())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .email(user.getEmail())
-                .password(user.getPassword())
-                .orders(user.getOrders().stream().map(Order::getId).collect(Collectors.toList()))
-                .build();
-    }
     public static UserDto toUserDto(User user){
         return UserDto.builder().id(user.getId())
                 .firstName(user.getFirstName())
@@ -25,6 +11,8 @@ public class UserMapper {
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .orders(user.getOrders())
+                .role(user.getRole())
+                .cart(user.getCart())
                 .build();
     }
     public static User toUser(UserDto userDto){
@@ -34,6 +22,8 @@ public class UserMapper {
                 .email(userDto.getEmail())
                 .password(userDto.getPassword())
                 .orders(userDto.getOrders())
+                .role(userDto.getRole())
+                .cart(userDto.getCart())
                 .build();
     }
 

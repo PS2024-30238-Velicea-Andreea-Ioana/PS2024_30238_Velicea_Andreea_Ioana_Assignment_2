@@ -1,5 +1,7 @@
 package com.example.untoldpsproject.dtos;
 
+import com.example.untoldpsproject.entities.CartItem;
+import com.example.untoldpsproject.entities.Role;
 import lombok.*;
 
 import java.util.List;
@@ -16,4 +18,6 @@ public class UserDtoIds {
     private String email;
     private String password;
     private List<String> orders;
+    private String role;
+    private String cart;
 }

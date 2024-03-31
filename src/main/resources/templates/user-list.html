@@ -117,6 +117,7 @@
             <th>Last Name</th>
             <th>Email</th>
             <th>Password</th>
+            <th>Role</th>
             <th>Actions</th>
         </tr>
         <tr th:each="user : ${users}">
@@ -128,6 +129,7 @@
                 <span class="password" th:text="${user.password}">********</span>
                 <span class="show-password" onclick="togglePassword(this)">👁️</span>
             </td>
+            <td th:text="${user.role}"></td>
             <td class="actions">
                 <a th:href="@{/user/edit/{id}(id=${user.id})}">Edit</a>
                 <a th:href="@{/user/delete/{id}(id=${user.id})}" class="delete">Delete</a>
@@ -136,7 +138,7 @@
     </table>
     </form>
     <a href="/user/add" class="add-user-link">Add User</a>
-    <a href="/index" class="back-button">Back to Home Page</a>
+    <a href="/administrator" class="back-button">Back to Admin Page</a>
 
 </div>
 <script>

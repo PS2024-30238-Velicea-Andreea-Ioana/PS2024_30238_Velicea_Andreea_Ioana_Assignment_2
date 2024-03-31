@@ -2,11 +2,12 @@ package com.example.untoldpsproject.controllers;
 
 import com.example.untoldpsproject.dtos.OrderDto;
 import com.example.untoldpsproject.dtos.OrderDtoIds;
+import com.example.untoldpsproject.dtos.TicketDto;
+import com.example.untoldpsproject.dtos.UserDto;
 import com.example.untoldpsproject.entities.Ticket;
-import com.example.untoldpsproject.entities.User;
+import com.example.untoldpsproject.mappers.TicketMapper;
+import com.example.untoldpsproject.mappers.UserMapper;
 import com.example.untoldpsproject.services.OrderService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,8 +27,6 @@ import java.util.List;
 @RequestMapping(value = "/order")
 public class OrderController {
     private final OrderService orderService;
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @GetMapping("/list")
     public ModelAndView ordersList() {
@@ -40,26 +39,23 @@ public class OrderController {
     public ModelAndView addOrderForm() {
         ModelAndView mav = new ModelAndView("order-add");
         mav.addObject("orderDto", new OrderDto());
-        List<User> users = entityManager.createQuery("SELECT u FROM User u", User.class).getResultList();
+        List<UserDto> users = orderService.findUsers();
         mav.addObject("users", users);
-        List<Ticket> tickets = entityManager.createQuery("SELECT t FROM Ticket t", Ticket.class).getResultList();
+        List<TicketDto> tickets = orderService.findTickets();
         mav.addObject("tickets", tickets);
         return mav;
     }
 
     @PostMapping("/add")
     public ModelAndView addOrder(@ModelAttribute("orderDto") OrderDtoIds orderDto) {
-        String userId = orderDto.getUser();
-        List<String> ticketIds = orderDto.getTickets();
-        User user = entityManager.find(User.class, userId);
-
+        UserDto user = orderService.findUserById(orderDto.getUser());
         List<Ticket> tickets = new ArrayList<>();
-        for(String ticketId : ticketIds ){
-            Ticket ticket = entityManager.find(Ticket.class, ticketId);
-            tickets.add(ticket);
+        for(String ticketId : orderDto.getTickets() ){
+            TicketDto ticket = orderService.findTicketById(ticketId);
+            tickets.add(TicketMapper.toTicket(ticket));
         }
         OrderDto order = new OrderDto();
-        order.setUser(user);
+        order.setUser(UserMapper.toUser(user));
         order.setTickets(tickets);
         order.setTotalPrice(orderService.calculateTotalPrice(order.getTickets()));
         orderService.insert(order);
@@ -71,9 +67,9 @@ public class OrderController {
         ModelAndView mav = new ModelAndView("order-edit");
         OrderDto orderDto = orderService.findOrderById(orderId);
         mav.addObject("orderDto", orderDto);
-        List<User> users = entityManager.createQuery("SELECT u FROM User u", User.class).getResultList();
+        List<UserDto> users = orderService.findUsers();
         mav.addObject("users", users);
-        List<Ticket> tickets = entityManager.createQuery("SELECT t FROM Ticket t", Ticket.class).getResultList();
+        List<TicketDto> tickets = orderService.findTickets();
         mav.addObject("tickets", tickets);
         return mav;
     }
@@ -89,6 +85,5 @@ public class OrderController {
         orderService.deleteOrderById(id);
         return new ModelAndView("redirect:/order/list");
     }
-
 
 }

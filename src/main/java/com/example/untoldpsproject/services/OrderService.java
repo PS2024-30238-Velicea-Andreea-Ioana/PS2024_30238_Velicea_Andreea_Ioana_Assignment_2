@@ -2,12 +2,18 @@ package com.example.untoldpsproject.services;
 
 import com.example.untoldpsproject.dtos.OrderDto;
 import com.example.untoldpsproject.dtos.OrderDtoIds;
+import com.example.untoldpsproject.dtos.TicketDto;
+import com.example.untoldpsproject.dtos.UserDto;
 import com.example.untoldpsproject.entities.Order;
 import com.example.untoldpsproject.entities.Ticket;
+import com.example.untoldpsproject.entities.User;
 import com.example.untoldpsproject.mappers.OrderMapper;
+import com.example.untoldpsproject.mappers.TicketMapper;
+import com.example.untoldpsproject.mappers.UserMapper;
 import com.example.untoldpsproject.repositories.OrderRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import com.example.untoldpsproject.repositories.TicketRepository;
+import com.example.untoldpsproject.repositories.UserRepository;
+import com.example.untoldpsproject.validators.OrderValidator;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,8 +21,6 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,8 +34,8 @@ import java.util.stream.Collectors;
 public class OrderService {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderService.class);
     private final OrderRepository orderRepository;
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final UserRepository userRepository;
+    private final TicketRepository ticketRepository;
 
 
     /**
@@ -44,23 +48,11 @@ public class OrderService {
     public String insert(OrderDto orderDto){
         Order order = OrderMapper.toOrder(orderDto);
         order.setTotalPrice(calculateTotalPrice(order.getTickets()));
-        if (order.getTickets() == null) {
-            order.setTickets(new ArrayList<>());
-        }
         order = orderRepository.save(order);
         LOGGER.debug("Order with id {} was inserted in db",order.getId());
         for (Ticket ticket : order.getTickets()) {
-            String updateQuery = "UPDATE Ticket t SET t.available = t.available - 1 WHERE t.id = :ticketId";
-            entityManager.createQuery(updateQuery)
-                    .setParameter("ticketId", ticket.getId())
-                    .executeUpdate();
-        }
-        for (Ticket ticket : order.getTickets()) {
-            String updateQuery = "UPDATE Ticket t SET t.quantity = :quantity WHERE t.id = :ticketId";
-            entityManager.createQuery(updateQuery)
-                    .setParameter("quantity", ticket.getQuantity())
-                    .setParameter("ticketId", ticket.getId())
-                    .executeUpdate();
+            if(ticketRepository.findById(ticket.getId()).isPresent())
+                ticketRepository.findById(ticket.getId()).get().setAvailable(ticket.getAvailable()-1);
         }
         return order.getId();
     }
@@ -83,10 +75,41 @@ public class OrderService {
      */
     public OrderDto findOrderById(String id){
         Optional<Order> orderOptional = orderRepository.findById(id);
-        if(!orderOptional.isPresent()){
+        if(orderOptional.isEmpty()){
             LOGGER.error("Order with id {} was not found in db", id);
+            return null;
+        }else{
+            return OrderMapper.toOrderDto(orderOptional.get());
         }
-        return OrderMapper.toOrderDto(orderOptional.get());
+
+    }
+    public List<UserDto> findUsers(){
+        List<User> userList = userRepository.findAll();
+        return userList.stream().map(UserMapper::toUserDto).collect(Collectors.toList());
+    }
+    public UserDto findUserById(String id){
+        Optional<User> userOptional = userRepository.findById(id);
+        if(userOptional.isEmpty()){
+            LOGGER.error(" in service Person with id {"+id+"} was not found in db", id);
+            return null;
+        }else{
+            return UserMapper.toUserDto(userOptional.get());
+        }
+
+    }
+    public TicketDto findTicketById(String id){
+        Optional<Ticket> ticketOptional = ticketRepository.findById(id);
+        if(ticketOptional.isEmpty()){
+            LOGGER.error("Ticket with id {} was not found in db", id);
+            return null;
+        }else{
+            return TicketMapper.toTicketDto(ticketOptional.get());
+        }
+
+    }
+    public List<TicketDto> findTickets(){
+        List<Ticket> ticketList = ticketRepository.findAll();
+        return ticketList.stream().map(TicketMapper::toTicketDto).collect(Collectors.toList());
     }
 
     /**
@@ -94,11 +117,10 @@ public class OrderService {
      *
      * @param id The ID of the order to update.
      * @param updatedOrderDto The updated order DTO.
-     * @return The updated order entity.
      */
-    public Order updateOrderById(String id, OrderDto updatedOrderDto){
+    public void updateOrderById(String id, OrderDto updatedOrderDto){
         Optional<Order> orderOptional = orderRepository.findById(id);
-        if(!orderOptional.isPresent()){
+        if(orderOptional.isEmpty()){
             LOGGER.error("Order with id {} was not found in db", id);
         }else{
             Order order = orderOptional.get();
@@ -108,9 +130,7 @@ public class OrderService {
             order.setTotalPrice(calculateTotalPrice(order.getTickets()));
             orderRepository.save(order);
             LOGGER.debug("Order with id {} was successfully updated", id);
-
         }
-        return orderOptional.get();
     }
 
     /**
@@ -121,23 +141,12 @@ public class OrderService {
     @Transactional
     public void deleteOrderById(String id){
         Optional<Order> optionalOrder = orderRepository.findById(id);
-        if(!optionalOrder.isPresent()){
+        if(optionalOrder.isEmpty()){
             LOGGER.error("Order with id {} was not found in db", id);
         }else{
             for (Ticket ticket :  optionalOrder.get().getTickets()) {
-                System.out.println(ticket.getQuantity());
-                String updateQuery = "UPDATE Ticket t SET t.available = t.available + 1 WHERE t.id = :ticketId";
-                entityManager.createQuery(updateQuery)
-                        .setParameter("ticketId", ticket.getId())
-                        .executeUpdate();
-            }
-            for (Ticket ticket :  optionalOrder.get().getTickets()) {
-                System.out.println(ticket.getQuantity());
-                String updateQuery = "UPDATE Ticket t SET t.quantity = t.quantity-:quantity WHERE t.id = :ticketId";
-                entityManager.createQuery(updateQuery)
-                        .setParameter("quantity", ticket.getQuantity())
-                        .setParameter("ticketId", ticket.getId())
-                        .executeUpdate();
+                if(ticketRepository.findById(ticket.getId()).isPresent())
+                    ticketRepository.findById(ticket.getId()).get().setAvailable(ticket.getAvailable() + 1);
             }
             orderRepository.delete(optionalOrder.get());
         }
@@ -150,4 +159,6 @@ public class OrderService {
             }
         return totalPrice1;
     }
+
+
 }

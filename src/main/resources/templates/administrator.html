@@ -13,7 +13,7 @@
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
-            background-image: url('/untold.jpg');
+            background-image: url('/background_image.jpg');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -31,8 +31,7 @@
         .user-list-link,
         .category-list-link,
         .ticket-list-link,
-        .order-list-link,
-        .user-customer-link{
+        .order-list-link{
             display: inline-block;
             padding: 10px 20px;
             background-color: #8917F5;
@@ -45,11 +44,24 @@
         .user-list-link:hover,
         .category-list-link:hover,
         .ticket-list-link:hover,
-        .order-list-link:hover,
-        .user-customer-link:hover{
+        .order-list-link:hover{
             background-color: #2B0251;
         }
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color:#8917F5; /* Light green color */
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
 
+        .back-button:hover {
+            background-color:  #2B0251; /* Darker green color on hover */
+        }
     </style>
 </head>
 <body>
@@ -59,7 +71,7 @@
     <a href="/category/list" class="category-list-link">Go to Category List</a>
     <a href="/ticket/list" class="ticket-list-link">Go to Ticket List</a>
     <a href="/order/list" class="order-list-link">Go to Order List</a>
-    <a href="/user/customer/tickets" class="user-customer-link">Go to Customer Interface</a>
+    <a href="/home" class="back-button">Back to Home Page</a>
 </div>
 </body>
 </html>

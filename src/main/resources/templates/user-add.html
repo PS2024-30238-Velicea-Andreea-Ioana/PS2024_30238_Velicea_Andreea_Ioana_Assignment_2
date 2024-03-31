@@ -69,6 +69,22 @@
     .back-button:hover {
       background-color: #32CD32; /* Darker green color on hover */
     }
+    form select {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background-color: #f9f9f9;
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+
+    form select:focus {
+      outline: none;
+      border-color: #66afe9;
+    }
   </style>
 </head>
 <body>
@@ -83,6 +99,11 @@
     <input type="email" id="email" name="email" th:field="*{email}"/><br/>
     <label for="password">Password:</label>
     <input type="password" id="password" name="password" th:field="*{password}"/><br/>
+    <label for="role">Role:</label>
+    <select id="role" name="role">
+      <option th:each="role : ${T(com.example.untoldpsproject.entities.Role).values()}"
+              th:value="${role}" th:text="${role}"></option>
+    </select><br/>
     <input type="submit" value="Add"/>
   </form>
   <a href="/user/list" class="back-button">Back to User List</a>

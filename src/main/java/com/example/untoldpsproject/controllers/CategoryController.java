@@ -1,8 +1,6 @@
 package com.example.untoldpsproject.controllers;
 
 import com.example.untoldpsproject.dtos.CategoryDto;
-import com.example.untoldpsproject.dtos.CategoryDtoIds;
-import com.example.untoldpsproject.entities.Category;
 import com.example.untoldpsproject.services.CategoryService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +20,7 @@ public class CategoryController {
     @GetMapping("/list")
     public ModelAndView categoryList() {
         ModelAndView mav = new ModelAndView("category-list");
-        List<CategoryDtoIds> categories = categoryService.findCategories();
+        List<CategoryDto> categories = categoryService.findCategories();
         mav.addObject("categories", categories);
         return mav;
     }
@@ -40,8 +38,8 @@ public class CategoryController {
     @GetMapping("/edit/{id}")
     public ModelAndView editCategoryForm(@PathVariable("id") String categoryId) {
         ModelAndView mav = new ModelAndView("category-edit");
-        Category category = categoryService.findCategoryById(categoryId);
-        mav.addObject("categoryDto", category);
+        CategoryDto categoryDto = categoryService.findCategoryById(categoryId);
+        mav.addObject("categoryDto", categoryDto);
         return mav;
     }
     @PostMapping("/edit/{id}")

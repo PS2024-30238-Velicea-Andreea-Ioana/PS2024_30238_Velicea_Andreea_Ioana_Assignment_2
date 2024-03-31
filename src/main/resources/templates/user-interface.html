@@ -9,6 +9,7 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
+            align-items: center;
         }
 
         .ticket {
@@ -50,12 +51,12 @@
             font-size: 16px;
         }
 
-        .cart-button {
+        .place-order-button {
             position: fixed;
             top: 20px;
             right: 20px;
             padding: 10px 20px;
-            background-color: #4b0082;
+            background-color: #4b0082; /* Dark purple */
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -64,53 +65,107 @@
             z-index: 999;
         }
 
-        .cart-button:hover {
-            background-color: #6a5acd;
+        .place-order-button:hover {
+            background-color: #6a5acd; /* Darker purple on hover */
         }
-
-        .add-to-cart-button {
-            background-color: #fff;
-            color: #4b0082;
-            border: 2px solid #4b0082;
-            border-radius: 5px;
-            padding: 8px 16px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        .add-to-cart-button:hover {
-            background-color: #4b0082;
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color:#8917F5; /* Light green color */
             color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color:  #2B0251; /* Darker green color on hover */
+        }
+        .header {
+            color: #2B0251; /* White text color */
+            padding: 20px; /* Add padding */
+            text-align: center; /* Center align text */
+        }
+
+        /* Style the title */
+        .title {
+            font-size: 36px; /* Larger font size */
+            margin-bottom: 10px; /* Add some space below the title */
+        }
+        .cart-button {
+            position:absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color:#8917F5; /* Light green color */
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .cart-button:hover {
+            background-color:  #2B0251; /* Darker green color on hover */
+        }
+        .ticket-availability {
+            /* Style for availability text */
+            margin-top: 10px; /* Adjust the margin as needed */
+            font-size: 14px; /* Adjust font size as needed */
+            color: #666; /* Adjust text color as needed */
+        }
+        .add-to-cart {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #6a5acd; /* Darker purple */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            text-decoration: none; /* Remove underline */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-to-cart:hover {
+            background-color: #8a2be2; /* Lighter purple on hover */
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-<h1>My Tickets</h1>
-<button class="cart-button"> <a href="/category/add"> 🛒 Cart </a></button>
-<form action="/user/customer/tickets" method="get">
-    <div class="ticket-container">
-        <div th:each="ticket : ${tickets}" class="ticket">
-            <div class="ticket-header">
-                <h2 class="ticket-type" th:text="${ticket.category.tip}"></h2>
-                <p class="ticket-number" th:text="'Ticket No: ' + ${ticket.id}"></p>
-            </div>
-            <div class="ticket-content">
-                <p class="ticket-price" th:text="'Price: ' + ${ticket.price} + ' RON'"></p>
-                <p class="ticket-date" th:text="'Start Date: ' + ${ticket.category.startDate}"></p>
-                <p class="ticket-date" th:text="'Finish Date: ' + ${ticket.category.finishDate}"></p>
-                <button class="add-to-cart-button" onclick="addToCart('${ticket.id}')">Add to Cart</button>
+
+    <div class="header">
+        <h1 class="title">Welcome to Untold</h1>
+        <p class="details">Explore the world of Untold and discover amazing stories.</p>
+    </div>
+    <form th:action="@{/cart/visualizeCart/{cartId} (cartId=${cartId})}" method="get">
+        <button class="cart-button" >Cart <i class="fa fa-shopping-cart" style="font-size:36px"></i>
+        </button>
+    </form>
+    <form th:action="@{/cart/customer/seetickets/{userId} (userId=${userId})}"  method="get">
+        <div class="ticket-container">
+            <div th:each="ticket : ${tickets}" class="ticket">
+<!--                <input type="checkbox" name="selectedTickets" th:value="${ticket.id}">-->
+                <div class="ticket-header">
+                    <h2 class="ticket-type" th:text="${ticket.category.tip}"></h2>
+                    <p class="ticket-number" th:text="'Ticket No: ' + ${ticket.id}"></p>
+                </div>
+                <div class="ticket-content">
+                    <p class="ticket-price" th:text="'Price: ' + ${ticket.price} + ' RON'"></p>
+                    <p class="ticket-date" th:text="'Start Date: ' + ${ticket.category.startDate}"></p>
+                    <p class="ticket-date" th:text="'Finish Date: ' + ${ticket.category.finishDate}"></p>
+                    <p class="ticket-availability" th:text="'Available: ' + ${ticket.available}"></p>
+                    <button class="add-to-cart">
+                        <a th:href="@{/cart/customer/tickets/{userId}/addToCart/{ticketId}/{cartId} (userId=${userId}, ticketId=${ticket.id}, cartId=${cartId})}" class="add-to-cart">Add to cart</a>
+                    </button>
+
+                </div>
             </div>
         </div>
-    </div>
-</form>
-<script>
-    function addToCart(ticketId) {
-        // You can implement your logic here to add the ticket to the cart
-        // For example, you can send an AJAX request to your server to add the ticket to the cart
-        alert('Ticket with ID ' + ticketId + ' added to cart!');
-    }
-</script>
-</body>
+    </form>
+    <a href="/home" class="back-button">Back to Home Page</a>
 
+</body>
 </html>

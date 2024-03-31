@@ -1,10 +1,9 @@
 package com.example.untoldpsproject.controllers;
 
 import com.example.untoldpsproject.dtos.*;
-import com.example.untoldpsproject.entities.Category;
+import com.example.untoldpsproject.mappers.CategoryMapper;
 import com.example.untoldpsproject.services.TicketService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import com.example.untoldpsproject.services.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,9 +22,7 @@ import java.util.List;
 @RequestMapping(value = "/ticket")
 public class TicketController {
     private final TicketService ticketService;
-
-    @PersistenceContext
-    private EntityManager entityManager;
+    private final UserService userService;
     @GetMapping("/list")
     public ModelAndView ticketsList() {
         ModelAndView mav = new ModelAndView("ticket-list");
@@ -37,16 +34,15 @@ public class TicketController {
     public ModelAndView addTicketForm() {
         ModelAndView mav = new ModelAndView("ticket-add");
         mav.addObject("ticketDto", new TicketDto());
-        List<Category> categories = entityManager.createQuery("SELECT c FROM Category c", Category.class).getResultList();
+        List<CategoryDto> categories = ticketService.findCategories();
         mav.addObject("categories", categories);
         return mav;
     }
     @PostMapping("/add")
     public ModelAndView addTicket(@ModelAttribute("ticketDto") TicketDtoIds ticketDtoIds) {
-        String categoryId = ticketDtoIds.getCategory();
-        Category category = entityManager.find(Category.class, categoryId);
+        CategoryDto category = ticketService.findCategoryById(ticketDtoIds.getCategory());
         TicketDto ticket = new TicketDto();
-        ticket.setCategory(category);
+        ticket.setCategory(CategoryMapper.toCategory(category));
         ticket.setAvailable(ticketDtoIds.getAvailable());
         ticket.setPrice(ticketDtoIds.getPrice());
         ticketService.insert(ticket);
@@ -55,9 +51,9 @@ public class TicketController {
     @GetMapping("/edit/{id}")
     public ModelAndView editTicketForm(@PathVariable("id") String ticketId) {
         ModelAndView mav = new ModelAndView("ticket-edit");
-        TicketDtoIds ticketDto = ticketService.findTicketById(ticketId);
+        TicketDto ticketDto = ticketService.findTicketById(ticketId);
         mav.addObject("ticketDto", ticketDto);
-        List<Category> categories = entityManager.createQuery("SELECT c FROM Category c", Category.class).getResultList();
+        List<CategoryDto> categories = ticketService.findCategories();
         mav.addObject("categories", categories);
         return mav;
     }
