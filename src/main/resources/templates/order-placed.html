@@ -86,7 +86,7 @@
 <form th:action="@{cart/visualizeOrder/{orderId} (orderId = ${orderId})}" method="get">
     <div class="ticket-container">
         <div class="header">
-            <h3 class="heading">Your Order</h3>
+            <div class="heading" th:text="'Your Order, '+${user.firstName}"></div>
         </div>
         <ul th:each="ticket: ${tickets}">
             <div class="ticket">

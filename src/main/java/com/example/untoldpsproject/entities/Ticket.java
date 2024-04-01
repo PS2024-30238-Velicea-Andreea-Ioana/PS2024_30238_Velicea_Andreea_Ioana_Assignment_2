@@ -41,4 +41,8 @@ public class Ticket {
     @OneToMany(mappedBy = "ticket", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
     private List<CartItem> cartItems;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "sale_id", referencedColumnName = "id")
+    private Sale sale;
+
 }

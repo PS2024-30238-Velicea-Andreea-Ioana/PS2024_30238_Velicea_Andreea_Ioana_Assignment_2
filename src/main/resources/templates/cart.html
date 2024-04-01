@@ -102,7 +102,7 @@
     <div class="cart-container">
         <div class="header">
             <h3 class="heading">Shopping Cart</h3>
-            <a th:href="@{/cart/place-order/{userId}/{cartId}(userId = ${userId},cartId = ${cart.id})}" class="action-button">Place Order</a>
+            <a th:href="@{/cart/place-order/{userId}/{cartId}(userId = ${userId},cartId = ${cart.id})}" onsubmit="return validateForm()" class="action-button">Place Order</a>
         </div>
         <ul th:each="cartItem: ${cartItems}">
             <div class="cart-item">

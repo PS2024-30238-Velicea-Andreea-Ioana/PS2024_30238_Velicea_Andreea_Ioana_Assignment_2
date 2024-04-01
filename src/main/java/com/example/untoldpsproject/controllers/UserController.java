@@ -20,8 +20,14 @@ import java.util.List;
 @Getter
 @RequestMapping(value = "/user")
 public class UserController {
+
     private final UserService userService;
 
+    /**
+     * Retrieves a list of users and displays them.
+     *
+     * @return A ModelAndView object containing the view name and the list of users.
+     */
     @GetMapping("/list")
     public ModelAndView userList() {
         ModelAndView mav = new ModelAndView("user-list");
@@ -29,6 +35,12 @@ public class UserController {
         mav.addObject("users", users);
         return mav;
     }
+
+    /**
+     * Displays the form for adding a new user.
+     *
+     * @return A ModelAndView object containing the view name and an empty UserDto object.
+     */
     @GetMapping("/add")
     public ModelAndView addUserForm() {
         ModelAndView mav = new ModelAndView("user-add");
@@ -36,12 +48,24 @@ public class UserController {
         return mav;
     }
 
+    /**
+     * Adds a new user.
+     *
+     * @param userDto The UserDto object representing the user to be added.
+     * @return A redirection to the user list view.
+     */
     @PostMapping("/add")
     public ModelAndView addUser(@ModelAttribute("userDto") UserDto userDto) {
         userService.insert(userDto);
         return new ModelAndView("redirect:/user/list");
     }
 
+    /**
+     * Displays the form for editing an existing user.
+     *
+     * @param userId The ID of the user to be edited.
+     * @return A ModelAndView object containing the view name and the UserDto object to be edited.
+     */
     @GetMapping("/edit/{id}")
     public ModelAndView editUserForm(@PathVariable("id") String userId) {
         ModelAndView mav = new ModelAndView("user-edit");
@@ -50,17 +74,27 @@ public class UserController {
         return mav;
     }
 
+    /**
+     * Updates an existing user.
+     *
+     * @param userDto The UserDto object representing the updated user information.
+     * @return A redirection to the user list view.
+     */
     @PostMapping ("/edit/{id}")
     public ModelAndView updateUser(@ModelAttribute("userDto") UserDto userDto) {
         userService.updateUserById(userDto.getId(), userDto);
         return new ModelAndView("redirect:/user/list");
     }
 
+    /**
+     * Deletes a user.
+     *
+     * @param id The ID of the user to be deleted.
+     * @return A redirection to the user list view.
+     */
     @GetMapping("/delete/{id}")
     public ModelAndView deleteUser(@PathVariable("id") String id) {
         userService.deleteUserById(id);
         return new ModelAndView("redirect:/user/list");
     }
-
-
 }
