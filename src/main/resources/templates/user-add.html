@@ -59,7 +59,7 @@
       top: 20px;
       left: 20px;
       padding: 10px 20px;
-      background-color: #D5F5E3; /* Light green color */
+      background-color: #D5F5E3;
       color: #000;
       text-decoration: none;
       border-radius: 5px;
@@ -67,7 +67,7 @@
     }
 
     .back-button:hover {
-      background-color: #32CD32; /* Darker green color on hover */
+      background-color: #32CD32;
     }
     form select {
       width: calc(100% - 20px);
@@ -119,8 +119,18 @@
       alert('Password must be between 8 and 15 characters');
       return false;
     }
-    if (!/[a-zA-Z]+-?[a-zA-Z]*$/.test(firstName)) {
+    if (!firstName) {
+      alert('First Name cannot be null');
+      return false;
+    } else if (!/[a-zA-Z]+-?[a-zA-Z]*$/.test(firstName)) {
       alert('First Name must contain only letters');
+      return false;
+    }
+    if (!lastName) {
+      alert('Last Name cannot be null');
+      return false;
+    } else if (!/[a-zA-Z]+-?[a-zA-Z]*$/.test(lastName)) {
+      alert('Last Name must contain only letters');
       return false;
     }
 

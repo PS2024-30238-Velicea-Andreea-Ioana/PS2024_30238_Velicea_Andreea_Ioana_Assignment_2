@@ -94,9 +94,6 @@
     </style>
 </head>
 <body>
-<!--<button class="action-button">-->
-<!--    <a th:href="@{/user/customer/seetickets/{userId} (userId=${userId})}" class="">home</a>-->
-<!--</button>-->
 <a th:href="@{/cart/customer/seetickets/{userId} (userId=${userId})}" class="back-button">Continue Shopping</a>
 <form th:action="@{/cart/visualizeCart/{cartId} (cartId = ${cart.id})}" method="get">
     <div class="cart-container">

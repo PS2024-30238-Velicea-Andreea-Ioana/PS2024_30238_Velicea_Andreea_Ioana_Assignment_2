@@ -75,7 +75,7 @@
 <body>
 <div class="container">
 <h2>Edit User</h2>
-<form th:action="@{/user/edit/ ${userDto.id}} " method="post" th:object="${userDto}" onsubmit="validateForm()">
+<form th:action="@{/user/edit/ ${userDto.id}} " method="post" th:object="${userDto}" onsubmit="return validateForm()">
    <input type="hidden" id="id" name="id" th:value="${userDto.id}"/>
     <label for="firstName">First Name:</label>
     <input type="text" id="firstName" name="firstName" th:field="*{firstName}"/><br/>
@@ -104,8 +104,18 @@
             alert('Password must be between 8 and 15 characters');
             return false;
         }
-        if (!/[a-zA-Z]+-?[a-zA-Z]*$/.test(firstName)) {
+        if (!firstName) {
+            alert('First Name cannot be null');
+            return false;
+        } else if (!/[a-zA-Z]+-?[a-zA-Z]*$/.test(firstName)) {
             alert('First Name must contain only letters');
+            return false;
+        }
+        if (!lastName) {
+            alert('Last Name cannot be null');
+            return false;
+        } else if (!/[a-zA-Z]+-?[a-zA-Z]*$/.test(lastName)) {
+            alert('Last Name must contain only letters');
             return false;
         }
 

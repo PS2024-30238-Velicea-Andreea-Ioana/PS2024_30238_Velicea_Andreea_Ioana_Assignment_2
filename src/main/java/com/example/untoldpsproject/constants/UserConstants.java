@@ -9,4 +9,5 @@ public class UserConstants {
     public static final String USER_UPDATED = "The user is successfully updated";
     public static final String USER_NOT_INSERTED = "The user is not inserted";
     public static final String USER_NOT_UPDATED = "The user is not updated";
+    public static final String USER_NULL = "The user is null";
 }

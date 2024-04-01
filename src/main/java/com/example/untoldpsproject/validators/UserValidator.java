@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 
 public class UserValidator {
     public boolean nameValidator(String name) throws Exception {
+        if(name == null) throw new Exception(UserConstants.USER_NULL);
         Pattern pattern = Pattern.compile("[a-zA-Z]+-?[a-zA-Z]*$");
         Matcher matcher = pattern.matcher(name);
         if(matcher.find()){
