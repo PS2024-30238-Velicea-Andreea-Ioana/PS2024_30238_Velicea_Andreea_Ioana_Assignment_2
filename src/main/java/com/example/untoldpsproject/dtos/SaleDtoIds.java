@@ -1,4 +1,6 @@
 package com.example.untoldpsproject.dtos;
+
+import com.example.untoldpsproject.entities.Ticket;
 import lombok.*;
 
 import java.util.List;
@@ -8,9 +10,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CartDtoIds {
+public class SaleDtoIds {
     private String id;
-    private String user;
-    private List<String> cartItems;
-    private Double totalPrice;
+    private Double discountPercentage;
+    private List<String> tickets;
 }

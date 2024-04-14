@@ -1,5 +1,6 @@
 package com.example.untoldpsproject.dtos;
 
+import com.example.untoldpsproject.entities.Status;
 import lombok.*;
 
 import java.util.List;
@@ -14,4 +15,5 @@ public class OrderDtoIds {
     private String user;
     private List<String> tickets;
     private Double totalPrice;
+    private Status status;
 }

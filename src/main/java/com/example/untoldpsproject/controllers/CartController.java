@@ -1,14 +1,8 @@
 package com.example.untoldpsproject.controllers;
 
-import com.example.untoldpsproject.dtos.CartDto;
-import com.example.untoldpsproject.dtos.OrderDto;
-import com.example.untoldpsproject.dtos.TicketDto;
-import com.example.untoldpsproject.dtos.UserDto;
+import com.example.untoldpsproject.dtos.*;
 import com.example.untoldpsproject.entities.*;
-import com.example.untoldpsproject.mappers.CartMapper;
-import com.example.untoldpsproject.mappers.OrderMapper;
-import com.example.untoldpsproject.mappers.TicketMapper;
-import com.example.untoldpsproject.mappers.UserMapper;
+import com.example.untoldpsproject.mappers.*;
 import com.example.untoldpsproject.services.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -88,15 +82,15 @@ public class CartController {
             }
             CartItem existingCartItem = cartItemService.findCartItemByTicketIdAndCartId(id, cartId);
             if (existingCartItem == null) {
-                CartItem newCartItem = new CartItem();
-                newCartItem.setTicket(TicketMapper.toTicket(ticket));
-                newCartItem.setQuantity(1.0);
-                newCartItem.setCart(cartDto);
-                cartItemService.insert(newCartItem);
+                CartItemDto newCartItemDto = new CartItemDto();
+                newCartItemDto.setTicket(TicketMapper.toTicket(ticket));
+                newCartItemDto.setQuantity(1.0);
+                newCartItemDto.setCart(cartDto);
+                cartItemService.insert(newCartItemDto);
             } else {
                 if (ticket.getAvailable() > existingCartItem.getQuantity()) {
                     existingCartItem.setQuantity(existingCartItem.getQuantity() + 1.0);
-                    cartItemService.update(existingCartItem);
+                    cartItemService.update(CartItemMapper.toCartItemDto(existingCartItem));
                 }
             }
             cartService.updateTotalPrice(cartId);
@@ -146,14 +140,8 @@ public class CartController {
      */
     @GetMapping("/removeItem/{cartItemId}")
     public ModelAndView removeItemFromCart(@PathVariable("cartItemId") String cartItemId) {
-        CartItem cartItem = cartItemService.findCartItemById(cartItemId);
-        if (cartItem != null) {
-            String cartId = cartItem.getCart().getId();
-            cartItemService.deleteCartItemById(cartItemId);
-            cartService.updateTotalPrice(cartId);
+            String cartId = cartService.removeCartItem(cartItemId);
             return new ModelAndView("redirect:/cart/visualizeCart/" + cartId);
-        }
-        return null;
     }
 
     /**
@@ -176,7 +164,7 @@ public class CartController {
                         quantity--;
                     }
                     cartItem.setQuantity(0.0);
-                    cartItemService.update(cartItem);
+                    cartItemService.update(CartItemMapper.toCartItemDto(cartItem));
                     cartItemService.deleteCartItemById(cartItem.getId());
                 }
             }
@@ -188,7 +176,13 @@ public class CartController {
             newOrder.setTotalPrice(totalPrice);
             newOrder.setUser(UserMapper.toUser(user));
             newOrder.setId(orderService.insert(OrderMapper.toOrderDto(newOrder)));
-            return new ModelAndView("redirect:/cart/visualizeOrder/" + newOrder.getId());
+            ModelAndView mav = new ModelAndView();
+            mav.addObject("userId", userId);
+            mav.addObject("cartId", cartId);
+            mav.addObject("orderId", newOrder.getId());
+            mav.setViewName("redirect:/payment/select-method/" + newOrder.getId());
+            return mav;
+//            return new ModelAndView("redirect:/payment/add/" + newOrder.getId());
         } else {
             return new ModelAndView("redirect:/cart/visualizeCart/" + cartId);
         }

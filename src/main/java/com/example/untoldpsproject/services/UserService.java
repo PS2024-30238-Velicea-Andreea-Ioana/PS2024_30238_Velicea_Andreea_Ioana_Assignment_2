@@ -3,6 +3,7 @@ package com.example.untoldpsproject.services;
 import com.example.untoldpsproject.constants.UserConstants;
 import com.example.untoldpsproject.dtos.TicketDto;
 import com.example.untoldpsproject.dtos.UserDto;
+import com.example.untoldpsproject.entities.Order;
 import com.example.untoldpsproject.entities.Ticket;
 import com.example.untoldpsproject.entities.User;
 import com.example.untoldpsproject.mappers.TicketMapper;
@@ -47,8 +48,8 @@ public class UserService {
             LOGGER.debug(UserConstants.USER_INSERTED);
             return UserConstants.USER_INSERTED;
         }catch (Exception e){
-            LOGGER.error(UserConstants.USER_NOT_INSERTED + e.getMessage());
-            return UserConstants.USER_NOT_INSERTED;
+            LOGGER.error(UserConstants.USER_NOT_INSERTED + ": "+ e.getMessage());
+            return UserConstants.USER_NOT_INSERTED + ": " +e.getMessage();
         }
     }
 
@@ -68,7 +69,7 @@ public class UserService {
     public UserDto findUserById(String id){
         Optional<User> userOptional = userRepository.findById(id);
         if(userOptional.isEmpty()){
-            LOGGER.error(" in service Person with id {"+id+"} was not found in db", id);
+            LOGGER.error(UserConstants.USER_NOT_FOUND);
             return null;
         }else{
             return UserMapper.toUserDto(userOptional.get());
@@ -85,10 +86,11 @@ public class UserService {
      * @param id             The ID of the user to update.
      * @param updatedUserDto The updated user DTO containing new user information.
      */
-    public void updateUserById(String id, UserDto updatedUserDto) {
+    public String updateUserById(String id, UserDto updatedUserDto) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
-            LOGGER.error(" in update User with id { " + id + " } was not found in the database", id);
+            LOGGER.error(UserConstants.USER_NOT_FOUND);
+            return UserConstants.USER_NOT_FOUND;
         } else {
             User user = userOptional.get();
             try {
@@ -102,22 +104,35 @@ public class UserService {
                 user.setCart(updatedUser.getCart());
                 userRepository.save(user);
                 LOGGER.debug(UserConstants.USER_UPDATED);
+                return UserConstants.USER_UPDATED;
             } catch (Exception e) {
                 LOGGER.error(UserConstants.USER_NOT_UPDATED);
+                return  UserConstants.USER_NOT_UPDATED + ": " + e.getMessage();
             }
         }
     }
-
     /**
      * Deletes a user by ID from the database.
      * @param id The ID of the user to delete.
      */
-    public void deleteUserById(String id){
+    public String deleteUserById(String id){
         Optional<User> userOptional = userRepository.findById(id);
         if(userOptional.isEmpty()){
-            LOGGER.error("Person with id {} was not found in db", id);
+            LOGGER.error(UserConstants.USER_NOT_FOUND);
+            return UserConstants.USER_NOT_FOUND;
         }else{
+            if(!userOptional.get().getOrders().isEmpty()) {
+                for (Order order : userOptional.get().getOrders()) {
+                    if(!order.getTickets().isEmpty()){
+                        for(Ticket ticket: order.getTickets()){
+                            ticket.setAvailable(ticket.getAvailable()+1);
+                            ticketRepository.save(ticket);
+                        }
+                    }
+                }
+            }
             userRepository.delete(userOptional.get());
+            return "User with id " + id + UserConstants.USER_SUCCESS_DELETE;
         }
     }
 }

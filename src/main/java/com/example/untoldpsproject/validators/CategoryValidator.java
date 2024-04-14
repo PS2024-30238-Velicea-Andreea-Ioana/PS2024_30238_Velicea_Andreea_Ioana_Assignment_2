@@ -15,20 +15,16 @@ public class CategoryValidator {
 
     public boolean validateDates(LocalDate startDate, LocalDate finishDate) throws Exception {
         LocalDate today = LocalDate.now();
-        System.out.println("STARTdate " + startDate);
-        System.out.println("finishDate " + finishDate);
-        System.out.println("today" + today);
-        System.out.println(startDate.isAfter(today));
-        if (startDate == null || finishDate == null || startDate.isAfter(finishDate) ){
+        if (startDate == null || finishDate == null){
+            throw new Exception(CategoryConstants.INVALID_DATE);
+        }
+        if(startDate.isBefore(today) || finishDate.isBefore(startDate)){
             throw new Exception(CategoryConstants.INVALID_DATE);
         }
         return true;
     }
 
     public boolean categoryDtoValidator(CategoryDto categoryDto) throws Exception {
-       if( (!validateTip(categoryDto.getTip()) && !validateDates(categoryDto.getStartDate(), categoryDto.getFinishDate()))){
-           return false;
-        }
-       return true;
+       return validateDates(categoryDto.getStartDate(), categoryDto.getFinishDate()) && validateTip(categoryDto.getTip());
     }
 }

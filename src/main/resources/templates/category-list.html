@@ -119,8 +119,15 @@
     </form>
     <a href="/category/add" class="add-category-button">Add Category</a>
     <a href="/administrator" class="back-button">Back to Admin Page</a>
+    <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
 </div>
 <script>
+    setTimeout(function() {
+        var errorMessage = document.getElementById('errorMessage');
+        if (errorMessage) {
+            errorMessage.style.display = 'none';
+        }
+    }, 3000);
 </script>
 </body>
 </html>

@@ -75,7 +75,7 @@
 <body>
 <div class="container">
 <h2>Edit User</h2>
-<form th:action="@{/user/edit/ ${userDto.id}} " method="post" th:object="${userDto}" onsubmit="return validateForm()">
+<form th:action="@{/user/edit/ ${userDto.id}} " method="post" th:object="${userDto}" onsubmit="validateForm()">
    <input type="hidden" id="id" name="id" th:value="${userDto.id}"/>
     <label for="firstName">First Name:</label>
     <input type="text" id="firstName" name="firstName" th:field="*{firstName}"/><br/>
@@ -91,6 +91,7 @@
                 th:value="${role}" th:text="${role}"></option>
     </select><br/>
     <input type="submit" value="Update"/>
+    <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
 </form>
 </div>
 <script>
@@ -125,6 +126,12 @@
         }
         return true;
     }
+    setTimeout(function() {
+        var errorMessage = document.getElementById('errorMessage');
+        if (errorMessage) {
+            errorMessage.style.display = 'none';
+        }
+    }, 3000);
 </script>
 </body>
 </html>

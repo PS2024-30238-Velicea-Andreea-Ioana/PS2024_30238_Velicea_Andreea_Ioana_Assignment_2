@@ -102,6 +102,7 @@
             <th>User</th>
             <th>Tickets</th>
             <th>Total Price</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
         <tr th:each="order : ${orders}">
@@ -116,6 +117,7 @@
                 </ul>
             </td>
             <td th:text="${order.totalPrice}"></td>
+            <td th:text="${order.status}"></td>
             <td class="actions">
                 <a th:href="@{/order/edit/{id}(id=${order.id})}">Edit</a>
                 <a th:href="@{/order/delete/{id}(id=${order.id})}" class="delete">Delete</a>

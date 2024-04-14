@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Payment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        .form-group input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 15px 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .form-group input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Enter Card Details</h2>
+    <form th:action="@{/payment/add/{orderId}(orderId = ${orderId})}" method="post" th:object="${paymentDto}">
+        <div class="form-group">
+            <label for="titularCard">Cardholder's Name:</label>
+            <input type="text" id="titularCard" name="titularCard" placeholder="Enter cardholder's name" th:value="${paymentDto.titularCard}" required>
+        </div>
+        <div class="form-group">
+            <label for="nrCard">Card Number:</label>
+            <input type="text" id="nrCard" name="nrCard" placeholder="Enter card number" th:value="${paymentDto.nrCard}" required>
+        </div>
+        <div class="form-group">
+            <label for="ccv">CVV:</label>
+            <input type="text" id="ccv" name="ccv" placeholder="Enter CVV" th:value="${paymentDto.ccv}" required>
+        </div>
+        <input type="submit" value="Add"/>
+
+        <p th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
+    </form>
+
+</div>
+
+</body>
+</html>

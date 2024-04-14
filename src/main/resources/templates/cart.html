@@ -108,10 +108,10 @@
                     <div class="quantity" th:text="${cartItem.quantity}"></div>
                 </div>
                 <div class="price">
-                    <div class="amount" th:text="${cartItem.ticket.price}"></div>
+                    <div class="amount" th:text="(${cartItem.ticket.discountedPrice} == null ? ${cartItem.ticket.price} : ${cartItem.ticket.discountedPrice})"></div>
                 </div>
                 <div class="price">
-                    <div class="amount" th:text="${cartItem.ticket.price * cartItem.quantity}"></div>
+                    <div class="amount" th:text="(${cartItem.ticket.discountedPrice} == null ? ${cartItem.ticket.price * cartItem.quantity} : ${cartItem.ticket.discountedPrice * cartItem.quantity})"></div>
                 </div>
                 <button class="action-button">
                     <a th:href="@{/cart/removeItem/{cartItemId} (cartItemId = ${cartItem.id})}" class="action-button">-</a>

@@ -1,5 +1,7 @@
 package com.example.untoldpsproject.controllers;
 
+import com.example.untoldpsproject.constants.PaymentConstants;
+import com.example.untoldpsproject.constants.UserConstants;
 import com.example.untoldpsproject.dtos.UserDto;
 import com.example.untoldpsproject.services.*;
 import lombok.AllArgsConstructor;
@@ -7,6 +9,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.List;
 
 
@@ -55,9 +59,14 @@ public class UserController {
      * @return A redirection to the user list view.
      */
     @PostMapping("/add")
-    public ModelAndView addUser(@ModelAttribute("userDto") UserDto userDto) {
-        userService.insert(userDto);
-        return new ModelAndView("redirect:/user/list");
+    public ModelAndView addUser(@ModelAttribute("userDto") UserDto userDto, RedirectAttributes redirectAttributes) {
+        String result = userService.insert(userDto);
+        if(result.equals(UserConstants.USER_INSERTED)){
+            return new ModelAndView("redirect:/user/list");
+        }else{
+            redirectAttributes.addFlashAttribute("error", result);
+            return new ModelAndView("redirect:/user/add");
+        }
     }
 
     /**
@@ -81,9 +90,14 @@ public class UserController {
      * @return A redirection to the user list view.
      */
     @PostMapping ("/edit/{id}")
-    public ModelAndView updateUser(@ModelAttribute("userDto") UserDto userDto) {
-        userService.updateUserById(userDto.getId(), userDto);
-        return new ModelAndView("redirect:/user/list");
+    public ModelAndView updateUser(@ModelAttribute("userDto") UserDto userDto, RedirectAttributes redirectAttributes) {
+        String result = userService.updateUserById(userDto.getId(), userDto);
+        if(result.equals(UserConstants.USER_UPDATED)){
+            return new ModelAndView("redirect:/user/list");
+        }else{
+            redirectAttributes.addFlashAttribute("error", result);
+            return new ModelAndView("redirect:/user/edit/"+userDto.getId());
+        }
     }
 
     /**
@@ -93,8 +107,9 @@ public class UserController {
      * @return A redirection to the user list view.
      */
     @GetMapping("/delete/{id}")
-    public ModelAndView deleteUser(@PathVariable("id") String id) {
-        userService.deleteUserById(id);
+    public ModelAndView deleteUser(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
+        String result = userService.deleteUserById(id);
+        redirectAttributes.addFlashAttribute("error", result);
         return new ModelAndView("redirect:/user/list");
     }
 }

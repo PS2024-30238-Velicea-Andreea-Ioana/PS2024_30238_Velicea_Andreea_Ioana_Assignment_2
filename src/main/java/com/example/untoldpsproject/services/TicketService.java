@@ -1,13 +1,17 @@
 package com.example.untoldpsproject.services;
 
+import com.example.untoldpsproject.constants.CartConstants;
+import com.example.untoldpsproject.constants.CategoryConstants;
 import com.example.untoldpsproject.constants.TicketConstants;
 import com.example.untoldpsproject.dtos.CategoryDto;
 import com.example.untoldpsproject.dtos.TicketDto;
 import com.example.untoldpsproject.entities.Category;
+import com.example.untoldpsproject.entities.Order;
 import com.example.untoldpsproject.entities.Ticket;
 import com.example.untoldpsproject.mappers.CategoryMapper;
 import com.example.untoldpsproject.mappers.TicketMapper;
 import com.example.untoldpsproject.repositories.CategoryRepository;
+import com.example.untoldpsproject.repositories.OrderRepository;
 import com.example.untoldpsproject.repositories.TicketRepository;
 import com.example.untoldpsproject.validators.TicketValidator;
 import lombok.AllArgsConstructor;
@@ -31,6 +35,7 @@ public class TicketService {
     private static final Logger LOGGER = LoggerFactory.getLogger(TicketService.class);
     private final TicketRepository ticketRepository;
     private final CategoryRepository categoryRepository;
+    private final OrderRepository orderRepository;
     private final TicketValidator ticketValidator = new TicketValidator();
 
     /**
@@ -43,12 +48,13 @@ public class TicketService {
         try{
             ticketValidator.ticketDtoValidator(ticketDto);
             Ticket ticket = TicketMapper.toTicket(ticketDto);
+            ticket.setDiscountedPrice(ticketDto.getPrice());
             ticket = ticketRepository.save(ticket);
             LOGGER.debug(TicketConstants.TICKET_INSERTED);
             return TicketConstants.TICKET_INSERTED;
         }catch (Exception e){
-            LOGGER.error(TicketConstants.TICKET_NOT_INSERTED + " " +e.getMessage());
-            return TicketConstants.TICKET_NOT_INSERTED;
+            LOGGER.error(TicketConstants.TICKET_NOT_INSERTED + ": " +e.getMessage());
+            return TicketConstants.TICKET_NOT_INSERTED+ ": "+e.getMessage();
         }
 
     }
@@ -72,7 +78,7 @@ public class TicketService {
     public TicketDto findTicketById(String id){
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if(ticketOptional.isEmpty()){
-            LOGGER.error("Ticket with id {} was not found in db", id);
+            LOGGER.error(TicketConstants.TICKET_NOT_FOUND);
             return null;
         }else{
             return TicketMapper.toTicketDto(ticketOptional.get());
@@ -83,7 +89,7 @@ public class TicketService {
     public CategoryDto findCategoryById(String id){
         Optional<Category> categoryOptional = categoryRepository.findById(id);
         if(categoryOptional.isEmpty()){
-            LOGGER.error("Category with id {} was not found in db", id);
+            LOGGER.error(CategoryConstants.CATEGORY_NOT_FOUND);
             return null;
         }else{
             return CategoryMapper.toCategoryDto(categoryOptional.get());
@@ -100,10 +106,11 @@ public class TicketService {
      * @param id The ID of the ticket to update.
      * @param updatedTicketDto The updated ticket DTO.
      */
-    public void updateTicketById(String id, TicketDto updatedTicketDto){
+    public String updateTicketById(String id, TicketDto updatedTicketDto){
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if(ticketOptional.isEmpty()){
-            LOGGER.error("Ticket with id {} was not found in db", id);
+            LOGGER.error(TicketConstants.TICKET_NOT_FOUND);
+            return TicketConstants.TICKET_NOT_FOUND;
         }else{
             Ticket ticket = ticketOptional.get();
             try {
@@ -114,9 +121,18 @@ public class TicketService {
                 ticket.setAvailable(updatedTicket.getAvailable());
                 ticket.setCartItems(updatedTicketDto.getCartItem());
                 ticketRepository.save(ticket);
+                if(!ticket.getOrders().isEmpty()) {
+                    List<Order> orders = ticket.getOrders();
+                    for (Order order : orders) {
+                        order.setTotalPrice(calculateTotalPrice(order.getTickets()));
+                        orderRepository.save(order);
+                    }
+                }
                 LOGGER.debug(TicketConstants.TICKET_UPDATED);
+                return TicketConstants.TICKET_UPDATED;
             }catch (Exception e){
                 LOGGER.error(TicketConstants.TICKET_NOT_UPDATED + " " + e.getMessage());
+                return TicketConstants.TICKET_NOT_UPDATED+": "+e.getMessage();
             }
 
         }
@@ -126,12 +142,22 @@ public class TicketService {
      *
      * @param id The ID of the ticket to delete.
      */
-    public void deleteTicketById(String id){
+    public String deleteTicketById(String id){
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if(ticketOptional.isEmpty()){
-            LOGGER.error("Ticket with id {} was not found in db", id);
+            LOGGER.error(TicketConstants.TICKET_NOT_FOUND);
+            return TicketConstants.TICKET_NOT_FOUND;
         }else{
             ticketRepository.delete(ticketOptional.get());
+            return "Ticket with id "+ id + TicketConstants.TICKET_SUCCESS_DELETE;
         }
+    }
+    public Double calculateTotalPrice(List<Ticket> tickets){
+        Double totalPrice1 = 0.0;
+        if (!tickets.isEmpty())
+            for (Ticket ticket : tickets) {
+                totalPrice1 += ticket.getPrice();
+            }
+        return totalPrice1;
     }
 }

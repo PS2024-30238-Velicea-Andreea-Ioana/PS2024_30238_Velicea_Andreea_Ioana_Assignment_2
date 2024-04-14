@@ -8,4 +8,6 @@ public class OrderConstants {
     public static final String ORDER_NOT_INSERTED = "The order is not inserted";
     public static final String ORDER_NOT_UPDATED = "The order is not updated";
 
+    public static final String ORDER_NOT_FOUND = "The order is not found in sb";
+
 }

@@ -7,4 +7,6 @@ public class TicketConstants {
     public static final String TICKET_UPDATED = "The ticket is successfully updated";
     public static final String TICKET_NOT_INSERTED = "The ticket is not inserted";
     public static final String TICKET_NOT_UPDATED = "The ticket is not updated";
+    public static final String TICKET_NOT_FOUND = "The ticket was not found";
+    public static final String TICKET_SUCCESS_DELETE = " is successfully deleted";
 }

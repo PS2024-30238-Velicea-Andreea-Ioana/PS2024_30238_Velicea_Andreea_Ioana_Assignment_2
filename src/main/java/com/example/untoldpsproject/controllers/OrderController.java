@@ -5,6 +5,7 @@ import com.example.untoldpsproject.dtos.OrderDtoIds;
 import com.example.untoldpsproject.dtos.TicketDto;
 import com.example.untoldpsproject.dtos.UserDto;
 import com.example.untoldpsproject.entities.Ticket;
+import com.example.untoldpsproject.entities.User;
 import com.example.untoldpsproject.mappers.TicketMapper;
 import com.example.untoldpsproject.mappers.UserMapper;
 import com.example.untoldpsproject.services.OrderService;
@@ -16,6 +17,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Controller class for managing order operations.
  */
@@ -53,7 +56,9 @@ public class OrderController {
         mav.addObject("orderDto", new OrderDto());
         List<UserDto> users = orderService.findUsers();
         mav.addObject("users", users);
-        List<TicketDto> tickets = orderService.findTickets();
+        List<TicketDto> tickets = orderService.findTickets().stream()
+                .filter(ticket -> ticket.getAvailable() > 0)
+                .collect(Collectors.toList());
         mav.addObject("tickets", tickets);
         return mav;
     }
@@ -123,4 +128,6 @@ public class OrderController {
         orderService.deleteOrderById(id);
         return new ModelAndView("redirect:/order/list");
     }
+
+
 }

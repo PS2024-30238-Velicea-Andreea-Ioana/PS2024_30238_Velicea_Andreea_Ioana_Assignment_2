@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 public class CategoryService {
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoryService.class);
     private final CategoryRepository categoryRepository;
-    private final TicketRepository ticketRepository;
     private final CategoryValidator categoryValidator = new CategoryValidator();
     /**
      * Inserts a new category into the database.
@@ -43,8 +42,8 @@ public class CategoryService {
             LOGGER.debug(CategoryConstants.CATEGORY_INSERTED);
             return CategoryConstants.CATEGORY_INSERTED;
         }catch (Exception e){
-            LOGGER.error(CategoryConstants.CATEGORY_NOT_INSERTED + e.getMessage());
-            return CategoryConstants.CATEGORY_NOT_INSERTED;
+            LOGGER.error(CategoryConstants.CATEGORY_NOT_INSERTED +" :" + e.getMessage());
+            return CategoryConstants.CATEGORY_NOT_INSERTED + ": " + e.getMessage();
         }
     }
 
@@ -65,18 +64,12 @@ public class CategoryService {
     public CategoryDto findCategoryById(String id){
         Optional<Category> categoryOptional = categoryRepository.findById(id);
         if(categoryOptional.isEmpty()){
-            LOGGER.error("Category with id {} was not found in db", id);
+            LOGGER.error(CategoryConstants.CATEGORY_NOT_FOUND);
             return null;
         }else{
             return CategoryMapper.toCategoryDto(categoryOptional.get());
         }
 
-    }
-    public List<TicketDto> findAllWithCategory(String categoryId){
-        Category category = categoryRepository.findById(categoryId).get();
-        return ticketRepository.findAllByCategory(category).stream()
-                .map(TicketMapper::toTicketDto)
-                .collect(Collectors.toList());
     }
     /**
      * Updates a category by ID in the database.
@@ -84,10 +77,11 @@ public class CategoryService {
      * @param id                 The ID of the category to update.
      * @param updatedCategoryDto The updated category DTO containing new user information.
      */
-    public void updateCategoryById(String id, CategoryDto updatedCategoryDto){
+    public String updateCategoryById(String id, CategoryDto updatedCategoryDto){
         Optional<Category> categoryOptional = categoryRepository.findById(id);
         if(categoryOptional.isEmpty()){
-            LOGGER.error("Category with id {} was not found in db", id);
+            LOGGER.error(CategoryConstants.CATEGORY_NOT_FOUND);
+            return CategoryConstants.CATEGORY_NOT_FOUND;
         }else{
             Category category = categoryOptional.get();
             try{
@@ -99,23 +93,26 @@ public class CategoryService {
                 category.setFinishDate(updatedCategory.getFinishDate());
                 categoryRepository.save(category);
                 LOGGER.debug(CategoryConstants.CATEGORY_UPDATED);
+                return CategoryConstants.CATEGORY_UPDATED;
             }catch (Exception e){
-                LOGGER.error(CategoryConstants.CATEGORY_NOT_UPDATED);
+                LOGGER.error(CategoryConstants.CATEGORY_NOT_UPDATED + ": "+ e.getMessage());
+                return CategoryConstants.CATEGORY_NOT_UPDATED + ": "+ e.getMessage();
             }
         }
-
     }
 
     /**
      * Deletes a category by ID from the database.
      * @param id The ID of the category to delete.
      */
-    public void deleteCategoryById(String id){
+    public String deleteCategoryById(String id){
         Optional<Category> categoryOptional = categoryRepository.findById(id);
         if(categoryOptional.isEmpty()){
-            LOGGER.error("Category with id {} was not found in db", id);
+            LOGGER.error(CategoryConstants.CATEGORY_NOT_FOUND);
+            return CategoryConstants.CATEGORY_NOT_FOUND;
         }else{
             categoryRepository.delete(categoryOptional.get());
+            return "Category with id: " + id + CategoryConstants.CATEGORY_SUCCESS_DELETE;
         }
     }
 }

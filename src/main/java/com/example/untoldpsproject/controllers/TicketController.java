@@ -1,14 +1,15 @@
 package com.example.untoldpsproject.controllers;
 
+import com.example.untoldpsproject.constants.TicketConstants;
 import com.example.untoldpsproject.dtos.*;
 import com.example.untoldpsproject.mappers.CategoryMapper;
 import com.example.untoldpsproject.services.TicketService;
-import com.example.untoldpsproject.services.UserService;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 /**
@@ -23,7 +24,6 @@ import java.util.List;
 public class TicketController {
 
     private final TicketService ticketService;
-    private final UserService userService;
 
     /**
      * Retrieves a list of tickets and displays them.
@@ -59,14 +59,20 @@ public class TicketController {
      * @return A redirection to the ticket list view.
      */
     @PostMapping("/add")
-    public ModelAndView addTicket(@ModelAttribute("ticketDto") TicketDtoIds ticketDtoIds) {
+    public ModelAndView addTicket(@ModelAttribute("ticketDto") TicketDtoIds ticketDtoIds, RedirectAttributes redirectAttributes) {
         CategoryDto category = ticketService.findCategoryById(ticketDtoIds.getCategory());
         TicketDto ticket = new TicketDto();
         ticket.setCategory(CategoryMapper.toCategory(category));
         ticket.setAvailable(ticketDtoIds.getAvailable());
         ticket.setPrice(ticketDtoIds.getPrice());
-        ticketService.insert(ticket);
-        return new ModelAndView("redirect:/ticket/list");
+        String result = ticketService.insert(ticket);
+        if(result.equals(TicketConstants.TICKET_INSERTED)){
+            return new ModelAndView("redirect:/ticket/list");
+        }else{
+            redirectAttributes.addFlashAttribute("error", result);
+            return new ModelAndView("redirect:/ticket/add");
+        }
+
     }
 
     /**
@@ -92,9 +98,15 @@ public class TicketController {
      * @return A redirection to the ticket list view.
      */
     @PostMapping("/edit/{id}")
-    public ModelAndView updateTicket(@ModelAttribute("ticketDto") TicketDto ticketDto) {
-        ticketService.updateTicketById(ticketDto.getId(), ticketDto);
-        return new ModelAndView("redirect:/ticket/list");
+    public ModelAndView updateTicket(@ModelAttribute("ticketDto") TicketDto ticketDto,RedirectAttributes redirectAttributes) {
+        String result = ticketService.updateTicketById(ticketDto.getId(), ticketDto);
+        if(result.equals(TicketConstants.TICKET_UPDATED)){
+            return new ModelAndView("redirect:/ticket/list");
+        }else{
+            redirectAttributes.addFlashAttribute("error",result);
+            return new ModelAndView("redirect:/ticket/edit/"+ticketDto.getId());
+        }
+
     }
 
     /**
@@ -104,8 +116,9 @@ public class TicketController {
      * @return A redirection to the ticket list view.
      */
     @GetMapping("/delete/{id}")
-    public ModelAndView deleteTicket(@PathVariable("id") String id) {
-        ticketService.deleteTicketById(id);
+    public ModelAndView deleteTicket(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
+        String result = ticketService.deleteTicketById(id);
+        redirectAttributes.addFlashAttribute("error", result);
         return new ModelAndView("redirect:/ticket/list");
     }
 }

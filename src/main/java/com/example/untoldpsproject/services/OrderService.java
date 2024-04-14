@@ -6,6 +6,7 @@ import com.example.untoldpsproject.dtos.OrderDtoIds;
 import com.example.untoldpsproject.dtos.TicketDto;
 import com.example.untoldpsproject.dtos.UserDto;
 import com.example.untoldpsproject.entities.Order;
+import com.example.untoldpsproject.entities.Status;
 import com.example.untoldpsproject.entities.Ticket;
 import com.example.untoldpsproject.entities.User;
 import com.example.untoldpsproject.mappers.OrderMapper;
@@ -52,12 +53,14 @@ public class OrderService {
             orderValidator.OrderDtoValidator(orderDto);
             Order order = OrderMapper.toOrder(orderDto);
             order.setTotalPrice(calculateTotalPrice(order.getTickets()));
+            order.setStatus(Status.PLACED);
             order = orderRepository.save(order);
-            LOGGER.debug(OrderConstants.ORDER_INSERTED);
+
             for (Ticket ticket : order.getTickets()) {
                 if(ticketRepository.findById(ticket.getId()).isPresent())
                     ticketRepository.findById(ticket.getId()).get().setAvailable(ticket.getAvailable()-1);
             }
+            LOGGER.debug(OrderConstants.ORDER_INSERTED);
             return order.getId();
         }catch (Exception e){
             LOGGER.error(OrderConstants.ORDER_NOT_INSERTED + " " + e.getMessage());
@@ -132,11 +135,22 @@ public class OrderService {
             LOGGER.error("Order with id {} was not found in db", id);
         }else{
             Order order = orderOptional.get();
+            if(!order.getTickets().isEmpty()){
+                for(Ticket ticket: order.getTickets()){
+                    ticket.setAvailable(ticket.getAvailable()+1);
+                    ticketRepository.save(ticket);
+                }
+            }
             try {
                 orderValidator.OrderDtoValidator(updatedOrderDto);
                 Order updatedOrder = OrderMapper.toOrder(updatedOrderDto);
                 order.setUser(updatedOrder.getUser());
                 order.setTickets(updatedOrder.getTickets());
+                order.setStatus(updatedOrder.getStatus());
+                for(Ticket ticket: updatedOrder.getTickets()){
+                    ticket.setAvailable(ticket.getAvailable()-1);
+                    ticketRepository.save(ticket);
+                }
                 order.setTotalPrice(calculateTotalPrice(order.getTickets()));
                 orderRepository.save(order);
                 LOGGER.debug(OrderConstants.ORDER_UPDATED);
@@ -168,7 +182,11 @@ public class OrderService {
         Double totalPrice1 = 0.0;
         if (!tickets.isEmpty())
             for (Ticket ticket : tickets) {
-                totalPrice1 += ticket.getPrice();
+                if(ticket.getDiscountedPrice() == null)
+                    totalPrice1 += ticket.getPrice();
+                else{
+                    totalPrice1 += ticket.getDiscountedPrice();
+                }
             }
         return totalPrice1;
     }

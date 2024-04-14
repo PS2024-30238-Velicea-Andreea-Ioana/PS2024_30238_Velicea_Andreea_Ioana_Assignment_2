@@ -11,6 +11,7 @@ public class OrderMapper {
                 .totalPrice(order.getTotalPrice())
                 .user(order.getUser())
                 .tickets(order.getTickets())
+                .status(order.getStatus())
                 .build();
     }
 
@@ -19,6 +20,7 @@ public class OrderMapper {
                 .totalPrice(orderDto.getTotalPrice())
                 .user(orderDto.getUser())
                 .tickets(orderDto.getTickets())
+                .status(orderDto.getStatus())
                 .build();
     }
 

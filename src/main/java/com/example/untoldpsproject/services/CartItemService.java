@@ -1,23 +1,14 @@
 package com.example.untoldpsproject.services;
-
-import com.example.untoldpsproject.dtos.CartDto;
-import com.example.untoldpsproject.dtos.CategoryDto;
-import com.example.untoldpsproject.dtos.TicketDto;
-import com.example.untoldpsproject.dtos.UserDto;
+import com.example.untoldpsproject.dtos.CartItemDto;
 import com.example.untoldpsproject.entities.*;
-import com.example.untoldpsproject.mappers.CartMapper;
-import com.example.untoldpsproject.mappers.CategoryMapper;
-import com.example.untoldpsproject.mappers.TicketMapper;
-import com.example.untoldpsproject.mappers.UserMapper;
+import com.example.untoldpsproject.mappers.CartItemMapper;
 import com.example.untoldpsproject.repositories.CartItemRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * This service class provides methods to manage cart items in the system.
@@ -31,12 +22,12 @@ public class CartItemService {
     /**
      * Inserts a new cart item into the database.
      *
-     * @param cartItem The cart item to be inserted.
+     * @param cartItemDto The cart item to be inserted.
      * @return The ID of the inserted cart item.
      */
-    public String insert(CartItem cartItem){
-        cartItemRepository.save(cartItem);
-        return cartItem.getId();
+    public String insert(CartItemDto cartItemDto){
+        cartItemRepository.save(CartItemMapper.toCartItem(cartItemDto));
+        return cartItemDto.getId();
     }
 
     /**
@@ -53,17 +44,17 @@ public class CartItemService {
     /**
      * Updates an existing cart item.
      *
-     * @param cartItem The cart item with updated information.
+     * @param cartItemDto The cart item with updated information.
      */
-    public void update(CartItem cartItem){
-        Optional<CartItem> cartOptional = cartItemRepository.findById(cartItem.getId());
+    public void update(CartItemDto cartItemDto){
+        Optional<CartItem> cartOptional = cartItemRepository.findById(cartItemDto.getId());
         if(cartOptional.isPresent()){
             CartItem cartItem1 = cartOptional.get();
-            cartItem1.setId(cartItem.getId());
-            cartItem1.setTicket(cartItem.getTicket());
-            cartItem1.setQuantity(cartItem.getQuantity());
-            cartItem1.setCart(cartItem.getCart());
-            cartItemRepository.save(cartItem);
+            cartItem1.setId(cartItemDto.getId());
+            cartItem1.setTicket(cartItemDto.getTicket());
+            cartItem1.setQuantity(cartItemDto.getQuantity());
+            cartItem1.setCart(cartItemDto.getCart());
+            cartItemRepository.save(CartItemMapper.toCartItem(cartItemDto));
         }
     }
 

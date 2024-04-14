@@ -90,7 +90,7 @@
 <body>
 <div class="container">
     <h2>Add Ticket</h2>
-    <form id="ticketForm" action="/ticket/add" method="post" th:object="${ticketDto}" onsubmit="return validateForm()">
+    <form id="ticketForm" action="/ticket/add" method="post" th:object="${ticketDto}" onsubmit="validateForm()">
         <label for="category">Category:</label>
         <select id="category" name="category">
             <option th:each="category : ${categories}"
@@ -102,6 +102,7 @@
         <label for="available">Available:</label>
         <input type="text" id="available" name="available" th:field="*{available}"/><br/>
         <input type="submit" value="Add"/>
+        <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
     </form>
     <a href="/ticket/list" class="back-button">Back to Ticket List</a>
 </div>
@@ -119,6 +120,12 @@
         }
         return true;
     }
+    setTimeout(function() {
+        var errorMessage = document.getElementById('errorMessage');
+        if (errorMessage) {
+            errorMessage.style.display = 'none';
+        }
+    }, 3000);
 </script>
 </body>
 </html>

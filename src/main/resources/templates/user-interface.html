@@ -126,6 +126,20 @@
         .add-to-cart:hover {
             background-color: #8a2be2;
         }
+        .ticket-price del {
+            color: #666;
+        }
+
+        .discounted-price {
+            color: red;
+        }
+        .discount-percentage {
+            color: green;
+            font-weight: bold;
+        }
+        .red-text {
+            color: red;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -148,7 +162,12 @@
                     <p class="ticket-number" th:text="'Ticket No: ' + ${ticket.id}"></p>
                 </div>
                 <div class="ticket-content">
-                    <p class="ticket-price" th:text="'Price: ' + ${ticket.price} + ' RON'"></p>
+                    <p class="ticket-price" th:if="${ticket.discountedPrice} != ${ticket.price}">
+                        <del th:text="'Initial Price: ' + ${ticket.price} + ' RON'"></del>
+                        <span class="discounted-price" th:text="'Discounted Price: ' + ${ticket.discountedPrice} + ' RON'"></span>
+                        <span class="discount-percentage" th:text="' (' + (${ticket.price} - ${ticket.discountedPrice}) / ${ticket.price} * 100 + '% off)'"></span>
+                    </p>
+                    <p class="ticket-price" th:unless="${ticket.discountedPrice} != ${ticket.price}" th:text="'Price: ' + ${ticket.price} + ' RON'"></p>
                     <p class="ticket-date" th:text="'Start Date: ' + ${ticket.category.startDate}"></p>
                     <p class="ticket-date" th:text="'Finish Date: ' + ${ticket.category.finishDate}"></p>
                     <p class="ticket-availability" th:text="'Available: ' + ${ticket.available}"></p>

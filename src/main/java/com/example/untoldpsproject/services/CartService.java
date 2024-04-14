@@ -1,12 +1,13 @@
 package com.example.untoldpsproject.services;
 
 import com.example.untoldpsproject.constants.CartConstants;
-import com.example.untoldpsproject.dtos.CartDto;
-import com.example.untoldpsproject.dtos.CartDtoIds;
+import com.example.untoldpsproject.constants.TicketConstants;
+import com.example.untoldpsproject.dtos.*;
 import com.example.untoldpsproject.entities.*;
 import com.example.untoldpsproject.mappers.CartMapper;
 import com.example.untoldpsproject.repositories.CartItemRepository;
 import com.example.untoldpsproject.repositories.CartRepository;
+import com.example.untoldpsproject.repositories.TicketRepository;
 import com.example.untoldpsproject.repositories.UserRepository;
 import com.example.untoldpsproject.validators.CartValidator;
 import jakarta.transaction.Transactional;
@@ -17,12 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static com.ibm.icu.text.PluralRules.Operand.c;
 
 /**
  * This service class provides methods to manage shopping carts in the system.
@@ -37,6 +34,7 @@ public class CartService {
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
     private final CartItemRepository cartItemRepository;
+    private final TicketRepository ticketRepository;
     private final CartValidator cartValidator = new CartValidator();
 
     /**
@@ -70,7 +68,11 @@ public class CartService {
         Double totalPrice1 = 0.0;
         if (!cartItems.isEmpty())
             for (CartItem cartItem : cartItems) {
-                totalPrice1 += cartItem.getTicket().getPrice()* cartItem.getQuantity();
+                if(cartItem.getTicket().getDiscountedPrice() == null)
+                    totalPrice1 += cartItem.getTicket().getPrice()* cartItem.getQuantity();
+                else{
+                    totalPrice1 += cartItem.getTicket().getDiscountedPrice()* cartItem.getQuantity();
+                }
             }
         return totalPrice1;
     }
@@ -128,4 +130,31 @@ public class CartService {
             cartRepository.save(cart);
         }
     }
+
+    public CartItem getCartItemById(String id){
+        Optional<CartItem> cartItem =  cartItemRepository.findById(id);
+        if(cartItem.isPresent()){
+            return cartItem.get();
+        }
+        return null;
+    }
+
+    public String removeCartItem(String cartItemId){
+        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
+        if (cartItem.isPresent()) {
+            String cartId = cartItem.get().getCart().getId();
+            cartItemRepository.delete(cartItem.get());
+            updateTotalPrice(cartId);
+            return cartId;
+        }
+        return null;
+    }
+    public Ticket findTicket(String ticketId){
+        Optional<Ticket> ticket =  ticketRepository.findById(ticketId);
+        if(!ticket.isPresent()){
+            LOGGER.error(TicketConstants.TICKET_NOT_FOUND);
+        }
+        return ticket.get();
+    }
+
 }

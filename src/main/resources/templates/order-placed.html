@@ -86,7 +86,7 @@
             <div class="ticket">
                 <div class="item-details" th:text="${ticket.id}"></div>
                <div class="ticket-type" th:text="${ticket.category.tip}"></div>
-                <div class="ticket-type" th:text="${ticket.price}"></div>
+                <div class="ticket-type" th:text="(${ticket.discountedPrice} == null ? ${ticket.price} : ${ticket.discountedPrice}) + ' RON'"></div>
             </div>
         </ul>
         <div class="total-price" th:text="${order.totalPrice} + 'Ron'"></div>

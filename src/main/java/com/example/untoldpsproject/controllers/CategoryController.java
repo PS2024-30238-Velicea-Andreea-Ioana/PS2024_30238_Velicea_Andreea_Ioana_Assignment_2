@@ -1,5 +1,6 @@
 package com.example.untoldpsproject.controllers;
 
+import com.example.untoldpsproject.constants.CategoryConstants;
 import com.example.untoldpsproject.dtos.CategoryDto;
 import com.example.untoldpsproject.services.CategoryService;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.util.List;
 
 /**
@@ -54,9 +57,15 @@ public class CategoryController {
      * @return A redirection to the category list view.
      */
     @PostMapping("/add")
-    public ModelAndView addCategory(@ModelAttribute CategoryDto categoryDto) {
-        categoryService.insert(categoryDto);
-        return new ModelAndView("redirect:/category/list");
+    public ModelAndView addCategory(@ModelAttribute CategoryDto categoryDto, RedirectAttributes redirectAttributes) {
+        String result = categoryService.insert(categoryDto);
+        if(result.equals(CategoryConstants.CATEGORY_INSERTED)){
+            return new ModelAndView("redirect:/category/list");
+        }else{
+            redirectAttributes.addFlashAttribute("error" + result);
+            return new ModelAndView("redirect:/category/add");
+        }
+
     }
 
     /**
@@ -80,9 +89,15 @@ public class CategoryController {
      * @return A redirection to the category list view.
      */
     @PostMapping("/edit/{id}")
-    public ModelAndView updateCategory( @ModelAttribute("categoryDto") CategoryDto categoryDto) {
-        categoryService.updateCategoryById(categoryDto.getId(), categoryDto);
-        return new ModelAndView("redirect:/category/list");
+    public ModelAndView updateCategory( @ModelAttribute("categoryDto") CategoryDto categoryDto, RedirectAttributes redirectAttributes) {
+        String result = categoryService.updateCategoryById(categoryDto.getId(), categoryDto);
+        if(result.equals(CategoryConstants.CATEGORY_UPDATED)){
+            return new ModelAndView("redirect:/category/list");
+        }else{
+            redirectAttributes.addFlashAttribute("error"+result);
+            return new ModelAndView("redirect:/category/edit/"+categoryDto.getId());
+        }
+
     }
 
     /**
@@ -92,8 +107,9 @@ public class CategoryController {
      * @return A redirection to the category list view.
      */
     @GetMapping("/delete/{id}")
-    public ModelAndView deleteCategory(@PathVariable("id") String id) {
-        categoryService.deleteCategoryById(id);
+    public ModelAndView deleteCategory(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
+        String result = categoryService.deleteCategoryById(id);
+        redirectAttributes.addFlashAttribute("error",result);
         return new ModelAndView("redirect:/category/list");
     }
 }

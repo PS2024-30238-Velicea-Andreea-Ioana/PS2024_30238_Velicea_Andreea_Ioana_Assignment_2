@@ -7,15 +7,15 @@ public class SaleMapper {
     public static SaleDto toSaleDto(Sale sale){
         return SaleDto.builder()
                 .id(sale.getId())
-                .discountedPrice(sale.getDiscountedPrice())
                 .discountPercentage(sale.getDiscountPercentage())
+                .tickets(sale.getTickets())
                 .build();
     }
     public static Sale toSale(SaleDto saleDto){
         return Sale.builder()
                 .id(saleDto.getId())
-                .discountedPrice(saleDto.getDiscountedPrice())
                 .discountPercentage(saleDto.getDiscountPercentage())
+                .tickets(saleDto.getTickets())
                 .build();
     }
 }

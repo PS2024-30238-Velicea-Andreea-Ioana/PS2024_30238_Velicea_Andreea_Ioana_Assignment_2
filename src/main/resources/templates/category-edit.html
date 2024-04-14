@@ -80,7 +80,7 @@
 <body>
 <div class="container">
   <h2>Edit Category</h2>
-  <form id="categoryForm" th:action="@{/category/edit/ ${categoryDto.id}} " method="post" th:object="${categoryDto}" onsubmit="return validateForm()">
+  <form id="categoryForm" th:action="@{/category/edit/ ${categoryDto.id}} " method="post" th:object="${categoryDto}" onsubmit="validateForm()">
     <input type="hidden" id="id" name="id" th:value="${categoryDto.id}"/>
     <label for="tip">Tip:</label>
     <select id="tip" name="tip" th:field="*{tip}">
@@ -94,6 +94,7 @@
     <label for="finishDate">Finish Date:</label>
     <input type="date" id="finishDate" name="finishDate" th:value="${categoryDto.finishDate}" required><br/>
     <input type="submit" value="Update"/>
+    <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
   </form>
 </div>
 <script>
@@ -107,6 +108,12 @@
     }
     return true;
   }
+  setTimeout(function() {
+    var errorMessage = document.getElementById('errorMessage');
+    if (errorMessage) {
+      errorMessage.style.display = 'none';
+    }
+  }, 3000);
 </script>
 </body>
 </html>

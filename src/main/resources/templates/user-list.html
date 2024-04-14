@@ -139,7 +139,7 @@
     </form>
     <a href="/user/add" class="add-user-link">Add User</a>
     <a href="/administrator" class="back-button">Back to Admin Page</a>
-
+    <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
 </div>
 <script>
     function togglePassword(element) {
@@ -152,6 +152,12 @@
             element.textContent = '👁️';
         }
     }
+    setTimeout(function() {
+        var errorMessage = document.getElementById('errorMessage');
+        if (errorMessage) {
+            errorMessage.style.display = 'none';
+        }
+    }, 3000);
 </script>
 </body>
 </html>

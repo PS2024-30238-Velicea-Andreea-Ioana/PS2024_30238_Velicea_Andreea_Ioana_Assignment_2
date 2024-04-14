@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="">
 <head>
     <meta charset="UTF-8">
     <title>Ticket List</title>
@@ -91,6 +91,9 @@
         .add-ticket-button:hover {
             background-color: #32CD32
         }
+        .red-text {
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -102,6 +105,7 @@
             <th>Category</th>
             <th>Price</th>
             <th>Available</th>
+            <th>Discounted Price</th>
             <th>Actions</th>
         </tr>
         <tr th:each="ticket : ${tickets}">
@@ -109,6 +113,7 @@
             <td th:text="${ticket.category.tip}"></td>
             <td th:text="${ticket.price}"></td>
             <td th:text="${ticket.available}"></td>
+            <td th:text="${ticket.discountedPrice}" th:class="${ticket.discountedPrice != ticket.price} ? 'red-text' : ''"></td>
             <td class="actions">
                 <a th:href="@{/ticket/edit/{id}(id=${ticket.id})}">Edit</a>
                 <a th:href="@{/ticket/delete/{id}(id=${ticket.id})}" class="delete">Delete</a>
@@ -117,6 +122,15 @@
     </table>
     <a href="/ticket/add" class="add-ticket-button">Add Ticket</a>
     <a href="/administrator" class="back-button">Back to Admin Page</a>
+    <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
 </div>
 </body>
+<script>
+    setTimeout(function() {
+        var errorMessage = document.getElementById('errorMessage');
+        if (errorMessage) {
+            errorMessage.style.display = 'none';
+        }
+    }, 3000);
+</script>
 </html>

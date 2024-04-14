@@ -89,6 +89,11 @@
                     th:text="${ticket.category.tip + ' - Available: ' + ticket.available}">
             </option>
         </select><br>
+        <label for="status">Status:</label>
+        <select id="status" name="status">
+            <option th:each="status : ${T(com.example.untoldpsproject.entities.Status).values()}"
+                    th:value="${status}" th:text="${status}"></option>
+        </select><br/>
         <input type="submit" value="Update"/>
     </form>
 </div>

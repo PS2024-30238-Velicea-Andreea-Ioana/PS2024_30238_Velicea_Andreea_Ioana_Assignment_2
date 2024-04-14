@@ -29,7 +29,8 @@ public class Ticket {
 
     @Column(name = "Price", nullable = false)
     private Double price;
-
+    @Column(name = "discountedPrice")
+    private Double discountedPrice;
 
     @Column(name = "available")
     private int available;
@@ -41,8 +42,8 @@ public class Ticket {
     @OneToMany(mappedBy = "ticket", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
     private List<CartItem> cartItems;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "sale_id", referencedColumnName = "id")
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn(name = "sale_id")
     private Sale sale;
-
 }
