@@ -18,6 +18,9 @@ public class CategoryValidator {
         if (startDate == null || finishDate == null){
             throw new Exception(CategoryConstants.INVALID_DATE);
         }
+        if(startDate.equals(finishDate)){
+            return true;
+        }
         if(startDate.isBefore(today) || finishDate.isBefore(startDate)){
             throw new Exception(CategoryConstants.INVALID_DATE);
         }

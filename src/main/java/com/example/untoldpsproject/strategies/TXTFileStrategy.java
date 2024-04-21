@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class TXTFileStrategy implements GenerateFileStrategy{
     @Override
-    public  void generateFile(Order order) {
+    public void generateFile(Order order) {
         String fileName = "order.txt";
         try {
             FileWriter writer = new FileWriter(fileName);

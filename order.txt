@@ -15,7 +15,7 @@ Ticket 2:
 Type: one_day
 Start Date: 2024-04-01
 Finish Date: 2024-04-02
-Price: 99.0
+Price: 50.0
 Ticket Number: 1ea789ce-2d22-4198-a287-cf54a5f9e90a
 
-Total amount for order null: 297.0
+Total amount for order 896bade2-c7d5-4ad5-973f-c70a7ad779fc: 297.0

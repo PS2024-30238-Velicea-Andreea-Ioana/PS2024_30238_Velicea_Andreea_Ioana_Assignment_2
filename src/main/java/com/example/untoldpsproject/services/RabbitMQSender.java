@@ -17,6 +17,10 @@ import org.springframework.stereotype.Service;
 public class RabbitMQSender {
     private static final org.slf4j.Logger log = LoggerFactory.getLogger(RabbitMQSender.class);
     private final RabbitTemplate rabbitTemplate;
+    @Value("${rabbitmq.exchange}")
+    private String exchange;
+    @Value("${rabbitmq.routingkey}")
+    private String routingkey;
 
     public RabbitMQSender(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
@@ -24,6 +28,6 @@ public class RabbitMQSender {
 
     public void send(Payload payload) {
             log.info("the payload is sended "+ payload.toString());
-            rabbitTemplate.convertAndSend(payload);
+            rabbitTemplate.convertAndSend(exchange,routingkey,payload);
     }
 }

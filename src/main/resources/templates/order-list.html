@@ -72,7 +72,8 @@
         .back-button:hover {
             background-color: #32CD32;
         }
-        .add-order-button {
+        .add-order-button,
+        .generate-button{
             display: block;
             margin-top: 20px;
             padding: 10px 20px;
@@ -88,8 +89,16 @@
             width: fit-content;
         }
 
-        .add-order-button:hover {
+        .add-order-button:hover,
+        .generate-button:hover{
             background-color: #32CD32
+        }
+        .generate-select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
@@ -104,6 +113,7 @@
             <th>Total Price</th>
             <th>Status</th>
             <th>Actions</th>
+            <th>Generate File</th>
         </tr>
         <tr th:each="order : ${orders}">
             <td th:text="${order.id}"></td>
@@ -121,15 +131,17 @@
             <td class="actions">
                 <a th:href="@{/order/edit/{id}(id=${order.id})}">Edit</a>
                 <a th:href="@{/order/delete/{id}(id=${order.id})}" class="delete">Delete</a>
+            </td>
+            <td>
                 <form action="/generate-file" method="post">
                     <input type="hidden" name="orderId" th:value="${order.id}">
                     <label for="type">Type:</label>
-                    <select id="type" name="type">
+                    <select id="type" name="type" class="generate-select">
                         <option value="txt">TXT</option>
                         <option value="csv">CSV</option>
                         <option value="pdf">PDF</option>
                     </select><br>
-                    <button type="submit">Generate File</button>
+                    <button type="submit" class="generate-button">Generate File</button>
                 </form>
             </td>
         </tr>

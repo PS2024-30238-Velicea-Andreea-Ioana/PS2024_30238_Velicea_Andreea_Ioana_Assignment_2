@@ -2,37 +2,42 @@ package com.example.untoldpsproject.services;
 
 import com.example.untoldpsproject.entities.Order;
 import com.example.untoldpsproject.repositories.OrderRepository;
-import com.example.untoldpsproject.strategies.CSVFileStrategy;
-import com.example.untoldpsproject.strategies.PDFFileStrategy;
-import com.example.untoldpsproject.strategies.TXTFileStrategy;
+import com.example.untoldpsproject.strategies.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 
 @Setter
 @Getter
-@NoArgsConstructor
 @Service
+@AllArgsConstructor
 public class GenerateFileService {
-    private TXTFileStrategy txtFileStrategy;
-    private PDFFileStrategy pdfFileStrategy;
-    private CSVFileStrategy csvFileStrategy;
+    private OrderRepository orderRepository;
 
-    public String generateFile(String type, Order order) {
-        if (type.equals("txt")) {
-            txtFileStrategy.generateFile(order);
-        }else if (type.equals("pdf")) {
-            pdfFileStrategy.generateFile(order);
-        }else if (type.equals("csv")) {
-            csvFileStrategy.generateFile(order);
+    public String generateFile(String type, String orderId) {
+        Optional<Order> order = orderRepository.findById(orderId);
+        if(order.isPresent()) {
+            if (type.equals("txt")) {
+                Context context = new Context(new TXTFileStrategy());
+                context.generate(order.get());
+            }else if (type.equals("pdf")) {
+                Context context = new Context(new PDFFileStrategy());
+                context.generate(order.get());
+            }else if (type.equals("csv")) {
+                Context context = new Context(new CSVFileStrategy());
+                context.generate(order.get());
+            }
+            return "The File was successfully generated.";
         }
-        return "The File was successfully generated.";
+        return "The Order was not found.";
     }
 
-
+    public List<Order> getOrders(){
+        return orderRepository.findAll();
+    }
 }

@@ -18,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 @AllArgsConstructor
 public class GenerateFileController {
     public GenerateFileService generateFileService;
-    public OrderService orderService;
+
     @GetMapping("/generate-file")
     public String showGenerateFileForm() {
         return "order-list";
@@ -27,9 +27,9 @@ public class GenerateFileController {
     public ModelAndView generateFile(@RequestParam("type") String type,
                                      @RequestParam("orderId") String orderId) {
         ModelAndView modelAndView = new ModelAndView();
-        OrderDto order = orderService.findOrderById(orderId);
-        String message = generateFileService.generateFile(type, OrderMapper.toOrder(order));
+        String message = generateFileService.generateFile(type, orderId);
         modelAndView.setViewName("order-list");
+        modelAndView.addObject("orders", generateFileService.getOrders());
         return modelAndView;
     }
 
