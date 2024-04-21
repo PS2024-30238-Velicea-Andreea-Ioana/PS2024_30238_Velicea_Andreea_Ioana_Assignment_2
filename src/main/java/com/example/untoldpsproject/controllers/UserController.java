@@ -112,4 +112,6 @@ public class UserController {
         redirectAttributes.addFlashAttribute("error", result);
         return new ModelAndView("redirect:/user/list");
     }
+
+
 }

@@ -2,9 +2,12 @@ package com.example.untoldpsproject.services;
 
 import com.example.untoldpsproject.constants.CartConstants;
 import com.example.untoldpsproject.constants.TicketConstants;
+import com.example.untoldpsproject.constants.UserConstants;
 import com.example.untoldpsproject.dtos.*;
 import com.example.untoldpsproject.entities.*;
+import com.example.untoldpsproject.mappers.CartItemMapper;
 import com.example.untoldpsproject.mappers.CartMapper;
+import com.example.untoldpsproject.mappers.UserMapper;
 import com.example.untoldpsproject.repositories.CartItemRepository;
 import com.example.untoldpsproject.repositories.CartRepository;
 import com.example.untoldpsproject.repositories.TicketRepository;
@@ -155,6 +158,63 @@ public class CartService {
             LOGGER.error(TicketConstants.TICKET_NOT_FOUND);
         }
         return ticket.get();
+    }
+    public User findUser(String userId){
+        Optional<User> user =  userRepository.findById(userId);
+        if(!user.isPresent()){
+            LOGGER.error(UserConstants.USER_NOT_FOUND);
+        }
+        return user.get();
+    }
+
+    public CartItem findCartItemByTicketIdAndCartId(String ticketId, String cartId){
+        return cartItemRepository.findCartItemByTicketIdAndAndCartId(ticketId,cartId);
+    }
+    public String insertCartItem(CartItemDto cartItemDto){
+        cartItemRepository.save(CartItemMapper.toCartItem(cartItemDto));
+        return cartItemDto.getId();
+    }
+    public void updateCartItem(CartItemDto cartItemDto){
+        Optional<CartItem> cartOptional = cartItemRepository.findById(cartItemDto.getId());
+        if(cartOptional.isPresent()){
+            CartItem cartItem1 = cartOptional.get();
+            cartItem1.setId(cartItemDto.getId());
+            cartItem1.setTicket(cartItemDto.getTicket());
+            cartItem1.setQuantity(cartItemDto.getQuantity());
+            cartItem1.setCart(cartItemDto.getCart());
+            cartItemRepository.save(CartItemMapper.toCartItem(cartItemDto));
+        }
+    }
+    public String updateUserById(String id, UserDto updatedUserDto) {
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isEmpty()) {
+            LOGGER.error(UserConstants.USER_NOT_FOUND);
+            return UserConstants.USER_NOT_FOUND;
+        } else {
+            User user = userOptional.get();
+            User updatedUser = UserMapper.toUser(updatedUserDto);
+            user.setCart(updatedUser.getCart());
+            userRepository.save(user);
+            return UserConstants.USER_UPDATED;
+        }
+    }
+    public List<CartItem> findCartItemsByCartId(String cartId){
+        return cartItemRepository.findCartItemsByCartId(cartId);
+    }
+    @Transactional
+    public void deleteCartItemById(String cartItemId){
+        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
+        if(cartItem.isPresent()){
+            CartItem cartItem1 = cartItem.get();
+            if(cartItem1.getQuantity()>1){
+                cartItem1.setQuantity(cartItem1.getQuantity()-1);
+                cartItem1.getTicket().setAvailable(cartItem1.getTicket().getAvailable());
+                cartItem1.setId(cartItemId);
+                cartItemRepository.save(cartItem1);
+            }else{
+                cartItemRepository.deleteById(cartItemId);
+            }
+        }
     }
 
 }

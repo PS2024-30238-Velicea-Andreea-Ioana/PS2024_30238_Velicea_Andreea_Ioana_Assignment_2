@@ -112,7 +112,7 @@
                 <ul>
                     <li th:each="ticket: ${order.tickets}">
                         Ticket type: <span th:text="${ticket.category.tip}"></span>
-                        Price: <span th:text="${ticket.price}"></span>
+                        Price: <span th:text="${ticket.discountedPrice}"></span>
                     </li>
                 </ul>
             </td>
@@ -121,6 +121,16 @@
             <td class="actions">
                 <a th:href="@{/order/edit/{id}(id=${order.id})}">Edit</a>
                 <a th:href="@{/order/delete/{id}(id=${order.id})}" class="delete">Delete</a>
+                <form action="/generate-file" method="post">
+                    <input type="hidden" name="orderId" th:value="${order.id}">
+                    <label for="type">Type:</label>
+                    <select id="type" name="type">
+                        <option value="txt">TXT</option>
+                        <option value="csv">CSV</option>
+                        <option value="pdf">PDF</option>
+                    </select><br>
+                    <button type="submit">Generate File</button>
+                </form>
             </td>
         </tr>
     </table>

@@ -1,0 +1,21 @@
+Order Details
+
+Order made by: Cosmin Pacurar
+
+Tickets: 
+
+Ticket 1:
+Type: two_days
+Start Date: 2024-04-01
+Finish Date: 2024-04-02
+Price: 198.0
+Ticket Number: 5da75c72-b9c4-477c-ab47-06d230706d46
+
+Ticket 2:
+Type: one_day
+Start Date: 2024-04-01
+Finish Date: 2024-04-02
+Price: 99.0
+Ticket Number: 1ea789ce-2d22-4198-a287-cf54a5f9e90a
+
+Total amount for order null: 297.0

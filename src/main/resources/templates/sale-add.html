@@ -95,7 +95,7 @@
 
     <label for="tickets">Select Tickets:</label>
     <select id="tickets" multiple="multiple" th:field="*{tickets}">
-        <option th:each="ticket : ${tickets}" th:value="${ticket.id}" th:text="${ticket.category.tip} + ${ticket.price} + ${ticket.available}"></option>
+        <option th:each="ticket : ${tickets}" th:value="${ticket.id}" th:text="'Type: ' + ${ticket.category.tip} + ' Price: ' + ${ticket.price}"></option>
     </select>
 
     <button type="submit">Add Sale</button>

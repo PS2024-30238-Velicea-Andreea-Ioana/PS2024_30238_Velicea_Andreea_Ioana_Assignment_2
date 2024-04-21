@@ -4,13 +4,19 @@ import com.example.untoldpsproject.dtos.*;
 import com.example.untoldpsproject.entities.*;
 import com.example.untoldpsproject.mappers.*;
 import com.example.untoldpsproject.services.*;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -24,10 +30,10 @@ import java.util.List;
 @RequestMapping(value = "/cart")
 public class CartController {
     private final OrderService orderService;
-    private final CartItemService cartItemService;
     private final CartService cartService;
-    private final TicketService ticketService;
     private final UserService userService;
+    private RabbitMQSender rabbitMQSender;
+    private RestTemplate restTemplate;
 
     /**
      * Displays the available tickets for the customer to visualize.
@@ -36,8 +42,17 @@ public class CartController {
      * @return A ModelAndView object containing the view name and the list of available tickets.
      */
     @GetMapping("/customer/seetickets/{userId}")
-    public ModelAndView visualiseTickets(@PathVariable("userId") String userId) {
+    public ModelAndView visualiseTickets(@PathVariable("userId") String userId, HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("user-interface");
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("userRole") && cookie.getValue().equals("ADMINISTRATOR")) {
+                    mav.setViewName("redirect:/login");
+                    return mav;
+                }
+            }
+        }
         UserDto user = userService.findUserById(userId);
         if (user.getCart() == null) {
             CartDto cart = new CartDto();
@@ -53,6 +68,7 @@ public class CartController {
             if (ticket.getAvailable() > 0)
                 tickets.add(ticket);
         }
+        tickets.sort(Comparator.comparing(TicketDto::getDiscountedPrice));
         mav.addObject("tickets", tickets);
         mav.addObject("userId", userId);
         mav.addObject("cartId", user.getCart().getId());
@@ -69,28 +85,28 @@ public class CartController {
      */
     @GetMapping("/customer/tickets/{userId}/addToCart/{ticketId}/{cartId}")
     public ModelAndView addTicketToCartForm(@PathVariable("ticketId") String id, @PathVariable("userId") String userId, @PathVariable("cartId") String cartId) {
-        TicketDto ticket = ticketService.findTicketById(id);
-        UserDto user = userService.findUserById(userId);
+        Ticket ticket = cartService.findTicket(id);
+        User user = cartService.findUser(userId);
         Cart cartDto = cartService.findCartById(cartId);
         if (ticket != null && ticket.getAvailable() > 0) {
             if (cartDto == null) {
                 cartDto = new Cart();
-                cartDto.setUser(UserMapper.toUser(user));
+                cartDto.setUser(user);
                 cartDto.setCartItems(new ArrayList<>());
                 cartDto.setTotalPrice(0.0);
                 cartService.insert(CartMapper.toCartDto(cartDto));
             }
-            CartItem existingCartItem = cartItemService.findCartItemByTicketIdAndCartId(id, cartId);
+            CartItem existingCartItem = cartService.findCartItemByTicketIdAndCartId(id, cartId);
             if (existingCartItem == null) {
                 CartItemDto newCartItemDto = new CartItemDto();
-                newCartItemDto.setTicket(TicketMapper.toTicket(ticket));
+                newCartItemDto.setTicket(ticket);
                 newCartItemDto.setQuantity(1.0);
                 newCartItemDto.setCart(cartDto);
-                cartItemService.insert(newCartItemDto);
+                cartService.insertCartItem(newCartItemDto);
             } else {
                 if (ticket.getAvailable() > existingCartItem.getQuantity()) {
                     existingCartItem.setQuantity(existingCartItem.getQuantity() + 1.0);
-                    cartItemService.update(CartItemMapper.toCartItemDto(existingCartItem));
+                    cartService.updateCartItem(CartItemMapper.toCartItemDto(existingCartItem));
                 }
             }
             cartService.updateTotalPrice(cartId);
@@ -153,7 +169,7 @@ public class CartController {
      */
     @GetMapping("/place-order/{userId}/{cartId}")
     public ModelAndView placeOrderForm(@PathVariable("userId") String userId, @PathVariable("cartId") String cartId) {
-        List<CartItem> cartItems = cartItemService.findCartItemsByCartId(cartId);
+        List<CartItem> cartItems = cartService.findCartItemsByCartId(cartId);
         List<Ticket> tickets = new ArrayList<>();
         if (!cartItems.isEmpty()) {
             for (CartItem cartItem : cartItems) {
@@ -164,17 +180,17 @@ public class CartController {
                         quantity--;
                     }
                     cartItem.setQuantity(0.0);
-                    cartItemService.update(CartItemMapper.toCartItemDto(cartItem));
-                    cartItemService.deleteCartItemById(cartItem.getId());
+                    cartService.updateCartItem(CartItemMapper.toCartItemDto(cartItem));
+                    cartService.deleteCartItemById(cartItem.getId());
                 }
             }
             cartService.updateTotalPrice(cartId);
             double totalPrice = cartService.findCartById(cartId).getTotalPrice();
-            UserDto user = userService.findUserById(userId);
+            User user = cartService.findUser(userId);
             Order newOrder = new Order();
             newOrder.setTickets(tickets);
             newOrder.setTotalPrice(totalPrice);
-            newOrder.setUser(UserMapper.toUser(user));
+            newOrder.setUser(user);
             newOrder.setId(orderService.insert(OrderMapper.toOrderDto(newOrder)));
             ModelAndView mav = new ModelAndView();
             mav.addObject("userId", userId);
@@ -210,6 +226,30 @@ public class CartController {
     public ModelAndView visualizeOrder(@PathVariable("orderId") String orderId) {
         ModelAndView mav = new ModelAndView("order-placed");
         OrderDto order = orderService.findOrderById(orderId);
+
+        Payload payload = new Payload(userService.findUserByEmail(order.getUser().getEmail()).getId(),order.getUser().getFirstName(),order.getUser().getEmail());
+        rabbitMQSender.send(payload);
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        httpHeaders.setBearerAuth(payload.getId()+payload.getId());
+
+        NotificationRequestDto notificationRequestDto = new NotificationRequestDto(payload.getId(),payload.getName(),payload.getEmail(), "order");
+        HttpEntity<NotificationRequestDto> entity = new HttpEntity<>(notificationRequestDto, httpHeaders);
+
+        String emailServiceUrl = "http://localhost:8081/receiver/sendEmail";
+        ResponseEntity<ResponseMessageDto> responseEntity = restTemplate.exchange(
+                emailServiceUrl,                        // URL
+                HttpMethod.POST,                       // HTTP method
+                entity,                                // Request entity (body and headers)
+                ResponseMessageDto.class                           // Response type
+        );
+        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+            ResponseMessageDto responseMessageDto = responseEntity.getBody();
+            System.out.println(responseMessageDto.getMessage());
+        } else {
+            System.out.println("Failed to send email notification");
+        }
         List<Ticket> tickets = order.getTickets();
         String userId = order.getUser().getId();
         User user = order.getUser();
