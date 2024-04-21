@@ -1,21 +1,14 @@
 Order Details
 
-Order made by: Cosmin Pacurar
+Order made by: Andreea Velicea
 
 Tickets: 
 
 Ticket 1:
-Type: two_days
-Start Date: 2024-04-01
-Finish Date: 2024-04-02
-Price: 198.0
-Ticket Number: 5da75c72-b9c4-477c-ab47-06d230706d46
-
-Ticket 2:
 Type: one_day
-Start Date: 2024-04-01
-Finish Date: 2024-04-02
+Start Date: 2024-08-22
+Finish Date: 2024-08-22
 Price: 50.0
 Ticket Number: 1ea789ce-2d22-4198-a287-cf54a5f9e90a
 
-Total amount for order 896bade2-c7d5-4ad5-973f-c70a7ad779fc: 297.0
+Total amount for order 7f6c6098-8126-462c-8345-7691eeb9abf7: 50.0

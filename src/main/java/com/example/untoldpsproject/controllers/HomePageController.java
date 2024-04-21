@@ -154,7 +154,7 @@ public class HomePageController {
         }
 
         Payload payload = new Payload(userService.findUserByEmail(userDto.getEmail()).getId(),userDto.getFirstName(),userDto.getEmail());
-        rabbitMQSender.send(payload);
+        //rabbitMQSender.send(payload);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));

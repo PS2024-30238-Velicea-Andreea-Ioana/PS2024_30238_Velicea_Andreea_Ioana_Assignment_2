@@ -230,26 +230,26 @@ public class CartController {
         Payload payload = new Payload(userService.findUserByEmail(order.getUser().getEmail()).getId(),order.getUser().getFirstName(),order.getUser().getEmail());
         rabbitMQSender.send(payload);
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        httpHeaders.setBearerAuth(payload.getId()+payload.getId());
-
-        NotificationRequestDto notificationRequestDto = new NotificationRequestDto(payload.getId(),payload.getName(),payload.getEmail(), "order");
-        HttpEntity<NotificationRequestDto> entity = new HttpEntity<>(notificationRequestDto, httpHeaders);
-
-        String emailServiceUrl = "http://localhost:8081/receiver/sendEmail";
-        ResponseEntity<ResponseMessageDto> responseEntity = restTemplate.exchange(
-                emailServiceUrl,                        // URL
-                HttpMethod.POST,                       // HTTP method
-                entity,                                // Request entity (body and headers)
-                ResponseMessageDto.class                           // Response type
-        );
-        if (responseEntity.getStatusCode() == HttpStatus.OK) {
-            ResponseMessageDto responseMessageDto = responseEntity.getBody();
-            System.out.println(responseMessageDto.getMessage());
-        } else {
-            System.out.println("Failed to send email notification");
-        }
+//        HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+//        httpHeaders.setBearerAuth(payload.getId()+payload.getId());
+//
+//        NotificationRequestDto notificationRequestDto = new NotificationRequestDto(payload.getId(),payload.getName(),payload.getEmail(), "order");
+//        HttpEntity<NotificationRequestDto> entity = new HttpEntity<>(notificationRequestDto, httpHeaders);
+//
+//        String emailServiceUrl = "http://localhost:8081/receiver/sendEmail";
+//        ResponseEntity<ResponseMessageDto> responseEntity = restTemplate.exchange(
+//                emailServiceUrl,                        // URL
+//                HttpMethod.POST,                       // HTTP method
+//                entity,                                // Request entity (body and headers)
+//                ResponseMessageDto.class                           // Response type
+//        );
+//        if (responseEntity.getStatusCode() == HttpStatus.OK) {
+//            ResponseMessageDto responseMessageDto = responseEntity.getBody();
+//            System.out.println(responseMessageDto.getMessage());
+//        } else {
+//            System.out.println("Failed to send email notification");
+//        }
         List<Ticket> tickets = order.getTickets();
         String userId = order.getUser().getId();
         User user = order.getUser();

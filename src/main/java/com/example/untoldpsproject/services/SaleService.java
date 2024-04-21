@@ -82,7 +82,7 @@ public class SaleService {
                     ticket.setDiscountedPrice(addDiscount(updatesSaleDto.getDiscountPercentage(),ticket.getPrice()));
                     ticketRepository.save(ticket);
                 }
-                saleRepository.save(sale);
+                saleRepository.save(updatedSale);
                 LOGGER.debug(SaleConstants.SALE_UPDATED);
                 return SaleConstants.SALE_UPDATED;
             }catch (Exception e){
