@@ -30,7 +30,7 @@ import java.util.Arrays;
 public class HomePageController {
 
     private final UserService userService;
-    private final RabbitMQSender rabbitMQSender;
+    //private final RabbitMQSender rabbitMQSender;
     private RestTemplate restTemplate;
 
     /**
@@ -49,7 +49,6 @@ public class HomePageController {
                 }
             }
         }
-        // If the user doesn't have the ADMIN role cookie, redirect them to the login page or show an access denied message
         return "redirect:/login";
     }
     @GetMapping("/customer/{userId}")
@@ -63,42 +62,9 @@ public class HomePageController {
                 }
             }
         }
-        // If the user doesn't have the ADMIN role cookie, redirect them to the login page or show an access denied message
         return "redirect:/login";
     }
 
-//    /**
-//     * Displays the home page.
-//     *
-//     * @return A ModelAndView object containing the view name and the list of users.
-//     */
-//    @GetMapping("/home")
-//    public ModelAndView showHomePage() {
-//        ModelAndView mav = new ModelAndView("home");
-//        List<UserDto> users = userService.findUsers();
-//        mav.addObject("users", users);
-//        return mav;
-//    }
-
-//    /**
-//     * Redirects to different interfaces based on the user's role.
-//     *
-//     * @param userId The ID of the user.
-//     * @return A ModelAndView object containing the redirection URL based on the user's role.
-//     */
-//    @PostMapping("/redirect")
-//    public ModelAndView redirectToInterface(@RequestParam("userId") String userId) {
-//        ModelAndView mav = new ModelAndView();
-//        UserDto userDto = userService.findUserById(userId);
-//        if (userDto.getRole() == Role.CUSTOMER) {
-//            mav.setViewName("redirect:/cart/customer/seetickets/" + userId);
-//        } else if (userDto.getRole() == Role.ADMINISTRATOR) {
-//            mav.setViewName("redirect:/administrator?userId=" + userId);
-//        } else {
-//            mav.setViewName("redirect:/");
-//        }
-//        return mav;
-//    }
     @GetMapping("/login")
     public ModelAndView loginForm(){
         ModelAndView mav = new ModelAndView("login");
@@ -138,14 +104,12 @@ public class HomePageController {
             return mav;
         }
 
-        // Validate if the email is already registered
         if (userService.findUserByEmail(userDto.getEmail()) != null) {
             mav.addObject("error", "Email already registered");
             mav.setViewName("register");
             return mav;
         }
 
-        // Insert the user into the database
         String result = userService.insert(userDto);
         if(!result.equals(UserConstants.USER_INSERTED)){
             mav.addObject("error", result);

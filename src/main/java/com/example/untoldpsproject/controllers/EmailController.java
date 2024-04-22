@@ -1,7 +1,5 @@
 package com.example.untoldpsproject.controllers;
 
-import com.example.untoldpsproject.services.RabbitMQSender;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +10,9 @@ import org.springframework.web.client.RestTemplate;
 @RequestMapping("/email")
 public class EmailController {
 
-    private final RestTemplate restTemplate; // Inject RestTemplate
+    private final RestTemplate restTemplate;
 
-    private static final String RABBITMQ_BASE_URL = "http://localhost:8080/rabbitmq/sendEmail"; // Assuming RabbitMQController runs on localhost:8080
+    private static final String RABBITMQ_BASE_URL = "http://localhost:8080/rabbitmq/sendEmail";
 
     @Autowired
     public EmailController(RestTemplate restTemplate) {
