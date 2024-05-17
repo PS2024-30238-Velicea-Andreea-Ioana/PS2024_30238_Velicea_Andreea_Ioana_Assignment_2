@@ -24,6 +24,7 @@
             flex-wrap: wrap;
             justify-content: center;
             align-items: center;
+            margin-top: 20px;
         }
 
         .ticket {
@@ -81,8 +82,9 @@
             background-color:  #2B0251;
         }
         .header {
-            color: #2B0251;
+            color: #ffffff;
             padding: 20px;
+            margin-top: 60px;
             text-align: center; /
         }
 
@@ -90,7 +92,7 @@
             font-size: 36px;
             margin-bottom: 10px;
         }
-        .cart-button {
+        .cart-button{
             position:absolute;
             top: 20px;
             right: 20px;
@@ -101,7 +103,20 @@
             border-radius: 5px;
             transition: background-color 0.3s ease;
         }
-
+        .orderStatus-button{
+            position:absolute;
+            top: 100px;
+            right: 20px;
+            padding: 10px 20px;
+            background-color:#8917F5;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .orderStatus-button:hover{
+            background-color:  #2B0251;
+        }
         .cart-button:hover {
             background-color:  #2B0251;
         }
@@ -113,7 +128,7 @@
         .add-to-cart {
             display: inline-block;
             padding: 10px 20px;
-            background-color: #6a5acd;
+            background-color:#8917F5;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -140,6 +155,124 @@
         .red-text {
             color: red;
         }
+        .filter-container {
+            position: absolute;
+            top: 20px;
+            left: 640px;
+            display: flex;
+            align-items: center;
+            border:1px solid #8917F5;
+            background-color: #8917F5;
+        }
+
+        .filter-button {
+            margin-left: 10px;
+            background-color:#8917F5;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .filter-button:hover {
+            background-color:  #2B0251;
+        }
+
+        select {
+            margin-left: 10px;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #8917F5;
+            color: #fff;
+        }
+        .sort-container {
+            position: absolute;
+            top: 20px;
+            right: 180px;
+            display: flex;
+            align-items: center;
+            border:1px solid #8917F5;
+            background-color: #8917F5;
+        }
+
+        .sort-container select {
+            margin-left: 10px;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #8917F5;
+        }
+        #searchForm {
+            position: absolute;
+            top: 20px;
+            left: 260px;
+            background-color: #8917F5;
+            display: flex;
+            align-items: center;
+        }
+
+        #search {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #8917F0;
+            background-color: #8917F0;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        #search:focus {
+            outline: none;
+            border-color: #2B0251;
+        }
+
+        #searchButton {
+            background-color: #8917F5;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #searchButton:hover {
+            background-color:  #2B0251;
+        }
+        .alert {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            padding: 20px;
+            background-color: #f44336;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            width: 80%;
+            max-width: 400px;
+        }
+        .alert.show {
+            display: block;
+        }
+        .alert .closebtn {
+            color: white;
+            font-weight: bold;
+            float: right;
+            font-size: 22px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .alert .closebtn:hover {
+            color: black;
+        }
+
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -149,29 +282,61 @@
         <h1 class="title">Welcome to Untold</h1>
         <p class="details">Explore the world of Untold and discover amazing stories.</p>
     </div>
+    <form id="searchForm">
+        <input type="text" id="search" name="search" placeholder="Search...">
+        <button id="searchButton" type="submit" class="filter-button">Search</button>
+    </form>
     <form th:action="@{/cart/visualizeCart/{cartId} (cartId=${cartId})}" method="get">
         <button class="cart-button" >Cart <i class="fa fa-shopping-cart" style="font-size:36px"></i>
         </button>
     </form>
-    <form th:action="@{/cart/customer/seetickets/{userId} (userId=${userId})}"  method="get">
+    <form th:action="@{/user/visualizeOrdersStatus/{userId} (userId=${userId})}" method="get">
+        <button class="orderStatus-button" >My orders</button>
+    </form>
+    <form th:action="@{/customer/seetickets/{userId} (userId=${userId})}"  method="get">
+        <div class="filter-container">
+            <select id="category-filter" name="category">
+                <option value="">All Categories</option>
+                <option th:each="category : ${categories}" th:value="${category.tip}" th:text="${category.tip}"></option>
+            </select>
+            <button type="submit" class="filter-button">Filter</button>
+        </div>
+        <div class="sort-container">
+            <select id="sort-by" name="sort">
+                <option value="price-asc">Price (Low to High)</option>
+                <option value="price-desc">Price (High to Low)</option>
+                <option value="availability-asc">Availability (Low to High)</option>
+                <option value="availability-desc">Availability (High to Low)</option>
+            </select>
+            <button type="submit" class="filter-button">Sort</button>
+        </div>
+        <div class="alert" th:if="${not #strings.isEmpty(error)}" id="errorAlert">
+            <span class="closebtn" onclick="closeAlert()">×</span>
+            <strong th:text="${error}"></strong>
+        </div>
         <div class="ticket-container">
             <div th:each="ticket : ${tickets}" class="ticket">
-<!--                <input type="checkbox" name="selectedTickets" th:value="${ticket.id}">-->
                 <div class="ticket-header">
                     <h2 class="ticket-type" th:text="${ticket.category.tip}"></h2>
                     <p class="ticket-number" th:text="'Ticket No: ' + ${ticket.id}"></p>
                 </div>
                 <div class="ticket-content">
+                    <img th:if="${ticket.imageUrl != null}" th:src="${ticket.imageUrl}" alt="Ticket Image" style="max-width: 250px; max-height: 200px;">
                     <p class="ticket-price" th:if="${ticket.discountedPrice} != ${ticket.price}">
                         <del th:text="'Initial Price: ' + ${ticket.price} + ' RON'"></del>
                         <span class="discounted-price" th:text="'Discounted Price: ' + ${ticket.discountedPrice} + ' RON'"></span>
                         <span class="discount-percentage" th:text="' (' + (${ticket.price} - ${ticket.discountedPrice}) / ${ticket.price} * 100 + '% off)'"></span>
                     </p>
+                    <p class="ticket-price" th:if="${ticket.available == 0}">
+                        <del th:text="'Price: '+ ${ticket.price} + ' RON'"></del>
+                        <br>
+                        <span class="discounted-price" th:text="'SOLD OUT'"></span>
+                    </p>
                     <p class="ticket-price" th:unless="${ticket.discountedPrice} != ${ticket.price}" th:text="'Price: ' + ${ticket.price} + ' RON'"></p>
                     <p class="ticket-date" th:text="'Start Date: ' + ${ticket.category.startDate}"></p>
                     <p class="ticket-date" th:text="'Finish Date: ' + ${ticket.category.finishDate}"></p>
                     <p class="ticket-availability" th:text="'Available: ' + ${ticket.available}"></p>
-                    <button class="add-to-cart">
+                    <button class="add-to-cart" th:if = "${ticket.available != 0}" >
                         <a th:href="@{/cart/customer/tickets/{userId}/addToCart/{ticketId}/{cartId} (userId=${userId}, ticketId=${ticket.id}, cartId=${cartId})}" class="add-to-cart">Add to cart</a>
                     </button>
 
@@ -181,4 +346,36 @@
     </form>
     <a href="/login" class="back-button">Back to Home Page</a>
 </body>
+<script>
+    document.getElementById('searchForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var searchQuery = document.getElementById('search').value.trim().toLowerCase();
+        var tickets = document.getElementsByClassName('ticket');
+        for (var i = 0; i < tickets.length; i++) {
+            var ticket = tickets[i];
+            var ticketType = ticket.getElementsByClassName('ticket-type')[0].innerText.trim().toLowerCase();
+            var ticketNumber = ticket.getElementsByClassName('ticket-number')[0].innerText.trim().toLowerCase();
+            var ticketInfo = ticketType + ' ' + ticketNumber;
+            if (ticketInfo.startsWith(searchQuery)) {
+                ticket.style.display = 'block';
+            } else {
+                ticket.style.display = 'none';
+            }
+        }
+    });
+    function closeAlert() {
+        var alert = document.getElementById("errorAlert");
+        alert.style.display = "none";
+    }
+    // Show the alert
+    function showAlert() {
+        var alert = document.getElementById("errorAlert");
+        alert.style.display = "block";
+    }
+    window.onload = function() {
+        if (document.getElementById("errorAlert").innerText.trim() !== "") {
+            showAlert();
+        }
+    };
+</script>
 </html>

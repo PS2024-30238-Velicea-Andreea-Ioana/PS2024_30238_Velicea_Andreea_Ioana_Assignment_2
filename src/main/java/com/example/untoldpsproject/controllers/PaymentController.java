@@ -31,7 +31,7 @@ public class PaymentController {
         String result = paymentService.insert(paymentDto);
         if (result.equals(PaymentConstants.PAYMENT_INSERTED)) {
             paymentService.actualizeOrderStatus(orderId);
-            return new ModelAndView("redirect:/cart/visualizeOrder/" + orderId);
+            return new ModelAndView("redirect:/order/visualizeOrder/" + orderId);
         } else {
             redirectAttributes.addFlashAttribute("error", result); // Here, add result directly as error message
             return new ModelAndView("redirect:/payment/add/" + orderId);
@@ -46,7 +46,7 @@ public class PaymentController {
     @PostMapping("/process-payment")
     public ModelAndView processPayment(@RequestParam("orderId") String orderId, @RequestParam("paymentMethod") String paymentMethod) {
         if ("cash".equals(paymentMethod)) {
-            return new ModelAndView("redirect:/cart/visualizeOrder/" + orderId);
+            return new ModelAndView("redirect:/order/visualizeOrder/" + orderId);
         }
         if ("card".equals(paymentMethod)) {
             return new ModelAndView("redirect:/payment/add/" + orderId);

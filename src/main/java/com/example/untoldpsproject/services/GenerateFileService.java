@@ -1,10 +1,14 @@
 package com.example.untoldpsproject.services;
 
 import com.example.untoldpsproject.entities.Order;
+import com.example.untoldpsproject.entities.User;
 import com.example.untoldpsproject.repositories.OrderRepository;
+import com.example.untoldpsproject.repositories.UserRepository;
 import com.example.untoldpsproject.strategies.*;
+import jdk.jfr.Name;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 
@@ -18,26 +22,44 @@ import java.util.Optional;
 @AllArgsConstructor
 public class GenerateFileService {
     private OrderRepository orderRepository;
+    private UserRepository userRepository;
 
     public String generateFile(String type, String orderId) {
         Optional<Order> order = orderRepository.findById(orderId);
+        String generatedFilePath = new String();
         if(order.isPresent()) {
             if (type.equals("txt")) {
                 Context context = new Context(new TXTFileStrategy());
-                context.generate(order.get());
-            }else if (type.equals("pdf")) {
+                generatedFilePath = context.generate(order.get()); // Store the generated file path
+            } else if (type.equals("pdf")) {
                 Context context = new Context(new PDFFileStrategy());
-                context.generate(order.get());
-            }else if (type.equals("csv")) {
+                generatedFilePath = context.generate(order.get()); // Store the generated file path
+            } else if (type.equals("csv")) {
                 Context context = new Context(new CSVFileStrategy());
-                context.generate(order.get());
+                generatedFilePath = context.generate(order.get()); // Store the generated file path
             }
-            return "The File was successfully generated.";
+            return generatedFilePath;
         }
-        return "The Order was not found.";
+        return null;
     }
 
     public List<Order> getOrders(){
         return orderRepository.findAll();
+    }
+    public Order getOrder(String orderId){
+        Optional<Order> order = orderRepository.findById(orderId);
+        if(order.isPresent()) {
+            return order.get();
+        }else{
+            return null;
+        }
+    }
+    public User getUser(String userId){
+        Optional<User> user = userRepository.findById(userId);
+        if(user.isPresent()) {
+            return user.get();
+        }else{
+            return null;
+        }
     }
 }

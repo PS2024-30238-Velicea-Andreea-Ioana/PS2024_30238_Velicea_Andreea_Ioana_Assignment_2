@@ -30,11 +30,12 @@ public class CategoryController {
      *
      * @return A ModelAndView object containing the view name and the list of categories.
      */
-    @GetMapping("/list")
-    public ModelAndView categoryList() {
+    @GetMapping("/list/{userId}")
+    public ModelAndView categoryList(@PathVariable("userId")String userId) {
         ModelAndView mav = new ModelAndView("category-list");
         List<CategoryDto> categories = categoryService.findCategories();
         mav.addObject("categories", categories);
+        mav.addObject("userId", userId);
         return mav;
     }
 
@@ -43,10 +44,11 @@ public class CategoryController {
      *
      * @return A ModelAndView object containing the view name and an empty CategoryDto object.
      */
-    @GetMapping("/add")
-    public ModelAndView addCategoryForm() {
+    @GetMapping("/add/{userId}")
+    public ModelAndView addCategoryForm(@PathVariable("userId") String userId) {
         ModelAndView mav = new ModelAndView("category-add");
         mav.addObject("categoryDto", new CategoryDto());
+        mav.addObject("userId", userId);
         return mav;
     }
 
@@ -56,14 +58,14 @@ public class CategoryController {
      * @param categoryDto The CategoryDto object representing the category to be added.
      * @return A redirection to the category list view.
      */
-    @PostMapping("/add")
-    public ModelAndView addCategory(@ModelAttribute CategoryDto categoryDto, RedirectAttributes redirectAttributes) {
+    @PostMapping("/add/{userId}")
+    public ModelAndView addCategory(@PathVariable("userId") String userId, @ModelAttribute CategoryDto categoryDto, RedirectAttributes redirectAttributes) {
         String result = categoryService.insert(categoryDto);
         if(result.equals(CategoryConstants.CATEGORY_INSERTED)){
-            return new ModelAndView("redirect:/category/list");
+            return new ModelAndView("redirect:/category/list/"+userId);
         }else{
             redirectAttributes.addFlashAttribute("error" + result);
-            return new ModelAndView("redirect:/category/add");
+            return new ModelAndView("redirect:/category/add/"+userId);
         }
 
     }
@@ -74,11 +76,12 @@ public class CategoryController {
      * @param categoryId The ID of the category to be edited.
      * @return A ModelAndView object containing the view name and the CategoryDto object to be edited.
      */
-    @GetMapping("/edit/{id}")
-    public ModelAndView editCategoryForm(@PathVariable("id") String categoryId) {
+    @GetMapping("/edit/{id}/{userId}")
+    public ModelAndView editCategoryForm(@PathVariable("userId") String userId, @PathVariable("id") String categoryId) {
         ModelAndView mav = new ModelAndView("category-edit");
         CategoryDto categoryDto = categoryService.findCategoryById(categoryId);
         mav.addObject("categoryDto", categoryDto);
+        mav.addObject("userId", userId);
         return mav;
     }
 
@@ -88,14 +91,14 @@ public class CategoryController {
      * @param categoryDto The CategoryDto object representing the updated category information.
      * @return A redirection to the category list view.
      */
-    @PostMapping("/edit/{id}")
-    public ModelAndView updateCategory( @ModelAttribute("categoryDto") CategoryDto categoryDto, RedirectAttributes redirectAttributes) {
+    @PostMapping("/edit/{id}/{userId}")
+    public ModelAndView updateCategory(@PathVariable("userId") String userId, @ModelAttribute("categoryDto") CategoryDto categoryDto, RedirectAttributes redirectAttributes) {
         String result = categoryService.updateCategoryById(categoryDto.getId(), categoryDto);
         if(result.equals(CategoryConstants.CATEGORY_UPDATED)){
-            return new ModelAndView("redirect:/category/list");
+            return new ModelAndView("redirect:/category/list/"+userId);
         }else{
             redirectAttributes.addFlashAttribute("error"+result);
-            return new ModelAndView("redirect:/category/edit/"+categoryDto.getId());
+            return new ModelAndView("redirect:/category/edit/"+categoryDto.getId()+"/"+userId);
         }
 
     }
@@ -106,10 +109,10 @@ public class CategoryController {
      * @param id The ID of the category to be deleted.
      * @return A redirection to the category list view.
      */
-    @GetMapping("/delete/{id}")
-    public ModelAndView deleteCategory(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
+    @GetMapping("/delete/{id}/{userId}")
+    public ModelAndView deleteCategory(@PathVariable("userId") String userId,@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
         String result = categoryService.deleteCategoryById(id);
         redirectAttributes.addFlashAttribute("error",result);
-        return new ModelAndView("redirect:/category/list");
+        return new ModelAndView("redirect:/category/list/"+userId);
     }
 }

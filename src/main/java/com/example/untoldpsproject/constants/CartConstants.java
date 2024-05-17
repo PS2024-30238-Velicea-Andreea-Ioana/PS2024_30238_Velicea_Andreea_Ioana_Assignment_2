@@ -9,4 +9,5 @@ public class CartConstants {
     public static final String CART_NOT_INSERTED = "The cart is not inserted";
     public static final String CART_NOT_UPDATED = "The cart is not updated";
     public static final String CART_NOT_FOUND = "The cart is not found in db";
+    public static final String INVALID_QUANTITY = "There are no more tickets available";
 }

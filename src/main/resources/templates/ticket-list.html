@@ -102,6 +102,7 @@
     <table>
         <tr>
             <th>ID</th>
+            <th>Image</th>
             <th>Category</th>
             <th>Price</th>
             <th>Available</th>
@@ -110,18 +111,21 @@
         </tr>
         <tr th:each="ticket : ${tickets}">
             <td th:text="${ticket.id}"></td>
+            <td>
+                <img th:if="${ticket.imageUrl != null}" th:src = "${ticket.imageUrl}" alt="Ticket Image" style="max-width: 100px; max-height: 100px;">
+            </td>
             <td th:text="${ticket.category.tip}"></td>
             <td th:text="${ticket.price}"></td>
             <td th:text="${ticket.available}"></td>
             <td th:text="${ticket.discountedPrice}" th:class="${ticket.discountedPrice != ticket.price} ? 'red-text' : ''"></td>
             <td class="actions">
-                <a th:href="@{/ticket/edit/{id}(id=${ticket.id})}">Edit</a>
-                <a th:href="@{/ticket/delete/{id}(id=${ticket.id})}" class="delete">Delete</a>
+                <a th:href="@{/ticket/edit/{id}/{userId}(id=${ticket.id}, userId = ${userId})}">Edit</a>
+                <a th:href="@{/ticket/delete/{id}/{userId}(id=${ticket.id}, userId = ${userId})}" class="delete">Delete</a>
             </td>
         </tr>
     </table>
-    <a href="/ticket/add" class="add-ticket-button">Add Ticket</a>
-    <a href="/administrator" class="back-button">Back to Admin Page</a>
+    <a th:href="@{/ticket/add/{userId}(userId = ${userId})}" class="add-ticket-button">Add Ticket</a>
+    <a th:href="@{/administrator/{userId}(userId = ${userId})}" class="back-button">Back to Admin Page</a>
     <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
 </div>
 </body>

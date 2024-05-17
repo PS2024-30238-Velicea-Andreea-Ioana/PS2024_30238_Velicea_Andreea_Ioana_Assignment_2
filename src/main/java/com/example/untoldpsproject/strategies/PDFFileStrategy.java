@@ -2,6 +2,7 @@ package com.example.untoldpsproject.strategies;
 
 import com.example.untoldpsproject.entities.Order;
 import com.example.untoldpsproject.entities.Ticket;
+import com.ibm.icu.text.SimpleDateFormat;
 import com.itextpdf.io.exceptions.IOException;
 import com.itextpdf.kernel.colors.Color;
 import com.itextpdf.kernel.colors.DeviceRgb;
@@ -18,15 +19,23 @@ import com.itextpdf.layout.properties.UnitValue;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Date;
 
 public class PDFFileStrategy implements GenerateFileStrategy {
 
     @Override
-    public void generateFile(Order order) {
+    public String generateFile(Order order) {
         String fileName = "order.pdf";
-
         try {
-            PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new File(fileName)));
+            String filePath = GenerateFileStrategy.directoryPath + File.separator + fileName;
+            File file = new File(filePath);
+            if (file.exists()) {
+                // If it exists, delete it
+                if (!file.delete()) {
+                    System.out.println("Failed to delete existing file: " + filePath);
+                }
+            }
+            PdfDocument pdfDocument = new PdfDocument(new PdfWriter(new File(filePath)));
             Document document = new Document(pdfDocument, PageSize.A4);
 
             PdfFont font = PdfFontFactory.createFont("Helvetica");
@@ -88,6 +97,7 @@ public class PDFFileStrategy implements GenerateFileStrategy {
                 document.add(table);
                 // Add some space between tickets
                 document.add(new Paragraph("\n"));
+
             }
 
             // Adding total amount
@@ -98,15 +108,19 @@ public class PDFFileStrategy implements GenerateFileStrategy {
                     .setMarginTop(20));
 
             document.close();
-            System.out.println("Order generated successfully. Check '" + fileName + "'.");
+            System.out.println("Order generated successfully. Check '" + filePath + "'.");
+            return filePath;
         } catch (IOException e) {
             System.out.println("An error occurred while generating the order.");
             e.printStackTrace();
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (java.io.IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("File not found exception occurred while generating the order PDF.");
+            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred while generating the order PDF.");
+            e.printStackTrace();
         }
+        return null;
     }
 
 }

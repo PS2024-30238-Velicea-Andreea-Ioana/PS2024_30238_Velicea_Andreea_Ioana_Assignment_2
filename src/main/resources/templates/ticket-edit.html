@@ -74,7 +74,7 @@
 <body>
 <div class="container">
     <h2>Edit Ticket</h2>
-    <form id="ticketForm" th:action="@{/ticket/edit/ ${ticketDto.id}}" method="post" th:object="${ticketDto}" onsubmit="validateForm()">
+    <form id="ticketForm" th:action="@{/ticket/edit/ ${ticketDto.id}/{userId}(userId = ${userId})}" method="post" th:object="${ticketDto}" onsubmit="validateForm()">
         <input type="hidden" id="id" name="id" th:value="${ticketDto.id}"/>
         <label for="category">Category:</label>
         <select id="category" name="category">
@@ -86,6 +86,8 @@
         <input type="text" id="price" name="price" th:field="*{price}"/><br/>
         <label for="available">Available:</label>
         <input type="text" id="available" name="available" th:field="*{available}"/><br/>
+        <label for="imageUrl">Image Url:</label>
+        <input type="text" id="imageUrl" name="imageUrl" th:field="*{imageUrl}"/><br/>
         <input type="submit" value="Update"/>
         <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
     </form>

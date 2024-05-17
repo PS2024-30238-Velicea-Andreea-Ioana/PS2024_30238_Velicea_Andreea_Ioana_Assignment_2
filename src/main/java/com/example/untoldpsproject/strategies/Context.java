@@ -12,7 +12,7 @@ import lombok.Setter;
 public class Context {
     private GenerateFileStrategy generateFileStrategy;
 
-    public void generate(Order order){
-        generateFileStrategy.generateFile(order);
+    public String generate(Order order){
+        return generateFileStrategy.generateFile(order);
     }
 }

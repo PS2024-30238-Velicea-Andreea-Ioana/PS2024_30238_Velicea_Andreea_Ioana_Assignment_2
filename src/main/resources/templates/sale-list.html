@@ -90,6 +90,31 @@
         .add-sale-button:hover {
         background-color: #32CD32
         }
+        .ticket-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .ticket-item {
+            margin-bottom: 15px;
+        }
+
+        .ticket-type {
+            font-weight: bold;
+        }
+
+        .price-list {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 5px;
+        }
+
+        .price-list li {
+            margin-bottom: 5px;
+        }
+        .discounted-price {
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -107,22 +132,25 @@
             <td th:text="${sale.id}"></td>
             <td th:text="${sale.discountPercentage}"></td>
             <td>
-                <ul>
-                    <li th:each="ticket : ${sale.tickets}" >
-                        Ticket type: <span th:text="${ticket.category.tip}"></span>
-                        Price: <span th:text="${ticket.discountedPrice}"></span>
+                <ul class="ticket-list">
+                    <li th:each="ticket : ${sale.tickets}" class="ticket-item">
+                        <span class="ticket-type">Ticket type: <span th:text="${ticket.category.tip}"></span></span>
+                        <ul class="price-list">
+                            <li>Initial price: <span th:text="${ticket.price}"></span></li>
+                            <li>New price: <span class="discounted-price" th:text="${ticket.discountedPrice}"></span></li>
+                        </ul>
                     </li>
                 </ul>
             </td>
             <td class="actions">
-                <a th:href="@{/sale/edit/{id}(id=${sale.id})}">Edit</a>
-                <a th:href="@{/sale/delete/{id}(id=${sale.id})}" class="delete">Delete</a>
+                <a th:href="@{/sale/edit/{id}/{userId}(id=${sale.id}, userId = ${userId})}">Edit</a>
+                <a th:href="@{/sale/delete/{id}/{userId}(id=${sale.id},userId = ${userId})}" class="delete">Delete</a>
             </td>
         </tr>
         </tbody>
     </table>
-    <a href="/sale/add" class="add-sale-button">Add Sale</a>
-    <a href="/administrator" class="back-button">Back to Admin Page</a>
+    <a th:href="@{/sale/add/{userId}(userId = ${userId})}" class="add-sale-button">Add Sale</a>
+    <a th:href="@{/administrator/{userId}(userId = ${userId})}" class="back-button">Back to Admin Page</a>
     <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
 </div>
 <script>

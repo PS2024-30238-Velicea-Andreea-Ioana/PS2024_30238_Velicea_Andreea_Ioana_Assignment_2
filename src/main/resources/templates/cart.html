@@ -40,7 +40,7 @@
             color: #fff;
             border: none;
             border-radius: 4px;
-            padding: 10px 20px;
+            padding: 5px 5px;
             cursor: pointer;
             transition: background-color 0.3s ease;
         }
@@ -48,6 +48,24 @@
         .action-button:hover {
             background-color: #d86d8e;
         }
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .cart-table th, .cart-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .cart-table th {
+            background-color: #f38ba0;
+            color: #fff;
+            font-weight: bold;
+        }
+
 
         .cart-item {
             border-bottom: 1px solid #ddd;
@@ -94,35 +112,55 @@
     </style>
 </head>
 <body>
-<a th:href="@{/cart/customer/seetickets/{userId} (userId=${userId})}" class="back-button">Continue Shopping</a>
+<a th:href="@{/customer/seetickets/{userId} (userId=${userId})}" class="back-button">Continue Shopping</a>
 <form th:action="@{/cart/visualizeCart/{cartId} (cartId = ${cart.id})}" method="get">
     <div class="cart-container">
         <div class="header">
             <h3 class="heading">Shopping Cart</h3>
-            <a th:href="@{/cart/place-order/{userId}/{cartId}(userId = ${userId},cartId = ${cart.id})}" onsubmit="return validateForm()" class="action-button">Place Order</a>
+            <a th:href="@{/order/place-order/{userId}/{cartId}(userId = ${userId},cartId = ${cart.id})}" onsubmit="return validateForm()" class="action-button">Place Order</a>
         </div>
-        <ul th:each="cartItem: ${cartItems}">
-            <div class="cart-item">
-                <div class="item-details" th:text="${cartItem.ticket.category.tip}"></div>
-                <div class="counter">
-                    <div class="quantity" th:text="${cartItem.quantity}"></div>
-                </div>
-                <div class="price">
-                    <div class="amount" th:text="(${cartItem.ticket.discountedPrice} == null ? ${cartItem.ticket.price} : ${cartItem.ticket.discountedPrice})"></div>
-                </div>
-                <div class="price">
-                    <div class="amount" th:text="(${cartItem.ticket.discountedPrice} == null ? ${cartItem.ticket.price * cartItem.quantity} : ${cartItem.ticket.discountedPrice * cartItem.quantity})"></div>
-                </div>
-                <button class="action-button">
-                    <a th:href="@{/cart/removeItem/{cartItemId} (cartItemId = ${cartItem.id})}" class="action-button">-</a>
-                </button>
-
-            </div>
-        </ul>
+        <table class="cart-table">
+            <thead>
+            <tr>
+                <th>Item Details</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="cartItem: ${cartItems}">
+                <td class="item-details" th:text="${cartItem.ticket.category.tip}"></td>
+                <td class="quantity" th:text="${cartItem.quantity}"></td>
+                <td class="price" th:text="(${cartItem.ticket.discountedPrice} == null ? ${cartItem.ticket.price} : ${cartItem.ticket.discountedPrice})"></td>
+                <td class="total-price" th:text="(${cartItem.ticket.discountedPrice} == null ? ${cartItem.ticket.price * cartItem.quantity} : ${cartItem.ticket.discountedPrice * cartItem.quantity})"></td>
+                <td class="action-buttons">
+                    <button class="action-button">
+                        <a style="text-decoration: none" th:href="@{/cart/decreaseQuantity/{cartItemId} (cartItemId = ${cartItem.id})}" class="action-button">-</a>
+                    </button>
+                    <button class="action-button">
+                        <a style="text-decoration: none" th:href="@{/cart/increaseQuantity/{cartItemId} (cartItemId = ${cartItem.id})}" class="action-button">+</a>
+                    </button>
+                    <button class="action-button">
+                        <a style="text-decoration: none" th:href="@{/cart/removeItem/{cartItemId} (cartItemId = ${cartItem.id})}" class="action-button">x</a>
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
         <div class="total-price" th:text="${cart.totalPrice} + 'Ron'"></div>
-
+        <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
     </div>
 
 </form>
 </body>
+<script>
+    setTimeout(function() {
+        var errorMessage = document.getElementById('errorMessage');
+        if (errorMessage) {
+            errorMessage.style.display = 'none';
+        }
+    }, 3000);
+</script>
 </html>

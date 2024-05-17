@@ -18,4 +18,5 @@ public class TicketDtoIds {
     private List<String> orders;
     private List<String> cartItem;
     private String sale;
+    private String imageUrl;
 }

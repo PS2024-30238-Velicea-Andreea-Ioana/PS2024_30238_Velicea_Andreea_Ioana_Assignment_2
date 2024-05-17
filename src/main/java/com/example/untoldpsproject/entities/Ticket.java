@@ -35,6 +35,9 @@ public class Ticket {
     @Column(name = "available")
     private int available;
 
+    @Column(name = "imageUrl")
+    private String imageUrl;
+
     @JsonIgnore
     @ManyToMany(mappedBy = "tickets", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.REMOVE})
     private List<Order> orders;
@@ -46,4 +49,6 @@ public class Ticket {
     @JsonIgnore
     @JoinColumn(name = "sale_id")
     private Sale sale;
+
+
 }

@@ -73,7 +73,7 @@
 <body>
 <div class="container">
 <h1>Edit Sale</h1>
-<form th:action="@{/sale/edit/{id}(id=${saleDto.id})}" th:object="${saleDto}" method="post">
+<form th:action="@{/sale/edit/{id}/{userId}(id=${saleDto.id}, userId = ${userId})}" th:object="${saleDto}" method="post">
     <input type="hidden" th:field="*{id}" />
 
     <label for="discountPercentage">Discount Percentage:</label>

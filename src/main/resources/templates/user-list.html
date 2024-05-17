@@ -105,11 +105,10 @@
 <body>
 <div class="container">
     <h2>User List</h2>
-    <form id="deleteForm" action="/user/delete" method="post">
+    <form id="deleteForm" th:action="@{/user/delete/{userId}(userId = ${userId})}" method="post">
         <input type="hidden" id="userIdToDelete" name="userIdToDelete" value="">
     </form>
-    <form action="/user/list" method="get">
-
+    <form th:action="@{/user/list/{userId}(userId = ${userId})}" method="get">
     <table>
         <tr>
             <th>ID</th>
@@ -131,14 +130,14 @@
             </td>
             <td th:text="${user.role}"></td>
             <td class="actions">
-                <a th:href="@{/user/edit/{id}(id=${user.id})}">Edit</a>
-                <a th:href="@{/user/delete/{id}(id=${user.id})}" class="delete">Delete</a>
+                <a th:href="@{/user/edit/{id}/{userId}(id=${user.id}, userId = ${userId})}">Edit</a>
+                <a th:href="@{/user/delete/{id}/{userId}(id=${user.id}, userId = ${userId})}" class="delete">Delete</a>
             </td>
         </tr>
     </table>
     </form>
-    <a href="/user/add" class="add-user-link">Add User</a>
-    <a href="/administrator" class="back-button">Back to Admin Page</a>
+    <a th:href="@{/user/add/{userId}(userId = ${userId})}" class="add-user-link">Add User</a>
+    <a th:href="@{/administrator/{userId}(userId = ${userId})}" class="back-button">Back to Admin Page</a>
     <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
 </div>
 <script>

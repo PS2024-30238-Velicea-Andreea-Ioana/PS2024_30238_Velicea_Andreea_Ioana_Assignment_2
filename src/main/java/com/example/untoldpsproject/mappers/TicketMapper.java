@@ -17,6 +17,7 @@ public class TicketMapper{
                 .orders(ticket.getOrders())
                 .cartItem(ticket.getCartItems())
                 .sale(ticket.getSale())
+                .imageUrl(ticket.getImageUrl())
                 .build();
     }
     public static Ticket toTicket(TicketDto ticketDto){
@@ -28,6 +29,7 @@ public class TicketMapper{
                 .orders(ticketDto.getOrders())
                 .cartItems(ticketDto.getCartItem())
                 .sale(ticketDto.getSale())
+                .imageUrl(ticketDto.getImageUrl())
                 .build();
     }
 

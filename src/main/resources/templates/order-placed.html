@@ -76,8 +76,8 @@
     </style>
 </head>
 <body>
-<a th:href="@{/cart/customer/seetickets/{userId} (userId=${userId})}" class="back-button">Continue Shopping</a>
-<form th:action="@{cart/visualizeOrder/{orderId} (orderId = ${orderId})}" method="get">
+<a th:href="@{/customer/seetickets/{userId} (userId=${userId})}" class="back-button">Continue Shopping</a>
+<form th:action="@{order/visualizeOrder/{orderId} (orderId = ${orderId})}" method="get">
     <div class="ticket-container">
         <div class="header">
             <div class="heading" th:text="'Your Order, '+${user.firstName}"></div>

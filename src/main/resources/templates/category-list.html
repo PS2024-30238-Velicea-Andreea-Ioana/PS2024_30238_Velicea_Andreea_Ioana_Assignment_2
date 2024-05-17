@@ -111,14 +111,14 @@
             <td th:text="${category.startDate}"></td>
             <td th:text="${category.finishDate}"></td>
             <td class="actions">
-                <a th:href="@{/category/edit/{id}(id=${category.id})}">Edit</a>
-                <a th:href="@{/category/delete/{id}(id=${category.id})}" class="delete">Delete</a>
+                <a th:href="@{/category/edit/{id}/{userId}(id=${category.id}, userId = ${userId})}">Edit</a>
+                <a th:href="@{/category/delete/{id}/{userId}(id=${category.id}, userId = ${userId})}" class="delete">Delete</a>
             </td>
         </tr>
     </table>
     </form>
-    <a href="/category/add" class="add-category-button">Add Category</a>
-    <a href="/administrator" class="back-button">Back to Admin Page</a>
+    <a th:href="@{/category/add/{userId}(userId = ${userId})}" class="add-category-button">Add Category</a>
+    <a th:href="@{/administrator/{userId}(userId = ${userId})}" class="back-button">Back to Admin Page</a>
     <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
 </div>
 <script>

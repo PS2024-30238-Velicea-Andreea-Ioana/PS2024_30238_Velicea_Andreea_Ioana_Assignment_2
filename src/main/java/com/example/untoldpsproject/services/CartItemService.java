@@ -31,17 +31,6 @@ public class CartItemService {
     }
 
     /**
-     * Finds a cart item by its ID.
-     *
-     * @param id The ID of the cart item to find.
-     * @return The found cart item, or null if not found.
-     */
-    public CartItem findCartItemById(String id){
-        Optional<CartItem> cartItemOptional = cartItemRepository.findById(id);
-        return cartItemOptional.orElse(null);
-    }
-
-    /**
      * Updates an existing cart item.
      *
      * @param cartItemDto The cart item with updated information.
@@ -55,49 +44,6 @@ public class CartItemService {
             cartItem1.setQuantity(cartItemDto.getQuantity());
             cartItem1.setCart(cartItemDto.getCart());
             cartItemRepository.save(CartItemMapper.toCartItem(cartItemDto));
-        }
-    }
-
-    /**
-     * Finds all cart items belonging to a particular cart.
-     *
-     * @param cartId The ID of the cart to find cart items for.
-     * @return A list of cart items belonging to the specified cart.
-     */
-    public List<CartItem> findCartItemsByCartId(String cartId){
-        return cartItemRepository.findCartItemsByCartId(cartId);
-    }
-
-    /**
-     * Finds a cart item by its ticket ID and cart ID.
-     *
-     * @param ticketId The ID of the ticket.
-     * @param cartId The ID of the cart.
-     * @return The found cart item, or null if not found.
-     */
-    public CartItem findCartItemByTicketIdAndCartId(String ticketId, String cartId){
-        return cartItemRepository.findCartItemByTicketIdAndAndCartId(ticketId,cartId);
-    }
-
-    /**
-     * Deletes a cart item by its ID. If the quantity of the cart item is greater than 1,
-     * it decreases the quantity by 1; otherwise, it deletes the cart item entirely.
-     *
-     * @param cartItemId The ID of the cart item to delete.
-     */
-    @Transactional
-    public void deleteCartItemById(String cartItemId){
-        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
-        if(cartItem.isPresent()){
-            CartItem cartItem1 = cartItem.get();
-            if(cartItem1.getQuantity()>1){
-                cartItem1.setQuantity(cartItem1.getQuantity()-1);
-                cartItem1.getTicket().setAvailable(cartItem1.getTicket().getAvailable());
-                cartItem1.setId(cartItemId);
-                cartItemRepository.save(cartItem1);
-            }else{
-                cartItemRepository.deleteById(cartItemId);
-            }
         }
     }
 }

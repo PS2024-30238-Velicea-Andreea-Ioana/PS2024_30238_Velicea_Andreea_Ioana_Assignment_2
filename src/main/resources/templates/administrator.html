@@ -69,12 +69,14 @@
 <body>
 <div class="container">
     <h1>Welcome to UNTOLD</h1>
-    <a href="/user/list" class="user-list-link">Go to User List</a>
-    <a href="/category/list" class="category-list-link">Go to Category List</a>
-    <a href="/ticket/list" class="ticket-list-link">Go to Ticket List</a>
-    <a href="/order/list" class="order-list-link">Go to Order List</a>
-    <a href="/sale/list" class="sale-list-link">Go to Sale List</a>
+    <form th:action="@{/administrator/{userId} (userId=${userId})}"  method="get">
+    <a th:href="@{/user/list/{userId} (userId=${userId})}" class="user-list-link">Go to User List</a>
+    <a th:href="@{/category/list/{userId} (userId=${userId})}" class="category-list-link">Go to Category List</a>
+    <a th:href="@{/ticket/list/{userId} (userId=${userId})}" class="ticket-list-link">Go to Ticket List</a>
+    <a th:href="@{/order/list/{userId} (userId=${userId})}" class="order-list-link">Go to Order List</a>
+    <a th:href="@{/sale/list/{userId} (userId=${userId})}" class="sale-list-link">Go to Sale List</a>
     <a href="/login" class="back-button">Back to Login Page</a>
+    </form>
 </div>
 </body>
 </html>

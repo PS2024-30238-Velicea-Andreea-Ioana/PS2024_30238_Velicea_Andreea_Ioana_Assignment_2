@@ -90,7 +90,7 @@
 <body>
 <div class="container">
     <h2>Add Order</h2>
-    <form id="orderForm" action="/order/add" method="post" th:object="${orderDto}" onsubmit="return validateForm()">
+    <form id="orderForm" th:action="@{/order/add/{userId} (userId=${userId})}" method="post" th:object="${orderDto}" onsubmit="return validateForm()">
         <label for="user">User:</label>
         <select id="user" name="user">
             <option th:each="user : ${users}"
@@ -107,7 +107,7 @@
         </select><br>
         <input type="submit" value="Add"/>
     </form>
-    <a href="/order/list" class="back-button">Back to Order List</a>
+    <a th:href="@{/order/list/{userId}(userId = ${userId})}" class="back-button">Back to Order List</a>
 </div>
 <script>
     function validateForm() {

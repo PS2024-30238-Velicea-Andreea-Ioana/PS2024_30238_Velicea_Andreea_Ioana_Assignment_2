@@ -120,6 +120,7 @@ public class TicketService {
                 ticket.setPrice(updatedTicket.getPrice());
                 ticket.setAvailable(updatedTicket.getAvailable());
                 ticket.setCartItems(updatedTicketDto.getCartItem());
+                ticket.setImageUrl(updatedTicketDto.getImageUrl());
                 ticketRepository.save(ticket);
                 if(!ticket.getOrders().isEmpty()) {
                     List<Order> orders = ticket.getOrders();

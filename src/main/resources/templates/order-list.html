@@ -93,17 +93,12 @@
         .generate-button:hover{
             background-color: #32CD32
         }
-        .generate-select {
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
+
     </style>
 </head>
 <body>
 <div class="container">
+    <form th:action="@{/order/list/{userId} (userId=${userId})}" method="get">
     <h2>Order List</h2>
     <table>
         <tr>
@@ -129,25 +124,26 @@
             <td th:text="${order.totalPrice}"></td>
             <td th:text="${order.status}"></td>
             <td class="actions">
-                <a th:href="@{/order/edit/{id}(id=${order.id})}">Edit</a>
-                <a th:href="@{/order/delete/{id}(id=${order.id})}" class="delete">Delete</a>
+                <a th:href="@{/order/edit/{id}/{userId}(id=${order.id}, userId = ${userId})}">Edit</a>
+                <a th:href="@{/order/delete/{id}/{userId}(id=${order.id}, userId = ${userId})}" class="delete">Delete</a>
             </td>
             <td>
-                <form action="/generate-file" method="post">
-                    <input type="hidden" name="orderId" th:value="${order.id}">
-                    <label for="type">Type:</label>
-                    <select id="type" name="type" class="generate-select">
-                        <option value="txt">TXT</option>
-                        <option value="csv">CSV</option>
-                        <option value="pdf">PDF</option>
-                    </select><br>
-                    <button type="submit" class="generate-button">Generate File</button>
-                </form>
+                <a th:href="@{/selectType/{userId}/{orderId}(userId=${userId}, orderId = ${order.id})}" class="generate-button">GenerateFile
+<!--                    <input type="hidden" name="orderId" th:value="${order.id}">-->
+<!--                    <label for="type">Type:</label>-->
+<!--                    <select id="type" name="type" class="generate-select">-->
+<!--                        <option value="txt">TXT</option>-->
+<!--                        <option value="csv">CSV</option>-->
+<!--                        <option value="pdf">PDF</option>-->
+<!--                    </select><br>-->
+<!--                    <button type="submit" class="generate-button">Generate File</button>-->
+                </a>
             </td>
         </tr>
     </table>
-    <a href="/order/add" class="add-order-button">Add Order</a>
-    <a href="/administrator" class="back-button">Back to Admin Page</a>
+    </form>
+    <a th:href="@{/order/add/{userId} (userId=${userId})}" class="add-order-button">Add Order</a>
+    <a th:href="@{/administrator/{userId}(userId = ${userId})}" class="back-button">Back to Admin Page</a>
 </div>
 </body>
 </html>

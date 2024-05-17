@@ -26,26 +26,28 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/sale")
 public class SaleController {
     private final SaleService saleService;
-    @GetMapping("/list")
-    public ModelAndView salesList() {
+    @GetMapping("/list/{userId}")
+    public ModelAndView salesList(@PathVariable("userId")String userId) {
         ModelAndView mav = new ModelAndView("sale-list");
         List<SaleDto> sales = saleService.findSales();
         List<SaleDto> salesWithTickets = sales.stream()
                 .filter(sale -> sale.getTickets() != null && !sale.getTickets().isEmpty())
                 .collect(Collectors.toList());
         mav.addObject("sales", salesWithTickets);
+        mav.addObject("userId", userId);
         return mav;
     }
-    @GetMapping("/add")
-    public ModelAndView addSaleForm() {
+    @GetMapping("/add/{userId}")
+    public ModelAndView addSaleForm(@PathVariable("userId") String userId) {
         ModelAndView mav = new ModelAndView("sale-add");
         mav.addObject("saleDto", new SaleDto());
         List<Ticket> tickets = saleService.getTickets();
         mav.addObject("tickets", tickets);
+        mav.addObject("userId", userId);
         return mav;
     }
-    @PostMapping("/add")
-    public ModelAndView addSale(@ModelAttribute("saleDto") SaleDtoIds saleDtoIds, RedirectAttributes redirectAttributes) {
+    @PostMapping("/add/{userId}")
+    public ModelAndView addSale(@PathVariable("userId") String userId,@ModelAttribute("saleDto") SaleDtoIds saleDtoIds, RedirectAttributes redirectAttributes) {
         List<Ticket> tickets = new ArrayList<>();
         if(saleDtoIds.getTickets()!=null){
             for(String ticketId : saleDtoIds.getTickets() ){
@@ -58,37 +60,38 @@ public class SaleController {
         saleDto.setTickets(tickets);
         String result = saleService.insert(saleDto);
         if(result.equals(SaleConstants.SALE_INSERTED)){
-            return new ModelAndView("redirect:/sale/list");
+            return new ModelAndView("redirect:/sale/list/"+userId);
         }else{
             redirectAttributes.addFlashAttribute("error", result);
-            return new ModelAndView("redirect:/sale/add");
+            return new ModelAndView("redirect:/sale/add/"+userId);
         }
     }
-    @GetMapping("/edit/{id}")
-    public ModelAndView editSaleForm(@PathVariable("id") String saleId){
+    @GetMapping("/edit/{id}/{userId}")
+    public ModelAndView editSaleForm(@PathVariable("userId") String userId, @PathVariable("id") String saleId){
         ModelAndView mav = new ModelAndView("sale-edit");
         SaleDto saleDto = saleService.findSaleById(saleId);
         mav.addObject("saleDto", saleDto);
         List<Ticket> tickets = saleService.getTickets();
         mav.addObject("tickets", tickets);
+        mav.addObject("userId", userId);
         return mav;
     }
-    @PostMapping("/edit/{id}")
-    public ModelAndView updateSake(@ModelAttribute("saleDto") SaleDto saleDto, RedirectAttributes redirectAttributes) {
+    @PostMapping("/edit/{id}/{userId}")
+    public ModelAndView updateSake(@PathVariable("userId") String userId, @ModelAttribute("saleDto") SaleDto saleDto, RedirectAttributes redirectAttributes) {
         String result = saleService.updateSaleById(saleDto.getId(), saleDto);
         if(result.equals(SaleConstants.SALE_UPDATED)){
-            return new ModelAndView("redirect:/sale/list");
+            return new ModelAndView("redirect:/sale/list/"+userId);
         }else{
             redirectAttributes.addFlashAttribute("error", result);
-            return new ModelAndView("redirect:/sale/edit/"+saleDto.getId());
+            return new ModelAndView("redirect:/sale/edit/"+saleDto.getId()+"/"+userId);
         }
 
     }
 
-    @GetMapping("/delete/{id}")
-    public ModelAndView deleteSale(@PathVariable("id") String id, RedirectAttributes redirectAttributes) {
+    @GetMapping("/delete/{id}/{userId}")
+    public ModelAndView deleteSale(@PathVariable("userId") String userId, @PathVariable("id") String id, RedirectAttributes redirectAttributes) {
         String result = saleService.deleteSaleById(id);
         redirectAttributes.addFlashAttribute("error",result);
-        return new ModelAndView("redirect:/sale/list");
+        return new ModelAndView("redirect:/sale/list/"+userId);
     }
 }

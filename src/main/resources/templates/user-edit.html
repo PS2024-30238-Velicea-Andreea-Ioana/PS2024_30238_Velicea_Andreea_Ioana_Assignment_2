@@ -75,7 +75,7 @@
 <body>
 <div class="container">
 <h2>Edit User</h2>
-<form th:action="@{/user/edit/ ${userDto.id}} " method="post" th:object="${userDto}" onsubmit="validateForm()">
+<form th:action="@{/user/edit/ ${userDto.id}/{userId}(userId = ${userId})} " method="post" th:object="${userDto}" onsubmit="validateForm()">
    <input type="hidden" id="id" name="id" th:value="${userDto.id}"/>
     <label for="firstName">First Name:</label>
     <input type="text" id="firstName" name="firstName" th:field="*{firstName}"/><br/>

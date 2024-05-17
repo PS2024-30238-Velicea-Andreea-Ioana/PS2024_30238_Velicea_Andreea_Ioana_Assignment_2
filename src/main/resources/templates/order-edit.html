@@ -74,7 +74,7 @@
 <body>
 <div class="container">
     <h2>Edit Order</h2>
-    <form id="orderForm" th:action="@{/order/edit/ ${orderDto.id}}" method="post" th:object="${orderDto}" onsubmit="return validateForm()">
+    <form id="orderForm" th:action="@{/order/edit/${orderDto.id}/{userId}(userId = ${userId})}" method="post" th:object="${orderDto}" onsubmit="return validateForm()">
         <input type="hidden" id="id" name="id" th:value="${orderDto.id}"/>
         <label for="user">User:</label>
         <select id="user" name="user">

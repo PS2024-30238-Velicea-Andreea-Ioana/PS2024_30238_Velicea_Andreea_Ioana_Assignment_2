@@ -3,9 +3,11 @@ package com.example.untoldpsproject.services;
 import com.example.untoldpsproject.constants.SaleConstants;
 import com.example.untoldpsproject.constants.TicketConstants;
 import com.example.untoldpsproject.dtos.SaleDto;
+import com.example.untoldpsproject.entities.Order;
 import com.example.untoldpsproject.entities.Sale;
 import com.example.untoldpsproject.entities.Ticket;
 import com.example.untoldpsproject.mappers.SaleMapper;
+import com.example.untoldpsproject.repositories.OrderRepository;
 import com.example.untoldpsproject.repositories.SaleRepository;
 import com.example.untoldpsproject.repositories.TicketRepository;
 import com.example.untoldpsproject.validators.SaleValidator;
@@ -15,6 +17,7 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +32,7 @@ public class SaleService {
     private final SaleRepository saleRepository;
     private final TicketRepository ticketRepository;
     private final SaleValidator saleValidator = new SaleValidator();
+    private final OrderRepository orderRepository;
 
     public String insert(SaleDto saleDto){
         try{
@@ -40,6 +44,11 @@ public class SaleService {
                 ticket.setSale(sale);
                 ticket.setDiscountedPrice(addDiscount(saleDto.getDiscountPercentage(),ticket.getPrice()));
                 ticketRepository.save(ticket);
+                List<Order> orders = ticket.getOrders();
+                for(Order order: orders){
+                    order.setTotalPrice(calculateTotalPrice(order.getTickets()));
+                    orderRepository.save(order);
+                }
             }
             LOGGER.debug(SaleConstants.SALE_INSERTED);
             return SaleConstants.SALE_INSERTED;
@@ -47,6 +56,18 @@ public class SaleService {
             LOGGER.error(SaleConstants.SALE_NOT_INSERTED + " " + e.getMessage());
             return SaleConstants.SALE_NOT_INSERTED + " " + e.getMessage();
         }
+    }
+    public Double calculateTotalPrice(List<Ticket> tickets){
+        Double totalPrice1 = 0.0;
+        if (!tickets.isEmpty())
+            for (Ticket ticket : tickets) {
+                if(ticket.getDiscountedPrice() == null)
+                    totalPrice1 += ticket.getPrice();
+                else{
+                    totalPrice1 += ticket.getDiscountedPrice();
+                }
+            }
+        return totalPrice1;
     }
 
     public List<SaleDto> findSales(){
@@ -81,6 +102,11 @@ public class SaleService {
                     ticket.setSale(sale);
                     ticket.setDiscountedPrice(addDiscount(updatesSaleDto.getDiscountPercentage(),ticket.getPrice()));
                     ticketRepository.save(ticket);
+                    List<Order> orders = ticket.getOrders();
+                    for(Order order: orders){
+                        order.setTotalPrice(calculateTotalPrice(order.getTickets()));
+                        orderRepository.save(order);
+                    }
                 }
                 saleRepository.save(updatedSale);
                 LOGGER.debug(SaleConstants.SALE_UPDATED);
@@ -101,6 +127,11 @@ public class SaleService {
                 ticket.setDiscountedPrice(ticket.getPrice());
                 ticket.setSale(null);
                 ticketRepository.save(ticket);
+                List<Order> orders = ticket.getOrders();
+                for(Order order: orders){
+                    order.setTotalPrice(calculateTotalPrice(order.getTickets()));
+                    orderRepository.save(order);
+                }
             }
             saleRepository.delete(saleOptional.get());
             return SaleConstants.SALE_SUCCESS_DELETE;

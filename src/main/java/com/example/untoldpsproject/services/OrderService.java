@@ -1,20 +1,15 @@
 package com.example.untoldpsproject.services;
 
+import com.example.untoldpsproject.constants.CartConstants;
 import com.example.untoldpsproject.constants.OrderConstants;
-import com.example.untoldpsproject.dtos.OrderDto;
-import com.example.untoldpsproject.dtos.OrderDtoIds;
-import com.example.untoldpsproject.dtos.TicketDto;
-import com.example.untoldpsproject.dtos.UserDto;
-import com.example.untoldpsproject.entities.Order;
-import com.example.untoldpsproject.entities.Status;
-import com.example.untoldpsproject.entities.Ticket;
-import com.example.untoldpsproject.entities.User;
+import com.example.untoldpsproject.constants.UserConstants;
+import com.example.untoldpsproject.dtos.*;
+import com.example.untoldpsproject.entities.*;
+import com.example.untoldpsproject.mappers.CartItemMapper;
 import com.example.untoldpsproject.mappers.OrderMapper;
 import com.example.untoldpsproject.mappers.TicketMapper;
 import com.example.untoldpsproject.mappers.UserMapper;
-import com.example.untoldpsproject.repositories.OrderRepository;
-import com.example.untoldpsproject.repositories.TicketRepository;
-import com.example.untoldpsproject.repositories.UserRepository;
+import com.example.untoldpsproject.repositories.*;
 import com.example.untoldpsproject.validators.OrderValidator;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -23,6 +18,9 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,6 +37,8 @@ public class OrderService {
     private final UserRepository userRepository;
     private final TicketRepository ticketRepository;
     private final OrderValidator orderValidator = new OrderValidator();
+    private final CartItemRepository cartItemRepository;
+    private final CartRepository cartRepository;
 
 
     /**
@@ -55,7 +55,6 @@ public class OrderService {
             order.setTotalPrice(calculateTotalPrice(order.getTickets()));
             order.setStatus(Status.PLACED);
             order = orderRepository.save(order);
-
             for (Ticket ticket : order.getTickets()) {
                 if(ticketRepository.findById(ticket.getId()).isPresent())
                     ticketRepository.findById(ticket.getId()).get().setAvailable(ticket.getAvailable()-1);
@@ -190,6 +189,76 @@ public class OrderService {
             }
         return totalPrice1;
     }
-
-
+    public Double calculateTotalPriceCartItems(List<CartItem> cartItems){
+        Double totalPrice1 = 0.0;
+        if (!cartItems.isEmpty())
+            for (CartItem cartItem : cartItems) {
+                if(cartItem.getTicket().getDiscountedPrice() == null)
+                    totalPrice1 += cartItem.getTicket().getPrice()* cartItem.getQuantity();
+                else{
+                    totalPrice1 += cartItem.getTicket().getDiscountedPrice()* cartItem.getQuantity();
+                }
+            }
+        return totalPrice1;
+    }
+    public List<CartItem> findCartItemsByCartId(String cartId){
+        List<CartItem> cartItems = cartItemRepository.findCartItemsByCartId(cartId);
+        return cartItems;
+    }
+    public List<Ticket> placeOrder(List<CartItem> cartItems, List<Ticket> tickets, String cartId, String userId){
+        for (CartItem cartItem : cartItems) {
+                Double quantity = cartItem.getQuantity();
+                if (cartItem.getTicket().getAvailable() >= cartItem.getQuantity()) {
+                    while (quantity > 0) {
+                        tickets.add(cartItem.getTicket());
+                        quantity--;
+                    }
+                    cartItem.setQuantity(0.0);
+                    CartItemDto cartItemDto = CartItemMapper.toCartItemDto(cartItem);
+                    Optional<CartItem> cartOptional = cartItemRepository.findById(cartItemDto.getId());
+                    if(cartOptional.isPresent()){
+                        CartItem cartItem1 = cartOptional.get();
+                        cartItem1.setId(cartItemDto.getId());
+                        cartItem1.setTicket(cartItemDto.getTicket());
+                        cartItem1.setQuantity(cartItemDto.getQuantity());
+                        cartItem1.setCart(cartItemDto.getCart());
+                        cartItemRepository.save(CartItemMapper.toCartItem(cartItemDto));
+                    }
+                    Optional<CartItem> cartItemOptional = cartItemRepository.findById(cartItemDto.getId());
+                    if(cartItemOptional.isPresent()){
+                        CartItem cartItem1 = cartItemOptional.get();
+                        if(cartItem1.getQuantity()>1){
+                            cartItem1.setQuantity(cartItem1.getQuantity()-1);
+                            cartItem1.getTicket().setAvailable(cartItem1.getTicket().getAvailable());
+                            cartItem1.setId(cartItemDto.getId());
+                            cartItemRepository.save(cartItem1);
+                        }else{
+                            cartItemRepository.deleteById(cartItemDto.getId());
+                        }
+                    }
+                }
+            }
+            Optional<Cart> cartOptional = cartRepository.findById(cartId);
+            if(cartOptional.isPresent()){
+                Cart cart = cartOptional.get();
+                cart.setId(cart.getId());
+                cart.setCartItems(cart.getCartItems());
+                cart.setTotalPrice(calculateTotalPriceCartItems(cart.getCartItems()));
+                cart.setUser(cart.getUser());
+                cartRepository.save(cart);
+            }
+            return tickets;
+    }
+    public Cart findCartById(String cartId){
+        Optional<Cart> cartOptional = cartRepository.findById(cartId);
+        if(cartOptional.isEmpty()){
+            LOGGER.error(CartConstants.CART_NOT_FOUND);
+            return null;
+        }else{
+            return cartOptional.get();
+        }
+    }
+    public User findUserByEmail(String email){
+        return userRepository.findByEmail(email);
+    }
 }

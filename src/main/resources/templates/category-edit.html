@@ -80,7 +80,7 @@
 <body>
 <div class="container">
   <h2>Edit Category</h2>
-  <form id="categoryForm" th:action="@{/category/edit/ ${categoryDto.id}} " method="post" th:object="${categoryDto}" onsubmit="validateForm()">
+  <form id="categoryForm" th:action="@{/category/edit/${categoryDto.id}/{userId}(userId = ${userId})}" method="post" th:object="${categoryDto}" onsubmit="validateForm()">
     <input type="hidden" id="id" name="id" th:value="${categoryDto.id}"/>
     <label for="tip">Tip:</label>
     <select id="tip" name="tip" th:field="*{tip}">

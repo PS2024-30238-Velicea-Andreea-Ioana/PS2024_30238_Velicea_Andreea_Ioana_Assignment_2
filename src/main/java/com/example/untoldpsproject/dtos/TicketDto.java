@@ -21,4 +21,5 @@ public class TicketDto {
     private List<Order> orders;
     private List<CartItem> cartItem;
     private Sale sale;
+    private String imageUrl;
 }

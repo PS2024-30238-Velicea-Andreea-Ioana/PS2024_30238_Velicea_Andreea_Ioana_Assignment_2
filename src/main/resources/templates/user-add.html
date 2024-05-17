@@ -90,7 +90,7 @@
 <body>
 <div class="container">
   <h2>Add User</h2>
-  <form id="userForm" action="/user/add" method="post" th:object="${userDto}" onsubmit="validateForm()">
+  <form id="userForm" th:action="@{/user/add/{userId}(userId = ${userId})}" method="post" th:object="${userDto}" onsubmit="validateForm()">
     <label for="firstName">First Name:</label>
     <input type="text" id="firstName" name="firstName" th:field="*{firstName}"/><br/>
     <label for="lastName">Last Name:</label>
@@ -107,7 +107,7 @@
     <input type="submit" value="Add"/>
     <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
   </form>
-  <a href="/user/list" class="back-button">Back to User List</a>
+  <a th:href="@{/user/list/{userId}(userId = ${userId})}" class="back-button">Back to User List</a>
 </div>
 <script>
   function validateForm() {

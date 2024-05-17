@@ -96,7 +96,7 @@
 <body>
 <div class="container">
   <h2>Add Category</h2>
-  <form id="categoryForm" action="/category/add" method="post" th:object="${categoryDto}" onsubmit="validateForm()">
+  <form id="categoryForm" th:action="@{/category/add/{userId} (userId=${userId})}" method="post" th:object="${categoryDto}" onsubmit="validateForm()">
     <label for="tip">Tip:</label>
     <select id="tip" name="tip" th:field="*{tip}">
       <option value="one_day">One Day</option>
@@ -112,7 +112,7 @@
     <input type="submit" value="Add"/>
     <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
   </form>
-  <a href="/category/list" class="back-button">Back to Category List</a>
+  <a th:href="@{/category/list/{userId} (userId=${userId})}" class="back-button">Back to Category List</a>
 </div>
 <script>
   function validateForm() {

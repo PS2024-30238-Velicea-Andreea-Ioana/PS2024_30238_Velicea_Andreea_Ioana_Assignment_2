@@ -13,6 +13,7 @@ import com.example.untoldpsproject.repositories.CartRepository;
 import com.example.untoldpsproject.repositories.TicketRepository;
 import com.example.untoldpsproject.repositories.UserRepository;
 import com.example.untoldpsproject.validators.CartValidator;
+import com.example.untoldpsproject.validators.TicketValidator;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -142,11 +143,27 @@ public class CartService {
         return null;
     }
 
-    public String removeCartItem(String cartItemId){
+    public String decreaseCartItem(String cartItemId){
         Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
         if (cartItem.isPresent()) {
             String cartId = cartItem.get().getCart().getId();
-            cartItemRepository.delete(cartItem.get());
+            if(cartItem.get().getQuantity() > 1){
+                cartItem.get().setQuantity(cartItem.get().getQuantity()-1);
+                cartItemRepository.save(cartItem.get());
+            }
+            updateTotalPrice(cartId);
+            return cartId;
+        }
+        return null;
+    }
+    public String increaseCartItem(String cartItemId){
+        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
+        if (cartItem.isPresent()) {
+            String cartId = cartItem.get().getCart().getId();
+            if(cartItem.get().getTicket().getAvailable() >= cartItem.get().getQuantity() + 1){
+                cartItem.get().setQuantity(cartItem.get().getQuantity()+1);
+                cartItemRepository.save(cartItem.get());
+            }
             updateTotalPrice(cartId);
             return cartId;
         }
@@ -185,36 +202,30 @@ public class CartService {
             cartItemRepository.save(CartItemMapper.toCartItem(cartItemDto));
         }
     }
-    public String updateUserById(String id, UserDto updatedUserDto) {
-        Optional<User> userOptional = userRepository.findById(id);
-        if (userOptional.isEmpty()) {
-            LOGGER.error(UserConstants.USER_NOT_FOUND);
-            return UserConstants.USER_NOT_FOUND;
-        } else {
-            User user = userOptional.get();
-            User updatedUser = UserMapper.toUser(updatedUserDto);
-            user.setCart(updatedUser.getCart());
-            userRepository.save(user);
-            return UserConstants.USER_UPDATED;
-        }
-    }
-    public List<CartItem> findCartItemsByCartId(String cartId){
-        return cartItemRepository.findCartItemsByCartId(cartId);
-    }
-    @Transactional
-    public void deleteCartItemById(String cartItemId){
+//    @Transactional
+//    public void deleteCartItemById(String cartItemId){
+//        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
+//        if(cartItem.isPresent()){
+//            CartItem cartItem1 = cartItem.get();
+//            if(cartItem1.getQuantity()>1){
+//                cartItem1.setQuantity(cartItem1.getQuantity()-1);
+//                cartItem1.getTicket().setAvailable(cartItem1.getTicket().getAvailable());
+//                cartItem1.setId(cartItemId);
+//                cartItemRepository.save(cartItem1);
+//            }else{
+//                cartItemRepository.deleteById(cartItemId);
+//            }
+//        }
+//    }
+    public String removeCartItem(String cartItemId){
         Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
-        if(cartItem.isPresent()){
-            CartItem cartItem1 = cartItem.get();
-            if(cartItem1.getQuantity()>1){
-                cartItem1.setQuantity(cartItem1.getQuantity()-1);
-                cartItem1.getTicket().setAvailable(cartItem1.getTicket().getAvailable());
-                cartItem1.setId(cartItemId);
-                cartItemRepository.save(cartItem1);
-            }else{
-                cartItemRepository.deleteById(cartItemId);
-            }
+        if (cartItem.isPresent()) {
+            String cartId = cartItem.get().getCart().getId();
+            cartItemRepository.delete(cartItem.get());
+            updateTotalPrice(cartId);
+            return cartId;
         }
+        return null;
     }
 
 }
