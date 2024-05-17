@@ -6,6 +6,7 @@ import com.example.untoldpsproject.dtos.CartDto;
 import com.example.untoldpsproject.dtos.TicketDto;
 import com.example.untoldpsproject.dtos.UserDto;
 import com.example.untoldpsproject.entities.*;
+import com.example.untoldpsproject.factory.Artist;
 import com.example.untoldpsproject.mappers.CartMapper;
 import com.example.untoldpsproject.mappers.TicketMapper;
 import com.example.untoldpsproject.mappers.UserMapper;
@@ -33,6 +34,7 @@ public class HomePageService {
     private final CartRepository cartRepository;
     private final TicketRepository ticketRepository;
     private final CategoryRepository categoryRepository;
+    private final ArtistRepository artistRepository;
     private final UserValidator userValidator = new UserValidator();
     private final CartValidator cartValidator = new CartValidator();
 
@@ -117,5 +119,7 @@ public class HomePageService {
     public List<Category> findCategories(){
         return categoryRepository.findAll();
     }
-
+    public List<Artist> findArtists(){
+        return artistRepository.findAll();
+    }
 }

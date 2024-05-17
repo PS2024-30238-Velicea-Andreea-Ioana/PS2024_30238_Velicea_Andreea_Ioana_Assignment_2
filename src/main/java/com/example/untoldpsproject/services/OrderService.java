@@ -236,7 +236,7 @@ public class OrderService {
                             cartItemRepository.deleteById(cartItemDto.getId());
                         }
                     }
-                }
+                }else return null;
             }
             Optional<Cart> cartOptional = cartRepository.findById(cartId);
             if(cartOptional.isPresent()){

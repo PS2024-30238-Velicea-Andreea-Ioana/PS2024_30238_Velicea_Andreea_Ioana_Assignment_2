@@ -19,6 +19,7 @@ import lombok.Setter;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -139,24 +140,32 @@ public class OrderController {
         return new ModelAndView("redirect:/order/list/"+userId);
     }
     @GetMapping("/place-order/{userId}/{cartId}")
-    public ModelAndView placeOrderForm(@PathVariable("userId") String userId, @PathVariable("cartId") String cartId) {
+    public ModelAndView placeOrderForm(@PathVariable("userId") String userId, @PathVariable("cartId") String cartId, RedirectAttributes redirectAttributes) {
         List<CartItem> cartItems = orderService.findCartItemsByCartId(cartId);
         List<Ticket> tickets = new ArrayList<>();
         if (!cartItems.isEmpty()) {
             tickets = orderService.placeOrder(cartItems,tickets, userId, cartId);
-            double totalPrice = orderService.findCartById(cartId).getTotalPrice();
-            UserDto user = orderService.findUserById(userId);
-            Order newOrder = new Order();
-            newOrder.setTickets(tickets);
-            newOrder.setTotalPrice(totalPrice);
-            newOrder.setUser(UserMapper.toUser(user));
-            newOrder.setId(orderService.insert(OrderMapper.toOrderDto(newOrder)));
-            ModelAndView mav = new ModelAndView();
-            mav.addObject("userId", userId);
-            mav.addObject("cartId", cartId);
-            mav.addObject("orderId", newOrder.getId());
-            mav.setViewName("redirect:/payment/select-method/" + newOrder.getId());
-            return mav;
+            if(tickets != null){
+                double totalPrice = orderService.findCartById(cartId).getTotalPrice();
+                UserDto user = orderService.findUserById(userId);
+                Order newOrder = new Order();
+                newOrder.setTickets(tickets);
+                newOrder.setTotalPrice(totalPrice);
+                newOrder.setUser(UserMapper.toUser(user));
+                newOrder.setId(orderService.insert(OrderMapper.toOrderDto(newOrder)));
+                ModelAndView mav = new ModelAndView();
+                mav.addObject("userId", userId);
+                mav.addObject("cartId", cartId);
+                mav.addObject("orderId", newOrder.getId());
+                mav.setViewName("redirect:/payment/select-method/" + newOrder.getId());
+                return mav;
+            }else{
+                ModelAndView mav = new ModelAndView();
+                mav.addObject("userId", userId);
+                mav.addObject("cartId", cartId);
+                redirectAttributes.addFlashAttribute("error", "One ticket is sold out!");
+                return new ModelAndView("redirect:/cart/visualizeCart/" + cartId);
+            }
         }else{
             return new ModelAndView("redirect:/cart/visualizeCart/" + cartId);
         }
@@ -171,8 +180,8 @@ public class OrderController {
      * @return A ModelAndView object containing a redirection URL.
      */
     @PostMapping("/place-order/{userId}/{cartId}")
-    public ModelAndView placeOrder(@PathVariable("userId") String userId, @PathVariable("cartId") String cartId) {
-        return placeOrderForm(userId, cartId);
+    public ModelAndView placeOrder(@PathVariable("userId") String userId, @PathVariable("cartId") String cartId, RedirectAttributes redirectAttributes) {
+        return placeOrderForm(userId, cartId, redirectAttributes);
     }
 
     /**

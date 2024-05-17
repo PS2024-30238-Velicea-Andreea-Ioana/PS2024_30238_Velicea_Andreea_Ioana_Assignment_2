@@ -272,7 +272,22 @@
         .alert .closebtn:hover {
             color: black;
         }
+        .artist-button {
+            padding: 10px 20px;
+            background-color: #8917F5;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
 
+        .artist-button:hover {
+            background-color: #2B0251;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -292,6 +307,9 @@
     </form>
     <form th:action="@{/user/visualizeOrdersStatus/{userId} (userId=${userId})}" method="get">
         <button class="orderStatus-button" >My orders</button>
+    </form>
+    <form th:action="@{/vizualizeArtists/{userId} (userId=${userId})}" method="get">
+        <button class="artist-button" >Artists 2024</button>
     </form>
     <form th:action="@{/customer/seetickets/{userId} (userId=${userId})}"  method="get">
         <div class="filter-container">
@@ -344,6 +362,7 @@
             </div>
         </div>
     </form>
+
     <a href="/login" class="back-button">Back to Home Page</a>
 </body>
 <script>

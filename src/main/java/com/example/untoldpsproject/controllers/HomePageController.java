@@ -5,6 +5,7 @@ import com.example.untoldpsproject.dtos.*;
 import com.example.untoldpsproject.entities.Category;
 import com.example.untoldpsproject.entities.Role;
 import com.example.untoldpsproject.entities.User;
+import com.example.untoldpsproject.factory.ArtistFactory;
 import com.example.untoldpsproject.mappers.CartMapper;
 import com.example.untoldpsproject.mappers.UserMapper;
 import com.example.untoldpsproject.services.HomePageService;
@@ -32,6 +33,7 @@ public class HomePageController {
 
     private final HomePageService homePageService;
     private RestTemplate restTemplate;
+
 
     /**
      * Displays the start page for administrators.
@@ -201,6 +203,13 @@ public class HomePageController {
         mav.addObject("userId", userId);
         mav.addObject("categories", categories);
         mav.addObject("cartId", user.getCart().getId());
+        return mav;
+    }
+    @GetMapping("/vizualizeArtists/{userId}")
+    public ModelAndView seeArtists(@PathVariable("userId") String userId){
+        ModelAndView mav = new ModelAndView("user-artists");
+        mav.addObject("userId", userId);
+        mav.addObject("artists", homePageService.findArtists());
         return mav;
     }
 }
