@@ -1,3 +1,4 @@
+
 package com.example.untoldpsproject.services;
 
 import com.example.untoldpsproject.constants.ArtistConstants;
@@ -42,40 +43,6 @@ public class ArtistService {
     }
     public List<Artist> getAllArtists() {
         return artistRepository.findAll();
-    }
-    public String deleteArtist(String id) {
-        Optional<Artist> artistOptional = artistRepository.findById(id);
-        if(artistOptional.isEmpty()){
-            LOGGER.error(ArtistConstants.ARTIST_NOT_FOUND);
-            return ArtistConstants.ARTIST_NOT_FOUND;
-        }else{
-            artistRepository.delete(artistOptional.get());
-            return "Artist with id " + id + ArtistConstants.ARTIST_SUCCESS_DELETE;
-        }
-    }
-
-    public String updateArtistById(String id, Artist updatedArtist) {
-        Optional<Artist> artistOptional = artistRepository.findById(id);
-        if (artistOptional.isEmpty()) {
-            LOGGER.error(ArtistConstants.ARTIST_NOT_FOUND);
-            return ArtistConstants.ARTIST_NOT_FOUND;
-        } else {
-            Artist artist = artistOptional.get();
-            try {
-                artistValidator.artistValidator(updatedArtist);
-                artist.setName(updatedArtist.getName());
-                artist.setDescription(updatedArtist.getDescription());
-                artist.setGenre(updatedArtist.getGenre());
-                artist.setNrOfPerson(updatedArtist.getNumberOfPerson());
-                artist.setPhotoUrl(updatedArtist.getPhotoUrl());
-                artistRepository.save(artist);
-                LOGGER.debug(ArtistConstants.ARTIST_UPDATED);
-                return ArtistConstants.ARTIST_UPDATED;
-            } catch (Exception e) {
-                LOGGER.error(ArtistConstants.ARTIST_NOT_UPDATED + ": " + e.getMessage());
-                return  ArtistConstants.ARTIST_NOT_UPDATED + ": " + e.getMessage();
-            }
-        }
     }
 
     public Artist findById(String id){

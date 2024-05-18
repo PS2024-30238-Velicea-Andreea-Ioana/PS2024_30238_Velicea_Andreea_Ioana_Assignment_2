@@ -118,11 +118,9 @@
         <th>Number of Persons</th>
         <th>Genre</th>
         <th>Photo</th>
-<!--        <th>Actions</th>-->
     </tr>
     </thead>
     <tbody>
-    <!-- Iterate over the list of artists and display each artist's information -->
     <th:block th:each="artist : ${artists}">
         <tr>
             <td th:text="${artist.name}">Artist Name</td>
@@ -132,10 +130,6 @@
             <td>
                 <img th:if="${artist.photoUrl != null}" th:src = "${artist.photoUrl}" alt="Artist Image" style="max-width: 100px; max-height: 100px;">
             </td>
-<!--            <td class="actions">-->
-<!--                <a th:href="@{/artist/edit/{id}/{userId}(id=${artist.id}, userId = ${userId})}">Edit</a>-->
-<!--                <a th:href="@{/artist/delete/{id}/{userId}(id=${artist.id}, userId = ${userId})}" class="delete">Delete</a>-->
-<!--            </td>-->
         </tr>
     </th:block>
     </tbody>

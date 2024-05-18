@@ -1,3 +1,4 @@
+
 package com.example.untoldpsproject.services;
 
 import com.example.untoldpsproject.dtos.Payload;
@@ -19,7 +20,7 @@ public class RabbitMQSender {
     }
 
     public void send(Payload payload) {
-            log.info("the payload is sended "+ payload.toString());
-            rabbitTemplate.convertAndSend(exchange,routingkey,payload);
+        log.info("the payload is sended "+ payload.toString());
+        rabbitTemplate.convertAndSend(exchange,routingkey,payload);
     }
 }

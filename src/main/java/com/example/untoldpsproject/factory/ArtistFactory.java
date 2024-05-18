@@ -7,8 +7,8 @@ public class ArtistFactory {
         }
         switch (artistType) {
             case "Singer": return new Singer(name, description,genre, nrOfPersons, photoUrl);
-            case "Band":  return new Band(name,description,nrOfPersons,genre, photoUrl);
-            case "DJ": return new Dj(name, description, genre, nrOfPersons, photoUrl);
+            case "Band":  return new Band( name,description,nrOfPersons,genre, photoUrl);
+            case "DJ": return new Dj( name, description, genre, nrOfPersons, photoUrl);
             default: return null;
         }
     }

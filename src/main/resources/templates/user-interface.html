@@ -288,6 +288,48 @@
         .artist-button:hover {
             background-color: #2B0251;
         }
+        .review-form {
+            margin-top: 50px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .review-form h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .review-form label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .review-form select,
+        .review-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .review-form button {
+            padding: 10px 20px;
+            background-color: #8917F5;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .review-form button:hover {
+            background-color: #2B0251;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -362,6 +404,32 @@
             </div>
         </div>
     </form>
+    <div id="reviewContainer" class="review-form">
+        <h2>Leave a Review</h2>
+        <form id="reviewForm" th:action="@{/reviews}" method="post">
+            <div>
+                <label for="rating">Rating:</label>
+                <select id="rating" name="rating">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <div>
+                <label for="comment">Comment:</label>
+                <textarea id="comment" name="comment" rows="4" cols="50"></textarea>
+            </div>
+            <div>
+                <button type="submit">Submit Review</button>
+            </div>
+        </form>
+    </div>
+    <div id="reviewSuccessMessage" class="alert" style="display: none;">
+        <span class="closebtn" onclick="closeReviewSuccessMessage()">×</span>
+        <strong>Thanks for the review!</strong>
+    </div>
 
     <a href="/login" class="back-button">Back to Home Page</a>
 </body>
@@ -396,5 +464,53 @@
             showAlert();
         }
     };
+    function showReviewSuccessMessage() {
+        var reviewSuccessMessage = document.getElementById("reviewSuccessMessage");
+        reviewSuccessMessage.style.display = "block";
+
+        // Hide the review container
+        var reviewContainer = document.getElementById("reviewContainer");
+        reviewContainer.style.display = "none";
+
+        // Show the message after 5 minutes
+        setTimeout(function() {
+            reviewContainer.style.display = "block";
+            reviewSuccessMessage.style.display = "none";
+        }, 5 * 60 * 1000); // 5 minutes in milliseconds
+    }
+
+    // Function to hide the "thanks for the review" message
+    function closeReviewSuccessMessage() {
+        var reviewSuccessMessage = document.getElementById("reviewSuccessMessage");
+        reviewSuccessMessage.style.display = "none";
+    }
+
+    // Add event listener to the review form
+    document.getElementById('reviewForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var formData = new FormData(this);
+
+        fetch('/reviews', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                rating: formData.get('rating'),
+                comment: formData.get('comment')
+            })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to submit review');
+                }
+                // Show the "thanks for the review" message
+                showReviewSuccessMessage();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle error (e.g., display error message)
+            });
+    });
 </script>
 </html>

@@ -207,47 +207,47 @@ public class OrderService {
     }
     public List<Ticket> placeOrder(List<CartItem> cartItems, List<Ticket> tickets, String cartId, String userId){
         for (CartItem cartItem : cartItems) {
-                Double quantity = cartItem.getQuantity();
-                if (cartItem.getTicket().getAvailable() >= cartItem.getQuantity()) {
-                    while (quantity > 0) {
-                        tickets.add(cartItem.getTicket());
-                        quantity--;
-                    }
-                    cartItem.setQuantity(0.0);
-                    CartItemDto cartItemDto = CartItemMapper.toCartItemDto(cartItem);
-                    Optional<CartItem> cartOptional = cartItemRepository.findById(cartItemDto.getId());
-                    if(cartOptional.isPresent()){
-                        CartItem cartItem1 = cartOptional.get();
+            Double quantity = cartItem.getQuantity();
+            if (cartItem.getTicket().getAvailable() >= cartItem.getQuantity()) {
+                while (quantity > 0) {
+                    tickets.add(cartItem.getTicket());
+                    quantity--;
+                }
+                cartItem.setQuantity(0.0);
+                CartItemDto cartItemDto = CartItemMapper.toCartItemDto(cartItem);
+                Optional<CartItem> cartOptional = cartItemRepository.findById(cartItemDto.getId());
+                if(cartOptional.isPresent()){
+                    CartItem cartItem1 = cartOptional.get();
+                    cartItem1.setId(cartItemDto.getId());
+                    cartItem1.setTicket(cartItemDto.getTicket());
+                    cartItem1.setQuantity(cartItemDto.getQuantity());
+                    cartItem1.setCart(cartItemDto.getCart());
+                    cartItemRepository.save(CartItemMapper.toCartItem(cartItemDto));
+                }
+                Optional<CartItem> cartItemOptional = cartItemRepository.findById(cartItemDto.getId());
+                if(cartItemOptional.isPresent()){
+                    CartItem cartItem1 = cartItemOptional.get();
+                    if(cartItem1.getQuantity()>1){
+                        cartItem1.setQuantity(cartItem1.getQuantity()-1);
+                        cartItem1.getTicket().setAvailable(cartItem1.getTicket().getAvailable());
                         cartItem1.setId(cartItemDto.getId());
-                        cartItem1.setTicket(cartItemDto.getTicket());
-                        cartItem1.setQuantity(cartItemDto.getQuantity());
-                        cartItem1.setCart(cartItemDto.getCart());
-                        cartItemRepository.save(CartItemMapper.toCartItem(cartItemDto));
+                        cartItemRepository.save(cartItem1);
+                    }else{
+                        cartItemRepository.deleteById(cartItemDto.getId());
                     }
-                    Optional<CartItem> cartItemOptional = cartItemRepository.findById(cartItemDto.getId());
-                    if(cartItemOptional.isPresent()){
-                        CartItem cartItem1 = cartItemOptional.get();
-                        if(cartItem1.getQuantity()>1){
-                            cartItem1.setQuantity(cartItem1.getQuantity()-1);
-                            cartItem1.getTicket().setAvailable(cartItem1.getTicket().getAvailable());
-                            cartItem1.setId(cartItemDto.getId());
-                            cartItemRepository.save(cartItem1);
-                        }else{
-                            cartItemRepository.deleteById(cartItemDto.getId());
-                        }
-                    }
-                }else return null;
-            }
-            Optional<Cart> cartOptional = cartRepository.findById(cartId);
-            if(cartOptional.isPresent()){
-                Cart cart = cartOptional.get();
-                cart.setId(cart.getId());
-                cart.setCartItems(cart.getCartItems());
-                cart.setTotalPrice(calculateTotalPriceCartItems(cart.getCartItems()));
-                cart.setUser(cart.getUser());
-                cartRepository.save(cart);
-            }
-            return tickets;
+                }
+            }else return null;
+        }
+        Optional<Cart> cartOptional = cartRepository.findById(cartId);
+        if(cartOptional.isPresent()){
+            Cart cart = cartOptional.get();
+            cart.setId(cart.getId());
+            cart.setCartItems(cart.getCartItems());
+            cart.setTotalPrice(calculateTotalPriceCartItems(cart.getCartItems()));
+            cart.setUser(cart.getUser());
+            cartRepository.save(cart);
+        }
+        return tickets;
     }
     public Cart findCartById(String cartId){
         Optional<Cart> cartOptional = cartRepository.findById(cartId);

@@ -202,7 +202,7 @@ public class CartService {
             cartItemRepository.save(CartItemMapper.toCartItem(cartItemDto));
         }
     }
-//    @Transactional
+    //    @Transactional
 //    public void deleteCartItemById(String cartItemId){
 //        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
 //        if(cartItem.isPresent()){

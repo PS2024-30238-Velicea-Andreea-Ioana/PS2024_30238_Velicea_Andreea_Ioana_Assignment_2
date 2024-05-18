@@ -28,4 +28,5 @@ public abstract class Artist {
     abstract public void setPhotoUrl(String photoUrl);
     abstract public void setNrOfPerson(int nrOfPerson);
     abstract public String getId();
+    abstract public void setId(String id);
 }
