@@ -25,6 +25,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Service class for managing payments.
+ */
 @Setter
 @Getter
 @AllArgsConstructor
@@ -34,6 +37,13 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final OrderRepository orderRepository;
     private final PaymentValidator paymentValidator = new PaymentValidator();
+
+    /**
+     * Inserts a new payment into the database.
+     *
+     * @param paymentDto The payment DTO containing information about the payment.
+     * @return A message indicating the success or failure of the insertion.
+     */
     public String insert(PaymentDto paymentDto){
         try{
             paymentValidator.paymentDtoValidator(paymentDto);
@@ -46,6 +56,13 @@ public class PaymentService {
             return PaymentConstants.PAYMENT_NOT_INSERTED + " "+e.getMessage();
         }
     }
+
+    /**
+     * Updates the status of an order to "PAID" after successful payment.
+     *
+     * @param orderId The ID of the order to update.
+     * @return A message indicating the success or failure of the update.
+     */
     public String actualizeOrderStatus(String orderId){
         Optional<Order> orderOptional = orderRepository.findById(orderId);
         if(orderOptional.isEmpty()){

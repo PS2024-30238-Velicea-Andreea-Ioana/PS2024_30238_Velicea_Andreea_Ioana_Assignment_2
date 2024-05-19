@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+/**
+ * Service class for managing sales.
+ */
 @Setter
 @Getter
 @AllArgsConstructor
@@ -34,6 +37,12 @@ public class SaleService {
     private final SaleValidator saleValidator = new SaleValidator();
     private final OrderRepository orderRepository;
 
+    /**
+     * Inserts a new sale into the database.
+     *
+     * @param saleDto The sale DTO containing information about the sale.
+     * @return A string indicating the result of the operation.
+     */
     public String insert(SaleDto saleDto){
         try{
             saleValidator.saleDtoValidator(saleDto);
@@ -57,6 +66,13 @@ public class SaleService {
             return SaleConstants.SALE_NOT_INSERTED + " " + e.getMessage();
         }
     }
+
+    /**
+     * Calculates the total price of a list of tickets.
+     *
+     * @param tickets The list of tickets.
+     * @return The total price.
+     */
     public Double calculateTotalPrice(List<Ticket> tickets){
         Double totalPrice1 = 0.0;
         if (!tickets.isEmpty())
@@ -70,11 +86,22 @@ public class SaleService {
         return totalPrice1;
     }
 
+    /**
+     * Retrieves all sales from the database.
+     *
+     * @return A list of sale DTOs.
+     */
     public List<SaleDto> findSales(){
         List<Sale> saleList = saleRepository.findAll();
         return saleList.stream().map(SaleMapper::toSaleDto).collect(Collectors.toList());
     }
 
+    /**
+     * Retrieves a sale by its ID from the database.
+     *
+     * @param id The ID of the sale to retrieve.
+     * @return The sale DTO.
+     */
     public SaleDto findSaleById(String id){
         Optional<Sale> saleOptional = saleRepository.findById(id);
         if(saleOptional.isEmpty()){
@@ -85,6 +112,13 @@ public class SaleService {
         }
     }
 
+    /**
+     * Updates a sale in the database.
+     *
+     * @param id The ID of the sale to update.
+     * @param updatesSaleDto The updated sale DTO.
+     * @return A string indicating the result of the operation.
+     */
     public String updateSaleById(String id, SaleDto updatesSaleDto){
         Optional<Sale> saleOptional = saleRepository.findById(id);
         if(saleOptional.isEmpty()){
@@ -117,6 +151,13 @@ public class SaleService {
             }
         }
     }
+
+    /**
+     * Deletes a sale from the database.
+     *
+     * @param id The ID of the sale to delete.
+     * @return A string indicating the result of the operation.
+     */
     public String deleteSaleById(String id){
         Optional<Sale> saleOptional = saleRepository.findById(id);
         if(saleOptional.isEmpty()){
@@ -137,9 +178,22 @@ public class SaleService {
             return SaleConstants.SALE_SUCCESS_DELETE;
         }
     }
+
+    /**
+     * Retrieves all tickets from the database.
+     *
+     * @return A list of tickets.
+     */
     public List<Ticket> getTickets(){
         return ticketRepository.findAll();
     }
+
+    /**
+     * Retrieves a ticket by its ID from the database.
+     *
+     * @param id The ID of the ticket to retrieve.
+     * @return The ticket entity.
+     */
     public Ticket findTicketById(String id){
         Optional<Ticket> ticket =  ticketRepository.findById(id);
         if(ticket.isEmpty()){
@@ -149,6 +203,13 @@ public class SaleService {
             return ticket.get();
         }
     }
+    /**
+     * Adds discount to the ticket price.
+     *
+     * @param sale The sale percentage.
+     * @param price The original price.
+     * @return The discounted price.
+     */
     public Double addDiscount(Double sale, Double price){
         return price*(1-sale);
     }

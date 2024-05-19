@@ -120,7 +120,8 @@ public class TicketService {
                 ticket.setPrice(updatedTicket.getPrice());
                 ticket.setAvailable(updatedTicket.getAvailable());
                 ticket.setCartItems(updatedTicketDto.getCartItem());
-                ticket.setImageUrl(updatedTicketDto.getImageUrl());
+                String imageUrl = "/images/" + updatedTicket.getImageUrl();
+                ticket.setImageUrl(imageUrl);
                 ticketRepository.save(ticket);
                 if(!ticket.getOrders().isEmpty()) {
                     List<Order> orders = ticket.getOrders();
@@ -153,6 +154,12 @@ public class TicketService {
             return "Ticket with id "+ id + TicketConstants.TICKET_SUCCESS_DELETE;
         }
     }
+    /**
+     * Calculates the total price of a list of tickets.
+     *
+     * @param tickets The list of tickets.
+     * @return The total price.
+     */
     public Double calculateTotalPrice(List<Ticket> tickets){
         Double totalPrice1 = 0.0;
         if (!tickets.isEmpty())

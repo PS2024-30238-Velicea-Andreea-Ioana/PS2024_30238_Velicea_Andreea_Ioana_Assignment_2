@@ -93,10 +93,23 @@ public class OrderService {
         }
 
     }
+
+    /**
+     * Retrieves all users from the database.
+     *
+     * @return A list of user DTOs.
+     */
     public List<UserDto> findUsers(){
         List<User> userList = userRepository.findAll();
         return userList.stream().map(UserMapper::toUserDto).collect(Collectors.toList());
     }
+
+    /**
+     * Retrieves a user by their ID from the database.
+     *
+     * @param id The ID of the user to retrieve.
+     * @return The user DTO, or null if not found.
+     */
     public UserDto findUserById(String id){
         Optional<User> userOptional = userRepository.findById(id);
         if(userOptional.isEmpty()){
@@ -107,6 +120,13 @@ public class OrderService {
         }
 
     }
+
+    /**
+     * Retrieves a ticket by its ID from the database.
+     *
+     * @param id The ID of the ticket to retrieve.
+     * @return The ticket DTO, or null if not found.
+     */
     public TicketDto findTicketById(String id){
         Optional<Ticket> ticketOptional = ticketRepository.findById(id);
         if(ticketOptional.isEmpty()){
@@ -117,6 +137,12 @@ public class OrderService {
         }
 
     }
+
+    /**
+     * Retrieves all tickets from the database.
+     *
+     * @return A list of ticket DTOs.
+     */
     public List<TicketDto> findTickets(){
         List<Ticket> ticketList = ticketRepository.findAll();
         return ticketList.stream().map(TicketMapper::toTicketDto).collect(Collectors.toList());
@@ -177,6 +203,13 @@ public class OrderService {
             orderRepository.delete(optionalOrder.get());
         }
     }
+
+    /**
+     * Calculates the total price of tickets in an order.
+     *
+     * @param tickets The list of tickets in the order.
+     * @return The total price of the order.
+     */
     public Double calculateTotalPrice(List<Ticket> tickets){
         Double totalPrice1 = 0.0;
         if (!tickets.isEmpty())
@@ -189,6 +222,13 @@ public class OrderService {
             }
         return totalPrice1;
     }
+
+    /**
+     * Calculates the total price of cart items.
+     *
+     * @param cartItems The list of cart items.
+     * @return The total price of the cart items.
+     */
     public Double calculateTotalPriceCartItems(List<CartItem> cartItems){
         Double totalPrice1 = 0.0;
         if (!cartItems.isEmpty())
@@ -201,10 +241,27 @@ public class OrderService {
             }
         return totalPrice1;
     }
+
+    /**
+     * Finds all cart items associated with a cart ID.
+     *
+     * @param cartId The ID of the cart.
+     * @return A list of cart items associated with the cart.
+     */
     public List<CartItem> findCartItemsByCartId(String cartId){
         List<CartItem> cartItems = cartItemRepository.findCartItemsByCartId(cartId);
         return cartItems;
     }
+
+    /**
+     * Places an order based on cart items, updates ticket availability, and updates the cart.
+     *
+     * @param cartItems The list of cart items to place in the order.
+     * @param tickets   The list of tickets in the order.
+     * @param cartId    The ID of the cart associated with the order.
+     * @param userId    The ID of the user placing the order.
+     * @return The list of tickets in the order, or null if placing the order fails.
+     */
     public List<Ticket> placeOrder(List<CartItem> cartItems, List<Ticket> tickets, String cartId, String userId){
         for (CartItem cartItem : cartItems) {
             Double quantity = cartItem.getQuantity();
@@ -249,6 +306,13 @@ public class OrderService {
         }
         return tickets;
     }
+
+    /**
+     * Finds a cart by its ID.
+     *
+     * @param cartId The ID of the cart to find.
+     * @return The found cart, or null if not found.
+     */
     public Cart findCartById(String cartId){
         Optional<Cart> cartOptional = cartRepository.findById(cartId);
         if(cartOptional.isEmpty()){
@@ -258,6 +322,13 @@ public class OrderService {
             return cartOptional.get();
         }
     }
+
+    /**
+     * Finds a user by email.
+     *
+     * @param email The email of the user to find.
+     * @return The found user, or null if not found.
+     */
     public User findUserByEmail(String email){
         return userRepository.findByEmail(email);
     }

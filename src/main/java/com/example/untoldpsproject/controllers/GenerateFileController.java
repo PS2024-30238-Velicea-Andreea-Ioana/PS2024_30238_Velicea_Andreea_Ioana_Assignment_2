@@ -19,22 +19,38 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Arrays;
 
+
+/**
+ * Controller class for generating files and handling related operations.
+ */
+
 @Controller
 @AllArgsConstructor
 public class GenerateFileController {
     public GenerateFileService generateFileService;
     public RestTemplate restTemplate;
 
-//    @GetMapping("/generateFile/add/{userId}/{orderId}/{type}")
-//    public ModelAndView addFileForm(@PathVariable("userId") String userId,@PathVariable("orderId") String orderId,  @PathVariable("type")String type) {
-//        ModelAndView mav = new ModelAndView("order-list");
-//        mav.addObject("orders", generateFileService.getOrders());
-//        return mav;
-//    }
+    /**
+     * Generates a file for the user and redirects to the appropriate page based on user role.
+     *
+     * @param userId  The ID of the user.
+     * @param orderId The ID of the order.
+     * @param type    The type of file to generate.
+     * @return A ModelAndView object for redirecting to the appropriate page.
+     */
     @PostMapping("/generateFile/add/{userId}/{orderId}/{type}")
     public ModelAndView generateFileForUserPost(@PathVariable("userId") String userId,@PathVariable("orderId") String orderId, @PathVariable("type")String type) {
         return generateFileForUser(userId,orderId,type);
     }
+
+    /**
+     * Generates a file for the user and redirects to the appropriate page based on user role.
+     *
+     * @param userId  The ID of the user.
+     * @param orderId The ID of the order.
+     * @param type    The type of file to generate.
+     * @return A ModelAndView object for redirecting to the appropriate page.
+     */
     @GetMapping("/generateFile/add/{userId}/{orderId}/{type}")
     public ModelAndView generateFileForUser(@PathVariable("userId") String userId,@PathVariable("orderId") String orderId, @PathVariable("type")String type) {
         User user = generateFileService.getUser(userId);
@@ -75,6 +91,13 @@ public class GenerateFileController {
         }
     }
 
+    /**
+     * Displays the file type selection page.
+     *
+     * @param userId  The ID of the user.
+     * @param orderId The ID of the order.
+     * @return A ModelAndView object for displaying the file type selection page.
+     */
     @GetMapping("/selectType/{userId}/{orderId}")
     public ModelAndView selectFileType(@PathVariable("userId") String userId,@PathVariable("orderId") String orderId) {
         ModelAndView mav = new ModelAndView("generateFile-selection");
@@ -83,6 +106,14 @@ public class GenerateFileController {
         return mav;
     }
 
+    /**
+     * Generates a file based on the selected type.
+     *
+     * @param userId  The ID of the user.
+     * @param type    The type of file to generate.
+     * @param orderId The ID of the order.
+     * @return A ModelAndView object for redirecting to the appropriate page.
+     */
     @PostMapping("/generateFile/{userId}/{orderId}")
     public ModelAndView generateFile(@PathVariable("userId") String userId, @RequestParam("type") String type,
                                      @PathVariable("orderId") String orderId) {

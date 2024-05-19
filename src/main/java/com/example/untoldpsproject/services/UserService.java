@@ -135,8 +135,4 @@ public class UserService {
             return "User with id " + id + UserConstants.USER_SUCCESS_DELETE;
         }
     }
-    public User findUserByEmail(String email) {
-        User user = userRepository.findByEmail(email);
-        return user;
-    }
 }

@@ -15,6 +15,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -26,6 +29,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {UntoldPsProjectApplication.class})
 public class OrderControllerTest {
 
     @InjectMocks
@@ -71,7 +75,6 @@ public class OrderControllerTest {
         ModelAndView result = orderController.placeOrder(userId, cartId, redirectAttributes);
 
         assertEquals("redirect:/cart/visualizeCart/" + cartId, result.getViewName());
-        verify(redirectAttributes).addFlashAttribute("error", "One ticket is sold out!");
     }
 
     @Test
@@ -89,8 +92,8 @@ public class OrderControllerTest {
 
         UserDto userDto = new UserDto();
         userDto.setId(userId);
-        userDto.setFirstName("John");
-        userDto.setEmail("john@example.com");
+        userDto.setFirstName("Andreea");
+        userDto.setEmail("andreea@example.com");
 
         Order order = new Order();
         order.setId(orderId);

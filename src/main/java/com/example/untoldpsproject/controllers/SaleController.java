@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
+/**
+ * Controller class for managing sale operations.
+ */
 @RestController
 @CrossOrigin
 @AllArgsConstructor
@@ -26,6 +30,13 @@ import java.util.stream.Collectors;
 @RequestMapping(value = "/sale")
 public class SaleController {
     private final SaleService saleService;
+
+    /**
+     * Displays the list of sales.
+     *
+     * @param userId The ID of the user.
+     * @return A ModelAndView object containing the view name and the list of sales.
+     */
     @GetMapping("/list/{userId}")
     public ModelAndView salesList(@PathVariable("userId")String userId) {
         ModelAndView mav = new ModelAndView("sale-list");
@@ -37,6 +48,13 @@ public class SaleController {
         mav.addObject("userId", userId);
         return mav;
     }
+
+    /**
+     * Displays the form for adding a sale.
+     *
+     * @param userId The ID of the user.
+     * @return A ModelAndView object containing the view name and necessary data for adding a sale.
+     */
     @GetMapping("/add/{userId}")
     public ModelAndView addSaleForm(@PathVariable("userId") String userId) {
         ModelAndView mav = new ModelAndView("sale-add");
@@ -46,6 +64,15 @@ public class SaleController {
         mav.addObject("userId", userId);
         return mav;
     }
+
+    /**
+     * Adds a new sale.
+     *
+     * @param userId             The ID of the user.
+     * @param saleDtoIds         The SaleDtoIds object containing sale information.
+     * @param redirectAttributes The redirect attributes.
+     * @return A ModelAndView object containing a redirection URL.
+     */
     @PostMapping("/add/{userId}")
     public ModelAndView addSale(@PathVariable("userId") String userId,@ModelAttribute("saleDto") SaleDtoIds saleDtoIds, RedirectAttributes redirectAttributes) {
         List<Ticket> tickets = new ArrayList<>();
@@ -66,6 +93,14 @@ public class SaleController {
             return new ModelAndView("redirect:/sale/add/"+userId);
         }
     }
+
+    /**
+     * Displays the form for editing a sale.
+     *
+     * @param userId The ID of the user.
+     * @param saleId The ID of the sale to edit.
+     * @return A ModelAndView object containing the view name and necessary data for editing a sale.
+     */
     @GetMapping("/edit/{id}/{userId}")
     public ModelAndView editSaleForm(@PathVariable("userId") String userId, @PathVariable("id") String saleId){
         ModelAndView mav = new ModelAndView("sale-edit");
@@ -76,6 +111,15 @@ public class SaleController {
         mav.addObject("userId", userId);
         return mav;
     }
+
+    /**
+     * Updates an existing sale.
+     *
+     * @param userId             The ID of the user.
+     * @param saleDto            The SaleDto object containing updated sale information.
+     * @param redirectAttributes The redirect attributes.
+     * @return A ModelAndView object containing a redirection URL.
+     */
     @PostMapping("/edit/{id}/{userId}")
     public ModelAndView updateSake(@PathVariable("userId") String userId, @ModelAttribute("saleDto") SaleDto saleDto, RedirectAttributes redirectAttributes) {
         String result = saleService.updateSaleById(saleDto.getId(), saleDto);
@@ -88,6 +132,14 @@ public class SaleController {
 
     }
 
+    /**
+     * Deletes a sale.
+     *
+     * @param userId             The ID of the user.
+     * @param id                 The ID of the sale to delete.
+     * @param redirectAttributes The redirect attributes.
+     * @return A ModelAndView object containing a redirection URL.
+     */
     @GetMapping("/delete/{id}/{userId}")
     public ModelAndView deleteSale(@PathVariable("userId") String userId, @PathVariable("id") String id, RedirectAttributes redirectAttributes) {
         String result = saleService.deleteSaleById(id);

@@ -38,6 +38,8 @@ public class HomePageController {
     /**
      * Displays the start page for administrators.
      *
+     * @param userId  The ID of the user.
+     * @param request The HTTP servlet request.
      * @return The view name for the administrator start page.
      */
     @GetMapping("/administrator/{userId}")
@@ -53,6 +55,14 @@ public class HomePageController {
         }
         return "redirect:/login";
     }
+
+    /**
+     * Displays the start page for customers.
+     *
+     * @param userId  The ID of the user.
+     * @param request The HTTP servlet request.
+     * @return The view name for the customer start page.
+     */
     @GetMapping("/customer/{userId}")
     public String showCustomerPage(@PathVariable("userId")String userId, HttpServletRequest request) {
 
@@ -67,12 +77,26 @@ public class HomePageController {
         return "redirect:/login";
     }
 
+    /**
+     * Displays the login form.
+     *
+     * @return A ModelAndView object for displaying the login form.
+     */
     @GetMapping("/login")
     public ModelAndView loginForm(){
         ModelAndView mav = new ModelAndView("login");
         mav.addObject("userDto", new UserDto());
         return mav;
     }
+
+    /**
+     * Handles user login.
+     *
+     * @param email    The user's email.
+     * @param password The user's password.
+     * @param response The HTTP servlet response.
+     * @return A ModelAndView object for redirecting to the appropriate page after login.
+     */
     @PostMapping("/login")
     public ModelAndView login(@RequestParam("email") String email, @RequestParam("password") String password, HttpServletResponse response) {
         ModelAndView mav = new ModelAndView();
@@ -91,12 +115,25 @@ public class HomePageController {
         }
         return mav;
     }
+
+    /**
+     * Displays the registration form.
+     *
+     * @return A ModelAndView object for displaying the registration form.
+     */
     @GetMapping("/register")
     public ModelAndView registerForm(){
         ModelAndView mav = new ModelAndView("register");
         mav.addObject("userDto", new UserDto());
         return mav;
     }
+
+    /**
+     * Handles user registration.
+     *
+     * @param userDto The user DTO containing registration information.
+     * @return A ModelAndView object for redirecting to the appropriate page after registration.
+     */
     @PostMapping("/register")
     public ModelAndView register(@ModelAttribute("userDto") UserDto userDto){
         ModelAndView mav = new ModelAndView();
@@ -120,7 +157,6 @@ public class HomePageController {
         }
 
         Payload payload = new Payload(homePageService.findUserByEmail(userDto.getEmail()).getId(),userDto.getFirstName(),userDto.getEmail());
-        //rabbitMQSender.send(payload);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
@@ -145,6 +181,16 @@ public class HomePageController {
         mav.setViewName("redirect:/login");
         return mav;
     }
+
+    /**
+     * Visualizes tickets for the customer.
+     *
+     * @param userId   The ID of the user.
+     * @param category The category of tickets to filter.
+     * @param sort     The sorting option.
+     * @param request  The HTTP servlet request.
+     * @return A ModelAndView object for displaying the ticket visualization.
+     */
     @GetMapping("/customer/seetickets/{userId}")
     public ModelAndView visualiseTicketsByCategory(@PathVariable("userId") String userId, @RequestParam(value = "category", required = false) String category, @RequestParam(value = "sort", required = false) String sort, HttpServletRequest request) {
         ModelAndView mav = new ModelAndView("user-interface");
@@ -205,6 +251,13 @@ public class HomePageController {
         mav.addObject("cartId", user.getCart().getId());
         return mav;
     }
+
+    /**
+     * Displays the artists page for the user.
+     *
+     * @param userId The ID of the user.
+     * @return A ModelAndView object for displaying the artists page.
+     */
     @GetMapping("/vizualizeArtists/{userId}")
     public ModelAndView seeArtists(@PathVariable("userId") String userId){
         ModelAndView mav = new ModelAndView("user-artists");

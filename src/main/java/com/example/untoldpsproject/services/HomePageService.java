@@ -25,6 +25,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+
+/**
+ * Service class providing various functionalities for the home page.
+ */
 @Service
 @Setter
 @Getter
@@ -39,9 +43,22 @@ public class HomePageService {
     private final UserValidator userValidator = new UserValidator();
     private final CartValidator cartValidator = new CartValidator();
 
+    /**
+     * Finds a user by email.
+     *
+     * @param email The email of the user to find.
+     * @return The found user, or null if not found.
+     */
     public User findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
+
+    /**
+     * Inserts a new user.
+     *
+     * @param userDto The DTO representing the user to insert.
+     * @return A success or error message indicating the result of the operation.
+     */
     public String insertUser(UserDto userDto){
         try{
             userValidator.userDtoValidator(userDto);
@@ -54,6 +71,13 @@ public class HomePageService {
             return UserConstants.USER_NOT_INSERTED + ": " +e.getMessage();
         }
     }
+
+    /**
+     * Finds a user by ID.
+     *
+     * @param id The ID of the user to find.
+     * @return The found user as a DTO, or null if not found.
+     */
     public UserDto findUserById(String id){
         Optional<User> userOptional =  userRepository.findById(id);
         if(userOptional.isEmpty()){
@@ -63,6 +87,13 @@ public class HomePageService {
             return UserMapper.toUserDto(userOptional.get());
         }
     }
+
+    /**
+     * Inserts a new cart.
+     *
+     * @param cartDto The DTO representing the cart to insert.
+     * @return The DTO representing the inserted cart, or the original DTO if insertion fails.
+     */
     public CartDto insertCart(CartDto cartDto) {
         try {
             cartValidator.validateCartDto(cartDto);
@@ -76,6 +107,13 @@ public class HomePageService {
             return cartDto;
         }
     }
+
+    /**
+     * Calculates the total price of items in the cart.
+     *
+     * @param cartItems The list of cart items.
+     * @return The total price of items in the cart.
+     */
     public Double calculateTotalPrice(List<CartItem> cartItems){
         Double totalPrice1 = 0.0;
         if (!cartItems.isEmpty())
@@ -88,10 +126,24 @@ public class HomePageService {
             }
         return totalPrice1;
     }
+
+    /**
+     * Finds all tickets.
+     *
+     * @return A list of all tickets.
+     */
     public List<TicketDto> findTickets(){
         List<Ticket> ticketList = ticketRepository.findAll();
         return ticketList.stream().map(TicketMapper::toTicketDto).collect(Collectors.toList());
     }
+
+    /**
+     * Updates a user by ID.
+     *
+     * @param id              The ID of the user to update.
+     * @param updatedUserDto  The DTO representing the updated user data.
+     * @return A success or error message indicating the result of the operation.
+     */
     public String updateUserById(String id, UserDto updatedUserDto) {
         Optional<User> userOptional = userRepository.findById(id);
         if (userOptional.isEmpty()) {
@@ -117,9 +169,19 @@ public class HomePageService {
             }
         }
     }
+    /**
+     * Finds all categories.
+     *
+     * @return A list of all categories.
+     */
     public List<Category> findCategories(){
         return categoryRepository.findAll();
     }
+    /**
+     * Finds all artists.
+     *
+     * @return A list of all artists.
+     */
     public List<Artist> findArtists(){
         return artistRepository.findAll();
     }

@@ -21,6 +21,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+
+/**
+ * Service class for managing artist operations.
+ */
 @Setter
 @Getter
 @AllArgsConstructor
@@ -30,6 +34,13 @@ public class ArtistService {
     public final ArtistRepository artistRepository;
     public final ArtistValidator artistValidator = new ArtistValidator();
 
+
+    /**
+     * Inserts a new artist.
+     *
+     * @param artist The artist object to insert.
+     * @return A string indicating the result of the insertion.
+     */
     public String insertArtist(Artist artist) {
         try {
             artistValidator.artistValidator(artist);
@@ -41,10 +52,23 @@ public class ArtistService {
             return ArtistConstants.ARTIST_NOT_INSERTED+": "+e.getMessage();
         }
     }
+
+    /**
+     * Retrieves all artists.
+     *
+     * @return A list of all artists.
+     */
     public List<Artist> getAllArtists() {
         return artistRepository.findAll();
     }
 
+
+    /**
+     * Finds an artist by ID.
+     *
+     * @param id The ID of the artist to find.
+     * @return The artist object if found, otherwise null.
+     */
     public Artist findById(String id){
         Optional<Artist> artistOptional = artistRepository.findById(id);
         if(artistOptional.isEmpty()){

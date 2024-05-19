@@ -1,3 +1,6 @@
 Ticket,Type,Start Date,Finish Date,Price,Ticket Number
-1,one_day,2024-08-22,2024-08-22,80.0,f921f8b2-ca56-4ccb-bb07-96ac17eb066d
-2,one_day,2024-08-22,2024-08-22,80.0,f921f8b2-ca56-4ccb-bb07-96ac17eb066d
+1,two_days,2024-08-22,2024-08-23,240.0,8d16036d-ae5e-4acb-a2df-52cbecd2e944
+2,two_days,2024-08-22,2024-08-23,240.0,8d16036d-ae5e-4acb-a2df-52cbecd2e944
+3,two_days,2024-08-22,2024-08-23,240.0,8d16036d-ae5e-4acb-a2df-52cbecd2e944
+4,two_days,2024-08-22,2024-08-23,240.0,8d16036d-ae5e-4acb-a2df-52cbecd2e944
+5,two_days,2024-08-22,2024-08-23,240.0,8d16036d-ae5e-4acb-a2df-52cbecd2e944

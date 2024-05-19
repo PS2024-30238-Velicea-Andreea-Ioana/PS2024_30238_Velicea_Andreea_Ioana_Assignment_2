@@ -86,8 +86,12 @@
         <input type="text" id="price" name="price" th:field="*{price}"/><br/>
         <label for="available">Available:</label>
         <input type="text" id="available" name="available" th:field="*{available}"/><br/>
-        <label for="imageUrl">Image Url:</label>
-        <input type="text" id="imageUrl" name="imageUrl" th:field="*{imageUrl}"/><br/>
+        <label for="imageUrl">Image:</label>
+        <select id="imageUrl" name="imageUrl" onchange="updateImagePreview()">
+            <option value="" disabled selected>Select an image</option>
+            <option th:each="imageName : ${imageNames}" th:value="${imageName}" th:text="${imageName}"></option>
+        </select><br>
+        <img id="imagePreview" src="" alt="Selected Image" style="max-width: 100%; margin-top: 10px;">
         <input type="submit" value="Update"/>
         <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
     </form>
@@ -112,6 +116,11 @@
             errorMessage.style.display = 'none';
         }
     }, 3000);
+    function updateImagePreview() {
+        const imageUrl = document.getElementById('imageUrl').value;
+        const imagePreview = document.getElementById('imagePreview');
+        imagePreview.src = "/images/" + imageUrl;
+    }
 </script>
 </body>
 </html>

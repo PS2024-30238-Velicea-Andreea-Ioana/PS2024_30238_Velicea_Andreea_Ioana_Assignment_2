@@ -26,6 +26,7 @@ import java.util.List;
 @RequestMapping(value = "/cart")
 public class CartController {
     private final CartService cartService;
+
     /**
      * Adds a ticket to the cart.
      *
@@ -108,9 +109,9 @@ public class CartController {
 
 
     /**
-     * Removes an item from the cart.
+     * Decrease the quantity of an item from the cart.
      *
-     * @param cartItemId The ID of the cart item to be removed.
+     * @param cartItemId The ID of the cart item to be descreased.
      * @return A ModelAndView object containing a redirection URL.
      */
     @GetMapping("/decreaseQuantity/{cartItemId}")
@@ -118,6 +119,14 @@ public class CartController {
         String cartId = cartService.decreaseCartItem(cartItemId);
         return new ModelAndView("redirect:/cart/visualizeCart/" + cartId);
     }
+
+    /**
+     * Increases the quantity of an item in the cart.
+     *
+     * @param cartItemId         The ID of the cart item.
+     * @param redirectAttributes RedirectAttributes for handling flash attributes.
+     * @return A ModelAndView object containing a redirection URL.
+     */
     @GetMapping("/increaseQuantity/{cartItemId}")
     public ModelAndView increaseCartItem(@PathVariable("cartItemId") String cartItemId,RedirectAttributes redirectAttributes) {
         CartItem cartItem = cartService.getCartItemById(cartItemId);
@@ -133,6 +142,12 @@ public class CartController {
         }
     }
 
+    /**
+     * Removes an item from the cart.
+     *
+     * @param cartItemId The ID of the cart item to be removed.
+     * @return A ModelAndView object containing a redirection URL.
+     */
     @GetMapping("/removeItem/{cartItemId}")
     public ModelAndView removeItemFromCart(@PathVariable("cartItemId") String cartItemId){
         String cartId = cartService.removeCartItem(cartItemId);

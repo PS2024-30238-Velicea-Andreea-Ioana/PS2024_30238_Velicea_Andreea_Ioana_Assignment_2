@@ -115,6 +115,8 @@ public class TicketController {
         List<CategoryDto> categories = ticketService.findCategories();
         mav.addObject("categories", categories);
         mav.addObject("userId", userId);
+        List<String> imageNames = getImageFiles();
+        mav.addObject("imageNames", imageNames);
         return mav;
     }
 

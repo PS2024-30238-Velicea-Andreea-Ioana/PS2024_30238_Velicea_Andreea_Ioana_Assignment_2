@@ -12,7 +12,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.Map;
+
+/**
+ * Controller class for artists.
+ */
 
 @RestController
 @CrossOrigin
@@ -24,6 +27,12 @@ public class ArtistController {
     private ArtistFactory artistFactory;
     private ArtistService artistService;
 
+    /**
+     * Retrieves a list of artists.
+     * @param userId The ID of the user.
+     * @return ModelAndView representing the artist list view.
+     */
+
     @GetMapping("/list/{userId}")
     public ModelAndView artistList(@PathVariable("userId") String userId) {
         ModelAndView mav = new ModelAndView("artist-list");
@@ -32,6 +41,12 @@ public class ArtistController {
         mav.addObject("userId", userId);
         return mav;
     }
+
+    /**
+     * Displays the form for adding a new artist.
+     * @param userId The ID of the user.
+     * @return ModelAndView representing the add artist form view.
+     */
     @GetMapping("/add/{userId}")
     public ModelAndView showAddArtistForm(@PathVariable("userId") String userId) {
         ModelAndView modelAndView = new ModelAndView("artist-add");
@@ -39,6 +54,18 @@ public class ArtistController {
         return modelAndView;
     }
 
+    /**
+     * Handles the submission of the add artist form.
+     * @param userId The ID of the user.
+     * @param type The type of the artist.
+     * @param name The name of the artist.
+     * @param description The description of the artist.
+     * @param nrOfPersons The number of persons in the artist group.
+     * @param genre The genre of the artist.
+     * @param photoUrl The URL of the artist's photo.
+     * @param redirectAttributes RedirectAttributes for handling flash attributes.
+     * @return ModelAndView representing the redirection after adding the artist.
+     */
     @PostMapping("/add/{userId}")
     public ModelAndView addArtist(@PathVariable("userId") String userId,
                                   @RequestParam String type,

@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * This service class provides methods to manage shopping carts in the system.
+ * Service class for managing shopping carts in the system.
  */
 @Setter
 @Getter
@@ -135,6 +135,12 @@ public class CartService {
         }
     }
 
+    /**
+     * Retrieves a cart item by its ID.
+     *
+     * @param id The ID of the cart item.
+     * @return The cart item if found, otherwise null.
+     */
     public CartItem getCartItemById(String id){
         Optional<CartItem> cartItem =  cartItemRepository.findById(id);
         if(cartItem.isPresent()){
@@ -143,6 +149,12 @@ public class CartService {
         return null;
     }
 
+    /**
+     * Decreases the quantity of a cart item.
+     *
+     * @param cartItemId The ID of the cart item to decrease.
+     * @return The ID of the cart after the operation, or null if the operation fails.
+     */
     public String decreaseCartItem(String cartItemId){
         Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
         if (cartItem.isPresent()) {
@@ -156,6 +168,13 @@ public class CartService {
         }
         return null;
     }
+
+    /**
+     * Increases the quantity of a cart item.
+     *
+     * @param cartItemId The ID of the cart item to increase.
+     * @return The ID of the cart after the operation, or null if the operation fails.
+     */
     public String increaseCartItem(String cartItemId){
         Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
         if (cartItem.isPresent()) {
@@ -169,6 +188,13 @@ public class CartService {
         }
         return null;
     }
+
+    /**
+     * Finds a ticket by its ID.
+     *
+     * @param ticketId The ID of the ticket.
+     * @return The ticket if found, otherwise null.
+     */
     public Ticket findTicket(String ticketId){
         Optional<Ticket> ticket =  ticketRepository.findById(ticketId);
         if(!ticket.isPresent()){
@@ -176,6 +202,13 @@ public class CartService {
         }
         return ticket.get();
     }
+
+    /**
+     * Finds a user by its ID.
+     *
+     * @param userId The ID of the user.
+     * @return The user if found, otherwise null.
+     */
     public User findUser(String userId){
         Optional<User> user =  userRepository.findById(userId);
         if(!user.isPresent()){
@@ -184,13 +217,34 @@ public class CartService {
         return user.get();
     }
 
+    /**
+     * Finds a cart item by ticket ID and cart ID.
+     *
+     * @param ticketId The ID of the ticket.
+     * @param cartId   The ID of the cart.
+     * @return The cart item if found, otherwise null.
+     */
     public CartItem findCartItemByTicketIdAndCartId(String ticketId, String cartId){
         return cartItemRepository.findCartItemByTicketIdAndAndCartId(ticketId,cartId);
     }
+
+    /**
+     * Inserts a cart item into the database.
+     *
+     * @param cartItemDto The DTO representing the cart item to be inserted.
+     * @return The ID of the inserted cart item.
+     */
     public String insertCartItem(CartItemDto cartItemDto){
         cartItemRepository.save(CartItemMapper.toCartItem(cartItemDto));
         return cartItemDto.getId();
     }
+
+
+    /**
+     * Updates a cart item in the database.
+     *
+     * @param cartItemDto The DTO representing the updated cart item.
+     */
     public void updateCartItem(CartItemDto cartItemDto){
         Optional<CartItem> cartOptional = cartItemRepository.findById(cartItemDto.getId());
         if(cartOptional.isPresent()){
@@ -202,21 +256,13 @@ public class CartService {
             cartItemRepository.save(CartItemMapper.toCartItem(cartItemDto));
         }
     }
-    //    @Transactional
-//    public void deleteCartItemById(String cartItemId){
-//        Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
-//        if(cartItem.isPresent()){
-//            CartItem cartItem1 = cartItem.get();
-//            if(cartItem1.getQuantity()>1){
-//                cartItem1.setQuantity(cartItem1.getQuantity()-1);
-//                cartItem1.getTicket().setAvailable(cartItem1.getTicket().getAvailable());
-//                cartItem1.setId(cartItemId);
-//                cartItemRepository.save(cartItem1);
-//            }else{
-//                cartItemRepository.deleteById(cartItemId);
-//            }
-//        }
-//    }
+
+    /**
+     * Removes a cart item from the database.
+     *
+     * @param cartItemId The ID of the cart item to be removed.
+     * @return The ID of the cart after the operation, or null if the operation fails.
+     */
     public String removeCartItem(String cartItemId){
         Optional<CartItem> cartItem = cartItemRepository.findById(cartItemId);
         if (cartItem.isPresent()) {
