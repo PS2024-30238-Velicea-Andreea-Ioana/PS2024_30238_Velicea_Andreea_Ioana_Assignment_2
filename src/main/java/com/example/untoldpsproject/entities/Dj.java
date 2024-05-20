@@ -1,4 +1,4 @@
-package com.example.untoldpsproject.factory;
+package com.example.untoldpsproject.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
-public class Singer extends Artist {
+public class Dj extends Artist {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -17,7 +17,7 @@ public class Singer extends Artist {
     public String genre;
     public String photoUrl;
 
-    public Singer(String name, String description, String genre, int nrOfPersons, String photoUrl) {
+    public Dj(String name, String description, String genre, int nrOfPersons, String photoUrl) {
         this.name = name;
         this.description = description;
         this.nrOfPersons = nrOfPersons;
@@ -25,7 +25,7 @@ public class Singer extends Artist {
         this.photoUrl = photoUrl;
     }
 
-    public Singer() {
+    public Dj() {
 
     }
 
@@ -76,7 +76,6 @@ public class Singer extends Artist {
     public void setNrOfPerson(int nrOfPerson) {
         this.nrOfPersons = nrOfPerson;
     }
-
     @Override
     public String getId() {
         return id;

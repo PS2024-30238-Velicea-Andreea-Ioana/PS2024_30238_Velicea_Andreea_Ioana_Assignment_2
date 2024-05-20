@@ -2,7 +2,7 @@ package com.example.untoldpsproject.validators;
 
 
 import com.example.untoldpsproject.constants.ArtistConstants;
-import com.example.untoldpsproject.factory.Artist;
+import com.example.untoldpsproject.entities.Artist;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

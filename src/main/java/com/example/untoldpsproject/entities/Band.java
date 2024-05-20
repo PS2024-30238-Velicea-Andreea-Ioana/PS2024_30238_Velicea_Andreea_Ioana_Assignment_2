@@ -1,4 +1,4 @@
-package com.example.untoldpsproject.factory;
+package com.example.untoldpsproject.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

@@ -132,9 +132,9 @@
             <tbody>
             <tr th:each="cartItem: ${cartItems}">
                 <td class="item-details" th:text="${cartItem.ticket.category.tip}"></td>
-                <td class="quantity" th:text="${cartItem.quantity}"></td>
-                <td class="price" th:text="(${cartItem.ticket.discountedPrice} == null ? ${cartItem.ticket.price} : ${cartItem.ticket.discountedPrice})"></td>
-                <td class="total-price" th:text="(${cartItem.ticket.discountedPrice} == null ? ${cartItem.ticket.price * cartItem.quantity} : ${cartItem.ticket.discountedPrice * cartItem.quantity})"></td>
+                <td class="quantity" th:text="${cartItem.ticket.available == 0 ? 'SOLD OUT' : cartItem.quantity}"></td>
+                <td class="price" th:text="${cartItem.ticket.available == 0 ? 'SOLD OUT' : (cartItem.ticket.discountedPrice == null ? cartItem.ticket.price : cartItem.ticket.discountedPrice)}"></td>
+                <td class="total-price" th:classappend="${cartItem.ticket.available == 0 ? 'strike-through' : ''}" th:text="${cartItem.ticket.available == 0 ? '' : (cartItem.ticket.discountedPrice == null ? cartItem.ticket.price * cartItem.quantity : cartItem.ticket.discountedPrice * cartItem.quantity)}"></td>
                 <td class="action-buttons">
                     <button class="action-button">
                         <a style="text-decoration: none" th:href="@{/cart/decreaseQuantity/{cartItemId} (cartItemId = ${cartItem.id})}" class="action-button">-</a>
@@ -149,7 +149,12 @@
             </tr>
             </tbody>
         </table>
-        <div class="total-price" th:text="${cart.totalPrice} + 'Ron'"></div>
+        <div th:if="${isAnyItemSoldOut}">
+            <div class="total-price" th:text="'Total: 0 Ron'"></div>
+        </div>
+        <div th:unless="${isAnyItemSoldOut}">
+            <div class="total-price" th:text="${cart.totalPrice} + ' Ron'"></div>
+        </div>
         <p id="errorMessage" th:if="${error}" style="color: red" th:text="${error}">An error occurred.</p>
     </div>
 

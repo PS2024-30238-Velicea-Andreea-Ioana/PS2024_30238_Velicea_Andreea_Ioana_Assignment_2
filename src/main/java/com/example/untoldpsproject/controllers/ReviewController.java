@@ -4,6 +4,7 @@ import com.example.untoldpsproject.entities.Review;
 import com.example.untoldpsproject.services.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -21,16 +22,13 @@ public class ReviewController {
      *
      * @return A list of Review objects representing all reviews.
      */
-    @GetMapping
-    public List<Review> getAllReviews() {
-        return reviewService.getAllReviews();
+    @GetMapping("/list/{userId}")
+    public ModelAndView getAllReviews(@PathVariable String userId) {
+        ModelAndView modelAndView = new ModelAndView("reviewList");
+        modelAndView.addObject("reviews", reviewService.getAllReviews());
+        modelAndView.addObject("userId", userId);
+        return  modelAndView;
     }
-
-    /**
-     * Retrieves all reviews.
-     *
-     * @return A list of Review objects representing all reviews.
-     */
     @PostMapping
     public void addReview(@RequestBody Review review) {
         reviewService.addReview(review);

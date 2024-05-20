@@ -103,6 +103,8 @@ public class CartController {
         mav.addObject("cart", cart);
         mav.addObject("cartItems", cartItems);
         mav.addObject("userId", userId);
+        mav.addObject("isAnyItemSoldOut", cartService.isAnyItemSoldOut(cart.getCartItems()));
+
         return mav;
     }
 

@@ -7,7 +7,7 @@ import com.example.untoldpsproject.dtos.CartDto;
 import com.example.untoldpsproject.dtos.TicketDto;
 import com.example.untoldpsproject.dtos.UserDto;
 import com.example.untoldpsproject.entities.*;
-import com.example.untoldpsproject.factory.Artist;
+import com.example.untoldpsproject.entities.Artist;
 import com.example.untoldpsproject.mappers.CartMapper;
 import com.example.untoldpsproject.mappers.TicketMapper;
 import com.example.untoldpsproject.mappers.UserMapper;

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #4b0082;
+        }
+
+        .container {
+            background-color: #6a0dad;
+            color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #ffffff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 18px;
+            min-width: 400px;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            background-color: #800080;
+        }
+
+        th {
+            background-color: #4b0082;
+            color: #ffffff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #6a0dad;
+        }
+
+        tr:hover {
+            background-color: #b19cd9;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #8917F5;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .back-button:hover {
+            background-color: #2B0251;
+        }
+    </style>
+</head>
+<body>
+<form th:action="@{/review/list/{userId}(userId = ${userId})}" method="get">
+<div class="container">
+    <h1>Review List</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Rating</th>
+            <th>Comment</th>
+            <th>Created At</th>
+        </tr>
+        <tbody>
+        <tr th:each="review : ${reviews}">
+            <td th:text="${review.id}"></td>
+            <td th:text="${review.rating}"></td>
+            <td th:text="${review.comment}"></td>
+            <td th:text="${review.createdAt}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <a th:href="@{/administrator/{userId}(userId = ${userId})}" class="back-button">Back to Admin Page</a>
+    </div>
+</form>
+</body>
+</html>

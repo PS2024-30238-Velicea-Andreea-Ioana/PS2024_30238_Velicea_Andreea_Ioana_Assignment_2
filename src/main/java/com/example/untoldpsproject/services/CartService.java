@@ -274,4 +274,8 @@ public class CartService {
         return null;
     }
 
+    public boolean isAnyItemSoldOut(List<CartItem> cartItems) {
+        return cartItems.stream().anyMatch(item -> item.getTicket().getAvailable() == 0);
+    }
+
 }

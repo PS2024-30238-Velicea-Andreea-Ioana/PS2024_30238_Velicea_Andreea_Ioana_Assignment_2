@@ -5,7 +5,6 @@ import com.example.untoldpsproject.dtos.*;
 import com.example.untoldpsproject.entities.Category;
 import com.example.untoldpsproject.entities.Role;
 import com.example.untoldpsproject.entities.User;
-import com.example.untoldpsproject.factory.ArtistFactory;
 import com.example.untoldpsproject.mappers.CartMapper;
 import com.example.untoldpsproject.mappers.UserMapper;
 import com.example.untoldpsproject.services.HomePageService;

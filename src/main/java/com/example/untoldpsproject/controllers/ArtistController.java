@@ -1,9 +1,8 @@
 package com.example.untoldpsproject.controllers;
 
 import com.example.untoldpsproject.constants.ArtistConstants;
-import com.example.untoldpsproject.factory.Artist;
-import com.example.untoldpsproject.factory.ArtistFactory;
-import com.example.untoldpsproject.services.ArtistService;
+import com.example.untoldpsproject.entities.Artist;
+import com.example.untoldpsproject.services.ArtistFactory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +24,6 @@ import java.util.List;
 @RequestMapping(value ="/artist")
 public class ArtistController {
     private ArtistFactory artistFactory;
-    private ArtistService artistService;
 
     /**
      * Retrieves a list of artists.
@@ -36,7 +34,7 @@ public class ArtistController {
     @GetMapping("/list/{userId}")
     public ModelAndView artistList(@PathVariable("userId") String userId) {
         ModelAndView mav = new ModelAndView("artist-list");
-        List<Artist> artists = artistService.getAllArtists();
+        List<Artist> artists = artistFactory.getAllArtists();
         mav.addObject("artists", artists);
         mav.addObject("userId", userId);
         return mav;
@@ -75,8 +73,7 @@ public class ArtistController {
                                   @RequestParam String genre,
                                   @RequestParam String photoUrl,
                                   RedirectAttributes redirectAttributes) {
-        Artist newArtist = artistFactory.createArtist(type, name, description, nrOfPersons, genre, photoUrl);
-        String result = artistService.insertArtist(newArtist);
+        String result = artistFactory.createArtist(type, name, description, nrOfPersons, genre, photoUrl);
         if (ArtistConstants.ARTIST_INSERTED.equals(result)) {
             return new ModelAndView("redirect:/artist/list/" + userId);
         } else {
@@ -84,4 +81,5 @@ public class ArtistController {
             return new ModelAndView("redirect:/artist/add/" + userId);
         }
     }
+
 }
